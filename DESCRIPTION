@@ -1,15 +1,22 @@
 Package: xpt
 Title: What the Package Does (One Line, Title Case)
 Version: 0.0.0.9000
-Authors@R:
-    person("Zach", "Jacobs", , "zach@forecastingresearch.org")
-    person("Molly", "Hickman", , "molly@forecastingresearch.org")
+Authors@R: c(
+    person("Zach", "Jacobs", email="zach@forecastingresearch.org", role=c("aut", "cre")),
+    person("Molly", "Hickman", email="molly@forecastingresearch.org", role=c("ctb")))
 Description: What the package does (one paragraph).
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Imports:
+    dplyr,
+    ggplot2,
+    lubridate,
+    rlang,
+    docstring,
+    data.table
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3

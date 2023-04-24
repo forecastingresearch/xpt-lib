@@ -12,8 +12,8 @@ trim <- function(table, p = 0.1) {
 
   table <- table %>% arrange(forecast)
   trimN <- round(p * nrow(table))
-  trimTable <- table[trimN:(nrow(table) - trimN)]
-  trimmedMean <- mean(trimTable$forecast)
+  trimTable <- table[trimN:(nrow(table) - trimN), ]
+  trimmedMean <- mean(trimTable[["forecast"]])
   return(trimmedMean)
 }
 

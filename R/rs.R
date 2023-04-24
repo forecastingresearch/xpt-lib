@@ -40,6 +40,10 @@ RSRankingInit <- function() {
   ))
 }
 
+log_score <- function(actual, forecast) {
+  return(log(1 - abs(actual / 100 - forecast / 100)))
+}
+
 multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
   #' Scores the multi-year reciprocal questions
   #'
@@ -124,9 +128,9 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
           phase_csv <- read.csv(files[grepl(paste0("Phase ", j, ".csv"), files)])
 
           if (grepl("Experts", otherBeliefSets[l])) {
-            phase_csv <- phase_csv %>% mutate(score_unincentivized = log(1 - abs(medianBeliefs$domainExpertsMedian / 100 - forecast / 100)))
+            phase_csv <- phase_csv %>% mutate(score_unincentivized = log_score(medianBeliefs$domainExpertsMedian, forecast))
           } else if (grepl("Superforecasters", otherBeliefSets[l])) {
-            phase_csv <- phase_csv %>% mutate(score_unincentivized = log(1 - abs(medianBeliefs$supersMedian / 100 - forecast / 100)))
+            phase_csv <- phase_csv %>% mutate(score_unincentivized = log_score(medianBeliefs$supersMedian, forecast))
           } else {
             print("ERROR!!!")
           }
@@ -146,9 +150,9 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
           }
 
           if (grepl("Experts", otherBeliefSets[l])) {
-            phase_csv <- phase_csv %>% mutate(score_rs = log(1 - abs(RSBeliefs$domainExpertsMedian / 100 - forecast / 100)))
+            phase_csv <- phase_csv %>% mutate(score_rs = log_score(RSBeliefs$domainExpertsMedian, forecast))
           } else if (grepl("Superforecasters", otherBeliefSets[l])) {
-            phase_csv <- phase_csv %>% mutate(score_rs = log(1 - abs(RSBeliefs$supersMedian / 100 - forecast / 100)))
+            phase_csv <- phase_csv %>% mutate(score_rs = log_score(RSBeliefs$supersMedian, forecast))
           } else {
             print("ERROR!!!")
           }
@@ -276,7 +280,6 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
   RSRanking_unincentivized <- RSRanking_unincentivized %>% mutate(avgRank = rankSum / n)
   write.csv(RSRanking_unincentivized, "RSRanking_unincentivized_first10.csv", row.names = FALSE)
 }
-
 
 pointDistrib_RS <- function(metaTable, data, summaryTable) {
   #' Scores the point distribution reciprocal questions
@@ -935,9 +938,9 @@ multiYearBinary_RS <- function(metaTable, data, summaryTable) {
               phase_csv$group[l] <- "experts (g2)"
             }
             if (phase_csv$group[l] == "supers") {
-              phase_csv$score_unincentivized[l] <- log(1 - abs(medianBeliefs$supersMedian / 100 - phase_csv$forecast[l] / 100))
+              phase_csv$score_unincentivized[l] <- log_score(medianBeliefs$supersMedian, phase_csv$forecast[l])
             } else if (phase_csv$group[l] %in% c("domain experts", "non-domain experts", "experts")) {
-              phase_csv$score_unincentivized[l] <- log(1 - abs(medianBeliefs$domainExpertsMedian / 100 - phase_csv$forecast[l] / 100))
+              phase_csv$score_unincentivized[l] <- log_score(medianBeliefs$domainExpertsMedian, phase_csv$forecast[l])
             } else {
               phase_csv$score_unincentivized[l] <- NA
             }
@@ -1146,9 +1149,9 @@ multiYearCountryDistrib_RS <- function(metaTable, data, summaryTable) {
                 phase_csv$group[m] <- "experts (g2)"
               }
               if (phase_csv$group[m] == "supers") {
-                phase_csv$score_unincentivized[m] <- log(1 - abs(medianBeliefs$supersMedian / 100 - phase_csv$forecast[m] / 100))
+                phase_csv$score_unincentivized[m] <- log_score(medianBeliefs$supersMedian, phase_csv$forecast[m])
               } else if (phase_csv$group[m] %in% c("domain experts", "non-domain experts", "experts")) {
-                phase_csv$score_unincentivized[m] <- log(1 - abs(medianBeliefs$domainExpertsMedian / 100 - phase_csv$forecast[m] / 100))
+                phase_csv$score_unincentivized[m] <- log_score(medianBeliefs$domainExpertsMedian, phase_csv$forecast[m])
               } else {
                 phase_csv$score_unincentivized[m] <- NA
               }
