@@ -2,12 +2,12 @@
 % Please edit documentation in R/agg.R
 \name{trim}
 \alias{trim}
-\title{Trim}
+\title{Trimmed mean}
 \usage{
-trim(table, p = 0.1)
+trim(questionData, p = 0.1)
 }
 \arguments{
-\item{table}{The processed question data table (needs to have a forecast column)}
+\item{questionData}{The processed question data table (needs to have a forecast column)}
 
 \item{p}{The proportion of forecasts to trim from each end (between 0 and 1)}
 }
