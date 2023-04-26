@@ -4,12 +4,12 @@
 \alias{trim}
 \title{Trimmed mean}
 \usage{
-trim(questionData, p = 0.1)
+trim(x, p = 0.1)
 }
 \arguments{
-\item{questionData}{The processed question data table (needs to have a forecast column)}
-
 \item{p}{The proportion of forecasts to trim from each end (between 0 and 1)}
+
+\item{questionData}{The processed question data table (needs to have a forecast column)}
 }
 \value{
 The trimmed mean

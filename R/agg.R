@@ -57,6 +57,7 @@ neymanAggCalc <- function(x) {
   #' @references Neyman, E. and Roughgarden, T. (2021). Are you
   #' smarter than a random expert? The robust aggregation of substitutable
   #' signals. `https://arxiv.org/abs/2111.03153`
+  #' @note Expects forecasts to be in the range [0, 100]!
 
   x <- (x / 100)
   n <- length(x)
@@ -65,13 +66,17 @@ neymanAggCalc <- function(x) {
   return(mean(t) * 100)
 }
 
-geoMeanCalc <- function(x) {
+geoMeanCalc <- function(x, q = 0.05) {
   #' Geometric Mean
   #'
-  #' Calculate the geometric mean of a vector of forecasts.
+  #' Calculate the geometric mean of a vector of forecasts. We handle 0s by
+  #' replacing them with the qth quantile of the non-zero forecasts.
+  #'
   #' @param x A vector of forecasts
+  #' @param q The quantile to use for replacing 0s (between 0 and 1)
+  #' @note agg(a) + agg(not a) does not sum to 1 for this aggregation method.
 
-  x[x == 0] <- as.numeric(quantile(x[x != 0], 0.05))
+  x[x == 0] <- as.numeric(quantile(x[x != 0], q))
   geoMean <- exp(mean(log(x)))
   return(geoMean)
 }

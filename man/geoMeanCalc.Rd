@@ -4,11 +4,17 @@
 \alias{geoMeanCalc}
 \title{Geometric Mean}
 \usage{
-geoMeanCalc(x)
+geoMeanCalc(x, q = 0.05)
 }
 \arguments{
 \item{x}{A vector of forecasts}
+
+\item{q}{The quantile to use for replacing 0s (between 0 and 1)}
 }
 \description{
-Calculate the geometric mean of a vector of forecasts.
+Calculate the geometric mean of a vector of forecasts. We handle 0s by
+replacing them with the qth quantile of the non-zero forecasts.
+}
+\note{
+agg(a) + agg(not a) does not sum to 1 for this aggregation method.
 }

@@ -19,8 +19,8 @@ test_that("trimmed mean works with p arg", {
 test_that("P(a) + P(not a) = 1 always", {
   not_forecasts <- 1 - forecasts
   expect_equal(trim(forecasts) + trim(not_forecasts), 1)
-  expect_equal(neymanAggCalc(forecasts) + neymanAggCalc(not_forecasts), 1)
+  expect_equal(neymanAggCalc(forecasts*100) + neymanAggCalc(not_forecasts*100), 100)
   expect_equal(hd_trim(forecasts) + hd_trim(not_forecasts), 1)
-  expect_equal(geoMeanCalc(forecasts) + geoMeanCalc(not_forecasts), 1)
+  # GeoMean doesn't have this property
 }
 )

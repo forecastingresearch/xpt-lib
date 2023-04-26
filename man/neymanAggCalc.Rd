@@ -17,6 +17,9 @@ Extremizes the aggregated forecast by a factor of:
 (n*(sqrt((3\emph{n^2) - (3}n) + 1) - 2))/(n^2 - n - 1)
 where n is the number of forecasts.
 }
+\note{
+Expects forecasts to be in the range \link{0, 100}!
+}
 \references{
 Neyman, E. and Roughgarden, T. (2021). Are you
 smarter than a random expert? The robust aggregation of substitutable
