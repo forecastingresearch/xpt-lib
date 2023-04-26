@@ -14,9 +14,8 @@ Imports:
     dplyr,
     ggplot2,
     lubridate,
-    rlang,
     docstring,
-    data.table
-Suggests: 
+    data.table (>= 1.14.6),
     testthat (>= 3.0.0)
+Suggests: 
 Config/testthat/edition: 3

@@ -11,9 +11,11 @@ trim <- function(questionData, p = 0.1) {
   #' @return The trimmed mean
 
   questionData <- questionData %>% arrange(forecast)
+  #print(questionData)
   trimN <- round(p * nrow(questionData))
   lastRow <- nrow(questionData) - trimN
-  trimTable <- questionData[(trimN + 1):lastRow, ]
+  # Without this cast to data.table, this *sometimes fails*
+  trimTable <- data.table(questionData[(trimN + 1):lastRow, ])
   trimmedMean <- mean(trimTable[["forecast"]])
   return(trimmedMean)
 }
