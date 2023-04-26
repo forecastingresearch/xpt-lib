@@ -1,7 +1,7 @@
 library(dplyr)
 library(docstring)
 
-trim <- function(questionData, p = 0.1) {
+trim <- function(x, p = 0.1) {
   #' Trimmed mean
   #'
   #' Trim the top and bottom (p*100)% of forecasts
@@ -10,13 +10,11 @@ trim <- function(questionData, p = 0.1) {
   #' @param p The proportion of forecasts to trim from each end (between 0 and 1)
   #' @return The trimmed mean
 
-  questionData <- questionData %>% arrange(forecast)
-  #print(questionData)
-  trimN <- round(p * nrow(questionData))
-  lastRow <- nrow(questionData) - trimN
-  # Without this cast to data.table, this *sometimes fails*
-  trimTable <- data.table(questionData[(trimN + 1):lastRow, ])
-  trimmedMean <- mean(trimTable[["forecast"]])
+  x <- sort(x)
+  trimN <- round(p * length(x))
+  lastRow <- length(x) - trimN
+  trimVec <- x[(trimN + 1):lastRow]
+  trimmedMean <- mean(trimVec)
   return(trimmedMean)
 }
 
