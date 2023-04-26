@@ -18,7 +18,7 @@ If you make changes to `xpt-lib`, just run `install()` again and you're golden.
 
 ## Usage
 
-Once you've installed it that way, you can load it from anywhere with `library(xpt).
+Once you've installed it that way, you can load it from anywhere with `library(xpt)`.
 Then you can use any of the functions that have `@export` in their docstrings.
 I designated those functions kind of haphazardly and probably missed some.
 
