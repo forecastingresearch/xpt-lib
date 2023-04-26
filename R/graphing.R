@@ -3,6 +3,10 @@ library(docstring)
 
 histogram <- function(questionDataProcessed, filenameStart, title, stage,
                       specialty, expectedRisk, forecastMin, forecastMax) {
+  #' Histogram
+  #'
+  #' @export
+
   if (grepl("%", filenameStart)) {
     filenameStart <- gsub("%", "%%", filenameStart)
   }
@@ -97,6 +101,10 @@ histogram <- function(questionDataProcessed, filenameStart, title, stage,
 
 boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
                     expectedRisk, forecastMin, forecastMax) {
+  #' Basic boxplot function
+  #'
+  #' @export
+
   tbl <- read.csv(files[1])
   if (type == "distrib") {
     # FOR LOOP TO ADD TO TBL AND REST
@@ -157,6 +165,10 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
 
 boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
                             stage, year) {
+  #' Box Plot for Distribution Questions
+  #'
+  #' @export
+
   boxData <- tbl %>% filter(userName %in% c(supers, expertsG1$userName))
   boxData$answerText <- factor(boxData$answerText, levels = unique(boxData$answerText), ordered = TRUE)
   boxData_supers <- tbl %>% filter(userName %in% supers)
@@ -341,6 +353,10 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
 
 boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
                                     forecastMax, stage, year) {
+  #' Box Plot for Distribution Country Questions
+  #'
+  #' @export
+
   boxData <- tbl %>% filter(userName %in% c(supers, expertsG1$userName))
   boxData$questionName <- factor(boxData$questionName, levels = unique(boxData$questionName), ordered = TRUE)
 
@@ -371,6 +387,10 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
 
 boxPlot_country <- function(tbl, specialty, title,
                             forecastMin, forecastMax, stage) {
+  #' Box Plot for Country Questions
+  #'
+  #' @export
+
   boxData <- tbl %>% filter(userName %in% c(supers, expertsG1$userName))
   boxData$answerText <- factor(boxData$answerText, levels = unique(boxData$answerText), ordered = TRUE)
 
@@ -1019,6 +1039,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
 }
 
 multiYearReciprocalFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
+  #' Multi-year Reciprocal Figure Data
+  #'
+  #' @export
+
   print("==GRAPHICS==")
   # minN = 12
   # for (i in 1:length(unique(metaTable$setName))){
@@ -1185,6 +1209,10 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
 }
 
 multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
+  #' Multi-year Reciprocal Variance Graphics
+  #'
+  #' @export
+
   csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
 
   plotTable <- data.frame(
@@ -1358,6 +1386,10 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
 }
 
 pointDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
+  #' Point Distribution Figure Data
+  #'
+  #' @export
+
   print("==GRAPHICS==")
   # minN = 12
   for (i in 1:unique(metaTable$setName)) {
@@ -1464,6 +1496,10 @@ pointDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
 }
 
 pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) {
+  #' Point Distribution Graphics
+  #'
+  #' @export
+
   plotTable <- data.frame(
     year = numeric(0),
     currentDate = Date(0),
@@ -1537,6 +1573,10 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
 }
 
 pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, currentDistrib) {
+  #' Point Distribution Variance Graphics
+  #'
+  #' @export
+
   csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
 
   plotTable <- data.frame(
@@ -1711,6 +1751,10 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
 }
 
 multiYearDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
+  #' Multi-year Distribution Figure Data
+  #'
+  #' @export
+
   print("==GRAPHICS==")
   # minN = 12
   for (i in 1:length(unique(metaTable$setName))) {
@@ -1835,6 +1879,10 @@ multiYearDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline
 }
 
 multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year, currentDistrib) {
+  #' Multi-Year Distribution Graphics
+  #'
+  #' @export
+
   plotTable <- data.frame(
     year = numeric(0),
     currentDate = Date(0),
@@ -1904,6 +1952,10 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
 }
 
 multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, year, currentDistrib) {
+  #' Multi-Year Distribution Graphics
+  #'
+  #' @export
+
   csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
 
   plotTable <- data.frame(
@@ -2078,6 +2130,10 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 }
 
 multiYearBinaryFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
+  #' Multi-year Binary Figure Data
+  #'
+  #' @export
+
   print("==GRAPHICS==")
   # minN = 12
   for (i in 1:length(unique(metaTable$setName))) {
@@ -2142,6 +2198,10 @@ multiYearBinaryFigureData <- function(metaTable, data, phaseTwoMedian, timeline)
 }
 
 multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) {
+  #' Multi-year Binary Graphics
+  #'
+  #' @export
+
   plotTable <- data.frame(
     year = numeric(0),
     currentDate = Date(0),
@@ -2211,6 +2271,10 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
 }
 
 multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName, year) {
+  #' Multi-year Binary Graphics
+  #'
+  #' @export
+
   csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
 
   plotTable <- data.frame(
@@ -2385,6 +2449,10 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
 }
 
 multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName, year, country) {
+  #' Multi-Year Country Distribution Graphics
+  #'
+  #' @export
+
   plotTable <- data.frame(
     year = numeric(0),
     currentDate = Date(0),
@@ -2455,6 +2523,10 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
 }
 
 multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetName, year, country) {
+  #' Multi-Year Country Variance Graphics
+  #'
+  #' @export
+
   csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
 
   plotTable <- data.frame(
@@ -2629,6 +2701,10 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 }
 
 multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, country) {
+  #' Multi-Country Binary Graphics
+  #'
+  #' @export
+
   plotTable <- data.frame(
     year = numeric(0),
     currentDate = Date(0),
@@ -2699,6 +2775,10 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
 }
 
 pointBinaryFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
+  #' Point Binary Figure Data
+  #'
+  #' @export
+
   print("==GRAPHICS==")
 
   for (i in 1:length(unique(metaTable$setName))) {
@@ -2752,6 +2832,10 @@ pointBinaryFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
 }
 
 pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
+  #' Point Binary Graphics
+  #'
+  #' @export
+
   plotTable <- data.frame(
     year = numeric(0),
     currentDate = Date(0),
@@ -2821,6 +2905,10 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
 }
 
 pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
+  #' Point Binary Variance Graphics
+  #'
+  #' @export
+
   csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
 
   plotTable <- data.frame(
@@ -3220,7 +3308,12 @@ multiYearReciprocal_teams <- function(metaTable, data) {
 }
 
 multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName) {
-  # All members of all teams
+  #' @title Team Graphics: Multi-year Reciprocal Questions
+  #'
+  #' @description All members of all teams
+  #'
+  #' @export
+
   plotTable <- data.frame(
     currentDate = Date(0),
     median = numeric(0),
@@ -3398,6 +3491,12 @@ pointDistrib_teams <- function(metaTable, data) {
 }
 
 pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distrib) {
+  #' @title Team Graphics: Point Distribution Questions
+  #'
+  #' @description All members of all teams
+  #'
+  #' @export
+
   # All members of all teams
   plotTable <- data.frame(
     currentDate = Date(0),
@@ -3606,7 +3705,12 @@ multiYearDistrib_teams <- function(metaTable, data) {
 }
 
 multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distrib, year) {
-  # All members of all teams
+  #' @title Multi-Year Distribution Questions: Team Graphics
+  #'
+  #' @description All members of all teams
+  #'
+  #' @export
+
   plotTable <- data.frame(
     currentDate = Date(0),
     median = numeric(0),
@@ -3726,7 +3830,12 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
 }
 
 salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
-  # Supers+Experts+Overall
+  #' Salience Graphics
+  #'
+  #' @description Salience graphics for supers+experts+overal
+  #'
+  #' @export
+
   plotTable <- data.frame(
     date = Date(0),
     opt = numeric(0),

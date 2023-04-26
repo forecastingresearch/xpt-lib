@@ -57,6 +57,8 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
   #' @param metaTable Metadata on the multi-year reciprocal questions
   #' @param data Data on the multi-year reciprocal questions (forecasts)
   #' @param summaryTable TODO
+  #'
+  #' @export
 
   # For each of the question sets (1. Genetically Engineered Pathogens, etc.)
   for (i in 1:length(unique(metaTable$setName))) {
@@ -297,6 +299,8 @@ pointDistrib_RS <- function(metaTable, data, summaryTable) {
   #' @param summaryTable TODO
   #'
   #' @note Were there any PD RS questions?
+  #'
+  #' @export
 
   distrib <- c("5th %", "25th %", "50th %", "75th %", "95th %")
   for (i in 1:length(unique(metaTable$setName))) {
@@ -561,6 +565,8 @@ multiYearDistrib_RS <- function(metaTable, data, summaryTable) {
   #' @param summaryTable TODO
   #'
   #' @note Were there any of these questions?
+  #'
+  #' @export
 
   distrib <- c("5th %", "25th %", "50th %", "75th %", "95th %")
 
@@ -854,6 +860,8 @@ multiYearBinary_RS <- function(metaTable, data, summaryTable) {
   #' @param summaryTable TODO
   #'
   #' @note "Median" belief on yes/no questions seems silly; did we ask any of these
+  #'
+  #' @export
 
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
@@ -1043,6 +1051,8 @@ multiYearCountryDistrib_RS <- function(metaTable, data, summaryTable) {
   #' @param summaryTable TODO
   #'
   #' @note Do we use this
+  #'
+  #' @export
 
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])

@@ -1,7 +1,5 @@
 library(dplyr)
 library(docstring)
-source("R/agg.R")
-source("R/graphing.R")
 
 newAddInit <- function() {
   #' Initialize empty dataframe to hold the summary stats.
@@ -200,7 +198,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   median <- median(questionDataProcessed$forecast)
   sd <- sd(questionDataProcessed$forecast)
   n <- nrow(questionDataProcessed)
-  trimmedMean <- trim(questionDataProcessed)
+  trimmedMean <- trim(questionDataProcessed$forecast)
   pct5th <- as.numeric(quantile(questionDataProcessed$forecast, 0.05))
   pct25th <- as.numeric(quantile(questionDataProcessed$forecast, 0.25))
   pct75th <- as.numeric(quantile(questionDataProcessed$forecast, 0.75))
@@ -214,7 +212,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   g1Median <- median(g1Processed$forecast)
   g1Sd <- sd(g1Processed$forecast)
   g1N <- nrow(g1Processed)
-  g1TrimmedMean <- trim(g1Processed)
+  g1TrimmedMean <- trim(g1Processed$forecast)
   g1Pct5th <- as.numeric(quantile(g1Processed$forecast, 0.05))
   g1Pct25th <- as.numeric(quantile(g1Processed$forecast, 0.25))
   g1Pct75th <- as.numeric(quantile(g1Processed$forecast, 0.75))
@@ -228,7 +226,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   supersMedian <- median(supersProcessed$forecast)
   supersSd <- sd(supersProcessed$forecast)
   supersN <- nrow(supersProcessed)
-  supersTrimmedMean <- trim(supersProcessed)
+  supersTrimmedMean <- trim(supersProcessed$forecast)
   supersPct5th <- as.numeric(quantile(supersProcessed$forecast, 0.05))
   supersPct25th <- as.numeric(quantile(supersProcessed$forecast, 0.25))
   supersPct75th <- as.numeric(quantile(supersProcessed$forecast, 0.75))
@@ -242,7 +240,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG1Median <- median(expertsG1Processed$forecast)
   expertsG1Sd <- sd(expertsG1Processed$forecast)
   expertsG1N <- nrow(expertsG1Processed)
-  expertsG1TrimmedMean <- trim(expertsG1Processed)
+  expertsG1TrimmedMean <- trim(expertsG1Processed$forecast)
   expertsG1Pct5th <- as.numeric(quantile(expertsG1Processed$forecast, 0.05))
   expertsG1Pct25th <- as.numeric(quantile(expertsG1Processed$forecast, 0.25))
   expertsG1Pct75th <- as.numeric(quantile(expertsG1Processed$forecast, 0.75))
@@ -256,7 +254,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG2Median <- median(expertsG2Processed$forecast)
   expertsG2Sd <- sd(expertsG2Processed$forecast)
   expertsG2N <- nrow(expertsG2Processed)
-  expertsG2TrimmedMean <- trim(expertsG2Processed)
+  expertsG2TrimmedMean <- trim(expertsG2Processed$forecast)
   expertsG2Pct5th <- as.numeric(quantile(expertsG2Processed$forecast, 0.05))
   expertsG2Pct25th <- as.numeric(quantile(expertsG2Processed$forecast, 0.25))
   expertsG2Pct75th <- as.numeric(quantile(expertsG2Processed$forecast, 0.75))
@@ -273,7 +271,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     domainExpertsMedian <- median(domainExpertsProcessed$forecast)
     domainExpertsSd <- sd(domainExpertsProcessed$forecast)
     domainExpertsN <- nrow(domainExpertsProcessed)
-    domainExpertsTrimmedMean <- trim(domainExpertsProcessed)
+    domainExpertsTrimmedMean <- trim(domainExpertsProcessed$forecast)
     domainExpertsPct5th <- as.numeric(quantile(domainExpertsProcessed$forecast, 0.05))
     domainExpertsPct25th <- as.numeric(quantile(domainExpertsProcessed$forecast, 0.25))
     domainExpertsPct75th <- as.numeric(quantile(domainExpertsProcessed$forecast, 0.75))
@@ -308,7 +306,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     nonDomainExpertsMedian <- median(nonDomainExpertsProcessed$forecast)
     nonDomainExpertsSd <- sd(nonDomainExpertsProcessed$forecast)
     nonDomainExpertsN <- nrow(nonDomainExpertsProcessed)
-    nonDomainExpertsTrimmedMean <- trim(nonDomainExpertsProcessed)
+    nonDomainExpertsTrimmedMean <- trim(nonDomainExpertsProcessed$forecast)
     nonDomainExpertsPct5th <- as.numeric(quantile(nonDomainExpertsProcessed$forecast, 0.05))
     nonDomainExpertsPct25th <- as.numeric(quantile(nonDomainExpertsProcessed$forecast, 0.25))
     nonDomainExpertsPct75th <- as.numeric(quantile(nonDomainExpertsProcessed$forecast, 0.75))
@@ -339,7 +337,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   median_exc <- median(questionDataProcessed_exc$forecast)
   sd_exc <- sd(questionDataProcessed_exc$forecast)
   n_exc <- nrow(questionDataProcessed_exc)
-  trimmedMean_exc <- trim(questionDataProcessed_exc)
+  trimmedMean_exc <- trim(questionDataProcessed_exc$forecast)
   pct5th_exc <- as.numeric(quantile(questionDataProcessed_exc$forecast, 0.05))
   pct25th_exc <- as.numeric(quantile(questionDataProcessed_exc$forecast, 0.25))
   pct75th_exc <- as.numeric(quantile(questionDataProcessed_exc$forecast, 0.75))
@@ -356,7 +354,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   g1Median_exc <- median(g1Processed_exc$forecast)
   g1Sd_exc <- sd(g1Processed_exc$forecast)
   g1N_exc <- nrow(g1Processed_exc)
-  g1TrimmedMean_exc <- trim(g1Processed_exc)
+  g1TrimmedMean_exc <- trim(g1Processed_exc$forecast)
   g1Pct5th_exc <- as.numeric(quantile(g1Processed_exc$forecast, 0.05))
   g1Pct25th_exc <- as.numeric(quantile(g1Processed_exc$forecast, 0.25))
   g1Pct75th_exc <- as.numeric(quantile(g1Processed_exc$forecast, 0.75))
@@ -373,7 +371,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   supersMedian_exc <- median(supersProcessed_exc$forecast)
   supersSd_exc <- sd(supersProcessed_exc$forecast)
   supersN_exc <- nrow(supersProcessed_exc)
-  supersTrimmedMean_exc <- trim(supersProcessed_exc)
+  supersTrimmedMean_exc <- trim(supersProcessed_exc$forecast)
   supersPct5th_exc <- as.numeric(quantile(supersProcessed_exc$forecast, 0.05))
   supersPct25th_exc <- as.numeric(quantile(supersProcessed_exc$forecast, 0.25))
   supersPct75th_exc <- as.numeric(quantile(supersProcessed_exc$forecast, 0.75))
@@ -390,7 +388,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG1Median_exc <- median(expertsG1Processed_exc$forecast)
   expertsG1Sd_exc <- sd(expertsG1Processed_exc$forecast)
   expertsG1N_exc <- nrow(expertsG1Processed_exc)
-  expertsG1TrimmedMean_exc <- trim(expertsG1Processed_exc)
+  expertsG1TrimmedMean_exc <- trim(expertsG1Processed_exc$forecast)
   expertsG1Pct5th_exc <- as.numeric(quantile(expertsG1Processed_exc$forecast, 0.05))
   expertsG1Pct25th_exc <- as.numeric(quantile(expertsG1Processed_exc$forecast, 0.25))
   expertsG1Pct75th_exc <- as.numeric(quantile(expertsG1Processed_exc$forecast, 0.75))
@@ -411,7 +409,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG2Median_exc <- median(expertsG2Processed_exc$forecast)
   expertsG2Sd_exc <- sd(expertsG2Processed_exc$forecast)
   expertsG2N_exc <- nrow(expertsG2Processed_exc)
-  expertsG2TrimmedMean_exc <- trim(expertsG2Processed_exc)
+  expertsG2TrimmedMean_exc <- trim(expertsG2Processed_exc$forecast)
   expertsG2Pct5th_exc <- as.numeric(quantile(expertsG2Processed_exc$forecast, 0.05))
   expertsG2Pct25th_exc <- as.numeric(quantile(expertsG2Processed_exc$forecast, 0.25))
   expertsG2Pct75th_exc <- as.numeric(quantile(expertsG2Processed_exc$forecast, 0.75))
@@ -431,7 +429,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     domainExpertsMedian_exc <- median(domainExpertsProcessed_exc$forecast)
     domainExpertsSd_exc <- sd(domainExpertsProcessed_exc$forecast)
     domainExpertsN_exc <- nrow(domainExpertsProcessed_exc)
-    domainExpertsTrimmedMean_exc <- trim(domainExpertsProcessed_exc)
+    domainExpertsTrimmedMean_exc <- trim(domainExpertsProcessed_exc$forecast)
     domainExpertsPct5th_exc <- as.numeric(quantile(domainExpertsProcessed_exc$forecast, 0.05))
     domainExpertsPct25th_exc <- as.numeric(quantile(domainExpertsProcessed_exc$forecast, 0.25))
     domainExpertsPct75th_exc <- as.numeric(quantile(domainExpertsProcessed_exc$forecast, 0.75))
@@ -468,7 +466,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     nonDomainExpertsMedian_exc <- median(nonDomainExpertsProcessed_exc$forecast)
     nonDomainExpertsSd_exc <- sd(nonDomainExpertsProcessed_exc$forecast)
     nonDomainExpertsN_exc <- nrow(nonDomainExpertsProcessed_exc)
-    nonDomainExpertsTrimmedMean_exc <- trim(nonDomainExpertsProcessed_exc)
+    nonDomainExpertsTrimmedMean_exc <- trim(nonDomainExpertsProcessed_exc$forecast)
     nonDomainExpertsPct5th_exc <- as.numeric(quantile(nonDomainExpertsProcessed_exc$forecast, 0.05))
     nonDomainExpertsPct25th_exc <- as.numeric(quantile(nonDomainExpertsProcessed_exc$forecast, 0.25))
     nonDomainExpertsPct75th_exc <- as.numeric(quantile(nonDomainExpertsProcessed_exc$forecast, 0.75))
@@ -684,6 +682,8 @@ multiYearReciprocal <- function(metaTable, data) {
   #'
   #' @param metaTable - metadata for all the multi-year reciprocal question sets
   #' @param data - data for all users on all multi-year reciprocal question sets
+  #'
+  #' @export
 
   newAdd <- newAddInit()
 
@@ -982,6 +982,8 @@ pointDistrib <- function(metaTable, data) {
   #'
   #' @param metaTable - metadata for all the point distribution question sets
   #' @param data - data for all users on all point distribution question sets
+  #'
+  #' @export
 
   newAdd <- newAddInit()
 
@@ -1363,6 +1365,8 @@ multiYearDistrib <- function(metaTable, data) {
   #'
   #' @param metaTable - metadata for all the multi-year distribution question sets
   #' @param data - data for all users on all multi-year distribution question sets
+  #'
+  #' @export
 
   newAdd <- newAddInit()
   distrib <- c("5th %", "25th %", "50th %", "75th %", "95th %")
@@ -1801,6 +1805,8 @@ multiYearBinary <- function(metaTable, data) {
   #'
   #' @param metaTable - metadata for all the multi-year reciprocal question sets
   #' @param data - data for all users on all multi-year reciprocal question sets
+  #'
+  #' @export
 
   newAdd <- newAddInit()
 
@@ -2100,6 +2106,8 @@ multiYearCountryDistrib <- function(metaTable, data) {
   #'
   #' @param metaTable - metadata for all the multi-year country distribution question sets
   #' @param data - data for all users on all multi-year country distribution question sets
+  #'
+  #' @export
 
   newAdd <- newAddInit()
 
@@ -2450,6 +2458,8 @@ multiCountryBinary <- function(metaTable, data) {
   #'
   #' @param metaTable - metadata for all the multi-year country binary question sets
   #' @param data - data for all users on all multi-year country binary question sets
+  #'
+  #' @export
 
   newAdd <- newAddInit()
 
@@ -2757,6 +2767,8 @@ pointBinary <- function(metaTable, data) {
   #'
   #' @param metaTable - metadata for all the point binary question sets
   #' @param data - data for all users on all point binary question sets
+  #'
+  #' @export
 
   newAdd <- newAddInit()
 

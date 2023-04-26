@@ -9,6 +9,8 @@ trim <- function(x, p = 0.1) {
   #' @param questionData The processed question data table (needs to have a forecast column)
   #' @param p The proportion of forecasts to trim from each end (between 0 and 1)
   #' @return The trimmed mean
+  #'
+  #' @export
 
   x <- sort(x)
   trimN <- round(p * length(x))
@@ -31,6 +33,8 @@ hd_trim <- function(x, p = 0.5) {
   #'
   #' @param x A vector of forecasts
   #' @param p The proportion of forecasts to trim (between 0 and 1)
+  #'
+  #' @export
 
   x <- sort(x)
   n_out <- floor(length(x) * p)
@@ -58,6 +62,8 @@ neymanAggCalc <- function(x) {
   #' smarter than a random expert? The robust aggregation of substitutable
   #' signals. `https://arxiv.org/abs/2111.03153`
   #' @note Expects forecasts to be in the range [0, 100]!
+  #'
+  #' @export
 
   x <- (x / 100)
   n <- length(x)
@@ -75,6 +81,8 @@ geoMeanCalc <- function(x, q = 0.05) {
   #' @param x A vector of forecasts
   #' @param q The quantile to use for replacing 0s (between 0 and 1)
   #' @note agg(a) + agg(not a) does not sum to 1 for this aggregation method.
+  #'
+  #' @export
 
   x[x == 0] <- as.numeric(quantile(x[x != 0], q))
   geoMean <- exp(mean(log(x)))
