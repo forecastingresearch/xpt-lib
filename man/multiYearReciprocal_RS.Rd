@@ -19,5 +19,16 @@ This scores everyone who answered the reciprocal questions
 believe?). They were asked about the MEDIAN belief of two groups.
 
 Scoring rule:
-\verb{log(1 - abs(action median - what you thought the median would be))}
+\verb{log(1 - abs(actual median - what you thought the median would be))}
+
++------------+-----------------------+-------------------------------------+ # nolint
+|     x      |       A. Actual       | B. What _ believes Group X will say | # nolint
++------------+-----------------------+-------------------------------------+ # nolint
+| 1. Yours   | Your true belief      | Your belief about Group X           | # nolint
+| 2. Group X | True Group X (median) | What Group X believes about itself  | # nolint
++------------+-----------------------+-------------------------------------+ # nolint
+
+This produces two kinds of scores:
+score_unincentivized compares A2 to B1, and
+score_rs compares B2 to B1
 }
