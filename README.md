@@ -14,7 +14,7 @@ devtools::install()
 
 Replace /path/to/xpt with the actual path to your cloned xpt package directory.
 
-If you make changes to `xpt-lib`, just run `install()` again and you're golden.
+If you make changes to `xpt-lib`, just run `document()`, then `install()` again, and you're golden. `devtools::document` updates the NAMESPACE file (important).
 
 ## Usage
 
