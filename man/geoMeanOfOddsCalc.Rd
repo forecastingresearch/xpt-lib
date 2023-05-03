@@ -4,7 +4,7 @@
 \alias{geoMeanOfOddsCalc}
 \title{Geometric Mean of Odds}
 \usage{
-geoMeanOfOddsCalc(x, q)
+geoMeanOfOddsCalc(x, q = 0.05)
 }
 \arguments{
 \item{x}{A vector of forecasts (probabilities!)}

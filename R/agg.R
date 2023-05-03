@@ -129,9 +129,11 @@ geoMeanOfOddsCalc <- function(x, q = 0.05) {
   #'
   #' @export
 
+  x <- x / 100
   x[x == 1] <- as.numeric(quantile(x[x != 1], 1 - q))
   x[x == 0] <- as.numeric(quantile(x[x != 0], q))
   odds <- x / (1 - x)
   geoMeanOfOdds <- exp(mean(log(odds[odds > 0])))
+  x <- x * 100
   return(geoMeanOfOdds)
 }
