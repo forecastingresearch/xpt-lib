@@ -24,3 +24,13 @@ test_that("P(a) + P(not a) = 1 always", {
   # GeoMean doesn't have this property
 }
 )
+
+test_that("Highest isn't more than 10x lowest", {
+  # Make a vector containing each of the aggregation methods on forecasts.
+  # The highest value should be no more than 10x the lowest.
+  agg_vec <- c(trim(forecasts*100), hd_trim(forecasts*100),
+               neymanAggCalc(forecasts*100), geoMeanCalc(forecasts*100),
+               geoMeanOfOddsCalc(forecasts*100))
+  expect_equal(max(agg_vec) / min(agg_vec) < 10, TRUE)
+}
+)
