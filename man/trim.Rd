@@ -4,11 +4,13 @@
 \alias{trim}
 \title{Trimmed mean}
 \usage{
-trim(x, p, q, drop_zeroes)
+trim(x, p = 0.1, drop_zeroes = FALSE)
 }
 \arguments{
 \item{p}{The proportion of forecasts to trim from each end (between 0 and
 1)}
+
+\item{drop_zeroes}{Whether to drop zeroes from the vector}
 
 \item{questionData}{The processed question data table (needs to have a
 forecast column)}

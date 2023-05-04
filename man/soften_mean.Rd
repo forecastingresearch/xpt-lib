@@ -4,10 +4,12 @@
 \alias{soften_mean}
 \title{Soften the mean.}
 \usage{
-soften_mean(x, p, q, drop_zeroes)
+soften_mean(x, p = 0.1, drop_zeroes = FALSE)
 }
 \arguments{
 \item{x}{A vector of forecasts}
+
+\item{drop_zeroes}{Whether to drop zeroes from the vector}
 
 \item{trim}{The proportion of forecasts to trim from each end (between 0
 and 1)}

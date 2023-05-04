@@ -4,10 +4,12 @@
 \alias{neymanAggCalc}
 \title{Neyman Aggregation (Extremized)}
 \usage{
-neymanAggCalc(x, p, q, drop_zeroes)
+neymanAggCalc(x, drop_zeroes = FALSE)
 }
 \arguments{
 \item{x}{A vector of forecasts}
+
+\item{drop_zeroes}{Whether to drop zeroes from the vector}
 }
 \description{
 Origin: Neyman and Roughgarden 2021
