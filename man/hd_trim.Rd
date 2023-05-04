@@ -4,7 +4,7 @@
 \alias{hd_trim}
 \title{High-Density Trimming/Winsorizing}
 \usage{
-hd_trim(x, p = 0.5)
+hd_trim(x, p, q, drop_zeroes)
 }
 \arguments{
 \item{x}{A vector of forecasts}

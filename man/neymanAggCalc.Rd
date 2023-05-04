@@ -4,7 +4,7 @@
 \alias{neymanAggCalc}
 \title{Neyman Aggregation (Extremized)}
 \usage{
-neymanAggCalc(x)
+neymanAggCalc(x, p, q, drop_zeroes)
 }
 \arguments{
 \item{x}{A vector of forecasts}

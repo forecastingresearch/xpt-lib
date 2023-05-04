@@ -4,7 +4,7 @@
 \alias{trim}
 \title{Trimmed mean}
 \usage{
-trim(x, p = 0.1)
+trim(x, p, q, drop_zeroes)
 }
 \arguments{
 \item{p}{The proportion of forecasts to trim from each end (between 0 and

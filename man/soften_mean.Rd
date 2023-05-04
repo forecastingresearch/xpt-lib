@@ -4,7 +4,7 @@
 \alias{soften_mean}
 \title{Soften the mean.}
 \usage{
-soften_mean(x, trim = 0.1)
+soften_mean(x, p, q, drop_zeroes)
 }
 \arguments{
 \item{x}{A vector of forecasts}

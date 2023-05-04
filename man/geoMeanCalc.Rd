@@ -4,7 +4,7 @@
 \alias{geoMeanCalc}
 \title{Geometric Mean}
 \usage{
-geoMeanCalc(x, q = 0.05)
+geoMeanCalc(x, p, q, drop_zeroes)
 }
 \arguments{
 \item{x}{A vector of forecasts}
