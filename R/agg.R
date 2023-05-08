@@ -2,7 +2,7 @@ library(dplyr)
 library(docstring)
 
 # Create an aggregation class that these all inherit from
-preprocess <- function(x, q = 0, drop_zeroes = FALSE) {
+preprocess <- function(x, q = 0) {
   #' Preprocessing function for agg methods
   #'
   #' @description This is sort of a base class or a template for the individual
@@ -11,7 +11,6 @@ preprocess <- function(x, q = 0, drop_zeroes = FALSE) {
   #' @param specific_function The specific aggregation function to be generated
   #' @param x A vector of forecasts
   #' @param q The quantile to use for replacing 0s and 1s (between 0 and 1)
-  #' @param drop_zeroes Whether to drop zeroes from the vector
   #'
   #' @note ASSUMES FORECASTS ARE IN THE RANGE [0, 100]!
 
@@ -22,14 +21,10 @@ preprocess <- function(x, q = 0, drop_zeroes = FALSE) {
     x[x == 0] <- as.numeric(quantile(x[x != 0], q))
   }
 
-  if (drop_zeroes) {
-    x <- x[x != 0]
-  }
-
   return(x)
 }
 
-trim <- function(x, p = 0.1, drop_zeroes = FALSE) {
+trim <- function(x, p = 0.1) {
   #' Trimmed mean
   #'
   #' Trim the top and bottom (p*100)% of forecasts
@@ -38,12 +33,11 @@ trim <- function(x, p = 0.1, drop_zeroes = FALSE) {
   #' forecast column)
   #' @param p The proportion of forecasts to trim from each end (between 0 and
   #' 1)
-  #' @param drop_zeroes Whether to drop zeroes from the vector
   #' @return The trimmed mean
   #'
   #' @export
 
-  x <- preprocess(x, q = 0, drop_zeroes)
+  x <- preprocess(x, q = 0)
   trimN <- round(p * length(x))
   lastRow <- length(x) - trimN
   trimVec <- x[(trimN + 1):lastRow]
@@ -51,7 +45,7 @@ trim <- function(x, p = 0.1, drop_zeroes = FALSE) {
   return(trimmedMean)
 }
 
-hd_trim <- function(x, p = 0.1, drop_zeroes = FALSE) {
+hd_trim <- function(x, p = 0.1) {
   #' High-Density Trimming/Winsorizing
   #'
   #' @description This code comes from an email from Ben Powell.
@@ -64,11 +58,10 @@ hd_trim <- function(x, p = 0.1, drop_zeroes = FALSE) {
   #'
   #' @param x A vector of forecasts
   #' @param p The proportion of forecasts to trim (between 0 and 1)
-  #' @param drop_zeroes Whether to drop zeroes from the vector
   #'
   #' @export
 
-  x <- preprocess(x, q = 0, drop_zeroes)
+  x <- preprocess(x, q = 0)
   n_out <- floor(length(x) * p)
   n_in <- length(x) - n_out
   d <- c()
@@ -79,7 +72,7 @@ hd_trim <- function(x, p = 0.1, drop_zeroes = FALSE) {
   mean(x[i:(i + n_in - 1)])
 }
 
-soften_mean <- function(x, p = 0.1, drop_zeroes = FALSE) {
+soften_mean <- function(x, p = 0.1) {
   #' Soften the mean.
   #'
   #' If the mean is > .5, trim the top trim%; if < .5, the bottom trim%. Return
@@ -88,14 +81,13 @@ soften_mean <- function(x, p = 0.1, drop_zeroes = FALSE) {
   #' @param x A vector of forecasts
   #' @param trim The proportion of forecasts to trim from each end (between 0
   #' and 1)
-  #' @param drop_zeroes Whether to drop zeroes from the vector
   #'
   #' @note This goes against usual wisdom of extremizing the mean, but performs
   #' well when the crowd has some overconfident forecasters in it.
   #'
   #' @export
 
-  x <- preprocess(x, q = 0, drop_zeroes)
+  x <- preprocess(x, q = 0)
   mymean <- mean(x)
   if (mymean > .5) {
     return(mean(x[1:floor(length(x) * (1 - p))]))
@@ -104,7 +96,7 @@ soften_mean <- function(x, p = 0.1, drop_zeroes = FALSE) {
   }
 }
 
-neymanAggCalc <- function(x, drop_zeroes = FALSE) {
+neymanAggCalc <- function(x) {
   #' Neyman Aggregation (Extremized)
   #'
   #' @description Origin: Neyman and Roughgarden 2021
@@ -115,7 +107,6 @@ neymanAggCalc <- function(x, drop_zeroes = FALSE) {
   #' where n is the number of forecasts.
   #'
   #' @param x A vector of forecasts
-  #' @param drop_zeroes Whether to drop zeroes from the vector
   #' @references Neyman, E. and Roughgarden, T. (2021). Are you
   #' smarter than a random expert? The robust aggregation of substitutable
   #' signals. `https://arxiv.org/abs/2111.03153`
@@ -123,7 +114,7 @@ neymanAggCalc <- function(x, drop_zeroes = FALSE) {
   #'
   #' @export
 
-  x <- preprocess(x, q = 0, drop_zeroes)
+  x <- preprocess(x, q = 0)
   x <- (x / 100)
   n <- length(x)
   d <- (n * (sqrt((3 * n^2) - (3 * n) + 1) - 2)) / (n^2 - n - 1)
@@ -131,7 +122,7 @@ neymanAggCalc <- function(x, drop_zeroes = FALSE) {
   return(mean(t) * 100)
 }
 
-geoMeanCalc <- function(x, q = 0.05, drop_zeroes = FALSE) {
+geoMeanCalc <- function(x, q = 0.05) {
   #' Geometric Mean
   #'
   #' Calculate the geometric mean of a vector of forecasts. We handle 0s by
@@ -139,17 +130,16 @@ geoMeanCalc <- function(x, q = 0.05, drop_zeroes = FALSE) {
   #'
   #' @param x A vector of forecasts
   #' @param q The quantile to use for replacing 0s (between 0 and 1)
-  #' @param drop_zeroes Whether to drop zeroes from the vector
   #' @note agg(a) + agg(not a) does not sum to 1 for this aggregation method.
   #'
   #' @export
 
-  x <- preprocess(x, q, drop_zeroes)
+  x <- preprocess(x, q)
   geoMean <- exp(mean(log(x)))
   return(geoMean)
 }
 
-geoMeanOfOddsCalc <- function(x, q = 0.05, drop_zeroes = FALSE) {
+geoMeanOfOddsCalc <- function(x, q = 0.05) {
   #' Geometric Mean of Odds
   #'
   #' Convert probabilities to odds, and calculate the geometric mean of the
@@ -158,12 +148,11 @@ geoMeanOfOddsCalc <- function(x, q = 0.05, drop_zeroes = FALSE) {
   #'
   #' @param x A vector of forecasts (probabilities!)
   #' @param q The quantile to use for replacing 0s (between 0 and 1)
-  #' @param drop_zeroes Whether to drop zeroes from the vector
   #' @note agg(a) + agg(not a) does not sum to 1 for this aggregation method.
   #'
   #' @export
 
-  x <- preprocess(x, q, drop_zeroes)
+  x <- preprocess(x, q)
   x <- x / 100
   odds <- x / (1 - x)
   geoMeanOfOdds <- exp(mean(log(odds)))
