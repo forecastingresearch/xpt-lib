@@ -1,5 +1,12 @@
 library(dplyr)
 library(docstring)
+library(ggthemes)
+
+# Generate a colorblind-friendly palette with four colors
+cb_pal <- colorblind_pal()(4)
+
+# Exclude black from the palette
+cb_pal <- tail(cb_pal, -1)
 
 histogram <- function(questionDataProcessed, filenameStart, title, stage,
                       specialty, expectedRisk, forecastMin, forecastMax) {
@@ -24,7 +31,7 @@ histogram <- function(questionDataProcessed, filenameStart, title, stage,
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_text(size = 9, vjust = -37)
     )
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
   if (expectedRisk == "low" & forecastMin == 0 & forecastMax == 100) {
     plot <- plot +
       scale_x_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
@@ -45,7 +52,7 @@ histogram <- function(questionDataProcessed, filenameStart, title, stage,
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_text(size = 9, vjust = -37)
     )
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
   if (expectedRisk == "low" & forecastMin == 0 & forecastMax == 100) {
     plot <- plot +
       scale_x_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
@@ -66,7 +73,7 @@ histogram <- function(questionDataProcessed, filenameStart, title, stage,
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_text(size = 9, vjust = -37)
     )
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
   if (expectedRisk == "low" & forecastMin == 0 & forecastMax == 100) {
     plot <- plot +
       scale_x_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
@@ -90,7 +97,7 @@ histogram <- function(questionDataProcessed, filenameStart, title, stage,
         plot.subtitle = element_text(hjust = 0.5),
         legend.title = element_text(size = 9, vjust = -37)
       )
-    plot$labels$colour <- ""
+    plot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 & forecastMax == 100) {
       plot <- plot +
         scale_x_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
@@ -114,7 +121,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
     boxData_supers <- tbl %>% filter(userName %in% supers)
     boxData <- boxData_supers %>% mutate(group = paste0("Superforecasters (n=", nrow(boxData_supers), ")"))
     boxData_experts <- tbl %>% filter(userName %in% expertsG1$userName)
-    boxData <- rbind(boxData, boxData_experts %>% mutate(group = paste0("Experts (n=", nrow(boxData_experts), ")")))
+    boxData <- rbind(boxData, boxData_experts %>% mutate(group = paste0("Non-domain Experts (n=", nrow(boxData_experts), ")")))
     if (specialty != "") {
       field <- specialty
       specialists <- expertsG1 %>% filter(field == specialty1 | field == specialty2 | field == specialty3)
@@ -129,24 +136,23 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
       xlab("Group") +
       labs(title = title, subtitle = subtitle) +
       theme_bw() +
-      scale_color_manual(values = hue_pal()(3)) +
+      scale_color_manual(values = cb_pal) +
       theme(
         plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5),
-        legend.title = element_text(size = 9, vjust = -37)
-      ) +
+        legend.position = "none") +
       geom_point(position = position_jitterdodge())
     if (specialty != "") {
       boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), color = hue_pal()(3)[1]) +
-        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), color = hue_pal()(3)[2]) +
-        geom_label(aes(x = 3, y = median(boxData_special$forecast), label = median(boxData_special$forecast)), color = hue_pal()(3)[3])
+        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), color = cb_pal[1]) +
+        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), color = cb_pal[2]) +
+        geom_label(aes(x = 3, y = median(boxData_special$forecast), label = median(boxData_special$forecast)), color = cb_pal[3])
     } else {
       boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), color = hue_pal()(3)[1]) +
-        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), color = hue_pal()(3)[2])
+        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), color = cb_pal[1]) +
+        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), color = cb_pal[2])
     }
-    boxPlot$labels$colour <- ""
+    boxPlot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 && forecastMax == 100) {
       boxPlot <- boxPlot +
         scale_y_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
@@ -188,18 +194,18 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = hue_pal()(5)) +
+    scale_color_manual(values = cb_pal) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_text(size = 9, vjust = -37)
     ) +
     geom_point(position = position_jitterdodge()) +
-    geom_label(aes(x = 1, y = median((boxData %>% filter(answerText == "5th %"))$forecast), label = median((boxData %>% filter(answerText == "5th %"))$forecast)), colour = hue_pal()(5)[1]) +
-    geom_label(aes(x = 2, y = median((boxData %>% filter(answerText == "25th %"))$forecast), label = median((boxData %>% filter(answerText == "25th %"))$forecast)), colour = hue_pal()(5)[2]) +
-    geom_label(aes(x = 3, y = median((boxData %>% filter(answerText == "50th %"))$forecast), label = median((boxData %>% filter(answerText == "50th %"))$forecast)), colour = hue_pal()(5)[3]) +
-    geom_label(aes(x = 4, y = median((boxData %>% filter(answerText == "75th %"))$forecast), label = median((boxData %>% filter(answerText == "75th %"))$forecast)), colour = hue_pal()(5)[4]) +
-    geom_label(aes(x = 5, y = median((boxData %>% filter(answerText == "95th %"))$forecast), label = median((boxData %>% filter(answerText == "95th %"))$forecast)), colour = hue_pal()(5)[5])
+    geom_label(aes(x = 1, y = median((boxData %>% filter(answerText == "5th %"))$forecast), label = median((boxData %>% filter(answerText == "5th %"))$forecast)), color = cb_pal[1]) +
+    geom_label(aes(x = 2, y = median((boxData %>% filter(answerText == "25th %"))$forecast), label = median((boxData %>% filter(answerText == "25th %"))$forecast)), color = cb_pal[2]) +
+    geom_label(aes(x = 3, y = median((boxData %>% filter(answerText == "50th %"))$forecast), label = median((boxData %>% filter(answerText == "50th %"))$forecast)), color = cb_pal[3]) +
+    geom_label(aes(x = 4, y = median((boxData %>% filter(answerText == "75th %"))$forecast), label = median((boxData %>% filter(answerText == "75th %"))$forecast)), color = cb_pal[4]) +
+    geom_label(aes(x = 5, y = median((boxData %>% filter(answerText == "95th %"))$forecast), label = median((boxData %>% filter(answerText == "95th %"))$forecast)), color = cb_pal[5])
   if (is.na(forecastMax)) {
     if ((max(boxData$forecast) > 10 * as.numeric(quantile(boxData$forecast, 0.95)))) {
       boxPlot <- boxPlot +
@@ -212,7 +218,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     boxPlot <- boxPlot +
       coord_cartesian(ylim = c(forecastMin, forecastMax))
   }
-  boxPlot$labels$colour <- ""
+  boxPlot$labels$color <- ""
   if (year != "") {
     boxPlot$labels$subtitle <- paste0("Stage ", stage, " | ", year, " | All Forecasters (n=", length(unique(boxData$userName)), ")")
   }
@@ -229,18 +235,18 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "Superforecasters (n=", length(unique(boxData_supers$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = hue_pal()(5)) +
+    scale_color_manual(values = cb_pal) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_text(size = 9, vjust = -37)
     ) +
     geom_point(position = position_jitterdodge()) +
-    geom_label(aes(x = 1, y = median((boxData_supers %>% filter(answerText == "5th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "5th %"))$forecast)), colour = hue_pal()(5)[1]) +
-    geom_label(aes(x = 2, y = median((boxData_supers %>% filter(answerText == "25th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "25th %"))$forecast)), colour = hue_pal()(5)[2]) +
-    geom_label(aes(x = 3, y = median((boxData_supers %>% filter(answerText == "50th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "50th %"))$forecast)), colour = hue_pal()(5)[3]) +
-    geom_label(aes(x = 4, y = median((boxData_supers %>% filter(answerText == "75th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "75th %"))$forecast)), colour = hue_pal()(5)[4]) +
-    geom_label(aes(x = 5, y = median((boxData_supers %>% filter(answerText == "95th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "95th %"))$forecast)), colour = hue_pal()(5)[5])
+    geom_label(aes(x = 1, y = median((boxData_supers %>% filter(answerText == "5th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "5th %"))$forecast)), color = cb_pal[1]) +
+    geom_label(aes(x = 2, y = median((boxData_supers %>% filter(answerText == "25th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "25th %"))$forecast)), color = cb_pal[2]) +
+    geom_label(aes(x = 3, y = median((boxData_supers %>% filter(answerText == "50th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "50th %"))$forecast)), color = cb_pal[3]) +
+    geom_label(aes(x = 4, y = median((boxData_supers %>% filter(answerText == "75th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "75th %"))$forecast)), color = cb_pal[4]) +
+    geom_label(aes(x = 5, y = median((boxData_supers %>% filter(answerText == "95th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "95th %"))$forecast)), color = cb_pal[5])
   if (is.na(forecastMax)) {
     if ((max(boxData_supers$forecast) > 10 * as.numeric(quantile(boxData_supers$forecast, 0.95)))) {
       boxPlot <- boxPlot +
@@ -253,7 +259,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     boxPlot <- boxPlot +
       coord_cartesian(ylim = c(forecastMin, forecastMax))
   }
-  boxPlot$labels$colour <- ""
+  boxPlot$labels$color <- ""
   if (year != "") {
     boxPlot$labels$subtitle <- paste0("Stage ", stage, " | ", year, " | Superforecasters (n=", length(unique(boxData_supers$userName)), ")")
   }
@@ -270,18 +276,18 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "Experts (n=", length(unique(boxData_experts$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = hue_pal()(5)) +
+    scale_color_manual(values = cb_pal) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_text(size = 9, vjust = -37)
     ) +
     geom_point(position = position_jitterdodge()) +
-    geom_label(aes(x = 1, y = median((boxData_experts %>% filter(answerText == "5th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "5th %"))$forecast)), colour = hue_pal()(5)[1]) +
-    geom_label(aes(x = 2, y = median((boxData_experts %>% filter(answerText == "25th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "25th %"))$forecast)), colour = hue_pal()(5)[2]) +
-    geom_label(aes(x = 3, y = median((boxData_experts %>% filter(answerText == "50th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "50th %"))$forecast)), colour = hue_pal()(5)[3]) +
-    geom_label(aes(x = 4, y = median((boxData_experts %>% filter(answerText == "75th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "75th %"))$forecast)), colour = hue_pal()(5)[4]) +
-    geom_label(aes(x = 5, y = median((boxData_experts %>% filter(answerText == "95th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "95th %"))$forecast)), colour = hue_pal()(5)[5])
+    geom_label(aes(x = 1, y = median((boxData_experts %>% filter(answerText == "5th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "5th %"))$forecast)), color = cb_pal[1]) +
+    geom_label(aes(x = 2, y = median((boxData_experts %>% filter(answerText == "25th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "25th %"))$forecast)), color = cb_pal[2]) +
+    geom_label(aes(x = 3, y = median((boxData_experts %>% filter(answerText == "50th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "50th %"))$forecast)), color = cb_pal[3]) +
+    geom_label(aes(x = 4, y = median((boxData_experts %>% filter(answerText == "75th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "75th %"))$forecast)), color = cb_pal[4]) +
+    geom_label(aes(x = 5, y = median((boxData_experts %>% filter(answerText == "95th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "95th %"))$forecast)), color = cb_pal[5])
   if (is.na(forecastMax)) {
     if ((max(boxData_experts$forecast) > 10 * as.numeric(quantile(boxData_experts$forecast, 0.95)))) {
       boxPlot <- boxPlot +
@@ -294,7 +300,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     boxPlot <- boxPlot +
       coord_cartesian(ylim = c(forecastMin, forecastMax))
   }
-  boxPlot$labels$colour <- ""
+  boxPlot$labels$color <- ""
   if (year != "") {
     boxPlot$labels$subtitle <- paste0("Stage ", stage, " | ", year, " | Experts (n=", length(unique(boxData_experts$userName)), ")")
   }
@@ -313,18 +319,18 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
         xlab("Percentile") +
         labs(title = title, subtitle = paste0("Stage ", stage, " | ", specialty, " Specialists (n=", length(unique(boxData_special$userName)), ")")) +
         theme_bw() +
-        scale_color_manual(values = hue_pal()(5)) +
+        scale_color_manual(values = cb_pal) +
         theme(
           plot.title = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5),
           legend.title = element_text(size = 9, vjust = -37)
         ) +
         geom_point(position = position_jitterdodge()) +
-        geom_label(aes(x = 1, y = median((boxData_special %>% filter(answerText == "5th %"))$forecast), label = median((boxData_special %>% filter(answerText == "5th %"))$forecast)), colour = hue_pal()(5)[1]) +
-        geom_label(aes(x = 2, y = median((boxData_special %>% filter(answerText == "25th %"))$forecast), label = median((boxData_special %>% filter(answerText == "25th %"))$forecast)), colour = hue_pal()(5)[2]) +
-        geom_label(aes(x = 3, y = median((boxData_special %>% filter(answerText == "50th %"))$forecast), label = median((boxData_special %>% filter(answerText == "50th %"))$forecast)), colour = hue_pal()(5)[3]) +
-        geom_label(aes(x = 4, y = median((boxData_special %>% filter(answerText == "75th %"))$forecast), label = median((boxData_special %>% filter(answerText == "75th %"))$forecast)), colour = hue_pal()(5)[4]) +
-        geom_label(aes(x = 5, y = median((boxData_special %>% filter(answerText == "95th %"))$forecast), label = median((boxData_special %>% filter(answerText == "95th %"))$forecast)), colour = hue_pal()(5)[5])
+        geom_label(aes(x = 1, y = median((boxData_special %>% filter(answerText == "5th %"))$forecast), label = median((boxData_special %>% filter(answerText == "5th %"))$forecast)), color = cb_pal[1]) +
+        geom_label(aes(x = 2, y = median((boxData_special %>% filter(answerText == "25th %"))$forecast), label = median((boxData_special %>% filter(answerText == "25th %"))$forecast)), color = cb_pal[2]) +
+        geom_label(aes(x = 3, y = median((boxData_special %>% filter(answerText == "50th %"))$forecast), label = median((boxData_special %>% filter(answerText == "50th %"))$forecast)), color = cb_pal[3]) +
+        geom_label(aes(x = 4, y = median((boxData_special %>% filter(answerText == "75th %"))$forecast), label = median((boxData_special %>% filter(answerText == "75th %"))$forecast)), color = cb_pal[4]) +
+        geom_label(aes(x = 5, y = median((boxData_special %>% filter(answerText == "95th %"))$forecast), label = median((boxData_special %>% filter(answerText == "95th %"))$forecast)), color = cb_pal[5])
       if (is.na(forecastMax)) {
         if ((max(boxData_special$forecast) > 10 * as.numeric(quantile(boxData_special$forecast, 0.95)))) {
           boxPlot <- boxPlot +
@@ -337,7 +343,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
         boxPlot <- boxPlot +
           coord_cartesian(ylim = c(forecastMin, forecastMax))
       }
-      boxPlot$labels$colour <- ""
+      boxPlot$labels$color <- ""
       if (year != "") {
         boxPlot$labels$subtitle <- paste0("Stage ", stage, " | ", year, " | ", specialty, "Specialists (n=", length(unique(boxData_special$userName)), ")")
       }
@@ -366,7 +372,7 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
     xlab("Country") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = hue_pal()(length(unique(boxData$questionName)))) +
+    scale_color_manual(values = cb_pal(length(unique(boxData$questionName)))) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
@@ -375,9 +381,9 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
     geom_point(position = position_jitterdodge())
   # for(i in 1:length(unique(boxData$questionName))){
   #   boxPlot = boxPlot +
-  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), colour=hue_pal()(length(unique(boxData$questionName)))[i])
+  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), color=cb_pal(length(unique(boxData$questionName)))[i])
   # }
-  boxPlot$labels$colour <- ""
+  boxPlot$labels$color <- ""
   if (year != "") {
     boxPlot$labels$subtitle <- paste0("Stage ", stage, " | ", year, " | All Forecasters (n=", length(unique(boxData$userName)), ")")
   }
@@ -400,7 +406,7 @@ boxPlot_country <- function(tbl, specialty, title,
     xlab("Country") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = hue_pal()(length(unique(boxData$answerText)))) +
+    scale_color_manual(values = cb_pal(length(unique(boxData$answerText)))) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
@@ -409,9 +415,9 @@ boxPlot_country <- function(tbl, specialty, title,
     geom_point(position = position_jitterdodge())
   # for(i in 1:length(unique(boxData$questionName))){
   #   boxPlot = boxPlot +
-  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), colour=hue_pal()(length(unique(boxData$questionName)))[i])
+  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), color=cb_pal(length(unique(boxData$questionName)))[i])
   # }
-  boxPlot$labels$colour <- ""
+  boxPlot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0(boxPlot$data$setName[1], " (All Forecasters) - Stage ", stage, " - Box Plot.png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -1198,12 +1204,12 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(paste0(currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -1287,12 +1293,12 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(paste0("VARIANCE - ", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -1375,12 +1381,12 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(paste0("PERCENT VARIANCE -", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -1651,12 +1657,12 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -1740,12 +1746,12 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -1897,7 +1903,7 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
   for (i in 1:nrow(supersTimeSeries)) {
-    if (supersTimeSeries[i, ]$n < 10) {
+    if (supersTimeSeries[i, ]$n < 10) {  # note to self to ask about this
       supersTimeSeries[i, ]$median <- NA
     }
   }
@@ -2030,12 +2036,12 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -2119,12 +2125,12 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -2349,12 +2355,12 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -2438,12 +2444,12 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -2517,7 +2523,7 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -2601,12 +2607,12 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", year, " ", country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -2690,12 +2696,12 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", year, country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -2769,7 +2775,7 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -2983,12 +2989,12 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3072,12 +3078,12 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
   if (length(unique(plotTable$group)) == 2) {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
+      scale_color_manual(values = cb_pal[1:2])
   } else {
     plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
+      scale_color_manual(values = cb_pal)
   }
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -3152,7 +3158,7 @@ pointBinaryGraphics_custom <- function(title, csv, currentSetName) {
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
 
   plot$labels$group <- ""
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   if (grepl("%", currentSetName)) {
     ggsave(paste0(currentSetName, "% - Figure One.png"), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -3230,7 +3236,7 @@ pointDistribGraphics_custom <- function(title, subtitle, csv, currentSetName, di
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
 
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   if (grepl("%", currentSetName)) {
     ggsave(paste0(currentSetName, "% - Figure One (", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -3347,8 +3353,8 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group))))
-  plot$labels$colour <- ""
+    scale_color_manual(values = cb_pal(length(unique(plotTable$group))))
+  plot$labels$color <- ""
 
   ggsave(paste0(currentSetName, " - Teams [All] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3385,8 +3391,8 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group))))
-  plot$labels$colour <- ""
+    scale_color_manual(values = cb_pal(length(unique(plotTable$group))))
+  plot$labels$color <- ""
 
   ggsave(paste0(currentSetName, " - Teams [Supers] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3423,8 +3429,8 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group))))
-  plot$labels$colour <- ""
+    scale_color_manual(values = cb_pal(length(unique(plotTable$group))))
+  plot$labels$color <- ""
 
   ggsave(paste0(currentSetName, " - Teams [Experts] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -3531,9 +3537,9 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
+    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [All] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3570,9 +3576,9 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
+    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [Supers] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3609,9 +3615,9 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
+    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [Experts] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -3744,9 +3750,9 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
+    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(paste0(currentSetName, " - Teams [All] (", year, " ", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3783,9 +3789,9 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
+    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(paste0(currentSetName, " - Teams [Supers] (", year, " ", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3822,9 +3828,9 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
+    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(paste0(currentSetName, " - Teams [Experts] (", year, " ", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -3868,7 +3874,7 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
     xlab("Date") +
     labs(title = paste(title), subtitle = subtitle) +
     theme_bw() +
-    scale_color_manual(values = c(hue_pal()(3)[1:2], "black")) +
+    scale_color_manual(values = c(cb_pal[1:2], "black")) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
@@ -3878,7 +3884,7 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
     geom_hline(yintercept = 0)
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
   ggsave(gsub("%", "%%", paste0(title, " OVERALL SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
   if (specialty != "") {
@@ -3915,7 +3921,7 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
       xlab("Date") +
       labs(title = paste(title), subtitle = subtitle) +
       theme_bw() +
-      scale_color_manual(values = c(hue_pal()(3))) +
+      scale_color_manual(values = c(cb_pal)) +
       theme(
         plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5),
@@ -3925,7 +3931,7 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
       geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
       geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
       geom_hline(yintercept = 0)
-    plot$labels$colour <- ""
+    plot$labels$color <- ""
     ggsave(gsub("%", "%%", paste0(title, " SUPERS VS DOMAIN EXP VS GENERALISTS SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
   }
 
@@ -4010,7 +4016,7 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
     xlab("Date") +
     labs(title = paste(title), subtitle = subtitle) +
     theme_bw() +
-    scale_color_manual(values = c(hue_pal()(10), "black")) +
+    scale_color_manual(values = c(cb_pal(10), "black")) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
@@ -4020,6 +4026,129 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
     geom_hline(yintercept = 0)
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
   ggsave(gsub("%", "%%", paste0(title, " TEAMS SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
+}
+
+rs_quintile_plot <- function(tbl) {
+  #' Boxplot for RS quintiles
+  #' 
+  #' @export
+  plot <- ggplot(tbl, aes(x = quintile, y = forecast, group = quintile)) +
+    # plot = ggplot(tbl, aes(x=quintile, y=forecast, fill = userType)) +
+    geom_boxplot(outlier.shape = NA) +
+    ylab("Forecast") +
+    xlab("Quintile") +
+    labs(title = title, subtitle = subtitle) +
+    theme_bw() +
+    coord_trans(y = pseudo_log_trans(base = 10), ylim = c(0, 100)) +
+    scale_y_continuous(breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100)) +
+    scale_color_manual(values = cb_pal) +
+    # scale_fill_manual(values=cb_pal) +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      plot.subtitle = element_text(hjust = 0.5),
+      legend.title = element_text(size = 9, vjust = -37)
+    ) +
+    # geom_point(position=position_jitterdodge(), aes(x=quintile, y=forecast, group=userType)) +
+    geom_point(position = position_jitterdodge(), aes(x = quintile, y = forecast, color = userType)) +
+    geom_label(aes(x = 1, y = median((tbl %>% filter(quintile == "Q1") %>% select(forecast))$forecast), label = median((tbl %>% filter(quintile == "Q1") %>% select(forecast))$forecast), group = userType)) +
+    geom_label(aes(x = 2, y = median((tbl %>% filter(quintile == "Q2") %>% select(forecast))$forecast), label = median((tbl %>% filter(quintile == "Q2") %>% select(forecast))$forecast), group = userType)) +
+    geom_label(aes(x = 3, y = median((tbl %>% filter(quintile == "Q3") %>% select(forecast))$forecast), label = median((tbl %>% filter(quintile == "Q3") %>% select(forecast))$forecast), group = userType)) +
+    geom_label(aes(x = 4, y = median((tbl %>% filter(quintile == "Q4") %>% select(forecast))$forecast), label = median((tbl %>% filter(quintile == "Q4") %>% select(forecast))$forecast), group = userType)) +
+    geom_label(aes(x = 5, y = median((tbl %>% filter(quintile == "Q5") %>% select(forecast))$forecast), label = median((tbl %>% filter(quintile == "Q5") %>% select(forecast))$forecast), group = userType))
+  # geom_label(aes(x=0.815, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  # geom_label(aes(x=1.195, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2])  +
+  # geom_label(aes(x=1.815, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  # geom_label(aes(x=2.195, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2])  +
+  # geom_label(aes(x=2.815, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  # geom_label(aes(x=3.195, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2])  +
+  # geom_label(aes(x=3.815, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  # geom_label(aes(x=4.195, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2])  +
+  # geom_label(aes(x=4.815, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  # geom_label(aes(x=5.195, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2])
+  # geom_label(aes(x=0.75, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  #   geom_label(aes(x=1, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
+  #   geom_label(aes(x=1.25, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
+  #   geom_label(aes(x=1.75, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  #   geom_label(aes(x=2, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
+  #   geom_label(aes(x=2.25, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
+  #   geom_label(aes(x=2.75, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  #   geom_label(aes(x=3, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
+  #   geom_label(aes(x=3.25, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
+  #   geom_label(aes(x=3.75, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  #   geom_label(aes(x=4, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
+  #   geom_label(aes(x=4.25, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
+  # geom_label(aes(x=4.75, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  # geom_label(aes(x=5, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
+  # geom_label(aes(x=5.25, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[3])
+  # geom_label(aes(x=0.717, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[1]) +
+  #   geom_label(aes(x=0.905, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[2]) +
+  #   geom_label(aes(x=1.095, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[3]) +
+  #   geom_label(aes(x=1.28, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[4]) +
+  #   geom_label(aes(x=1.717, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[1]) +
+  #   geom_label(aes(x=1.905, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[2]) +
+  #   geom_label(aes(x=2.095, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[3]) +
+  #   geom_label(aes(x=2.28, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[4]) +
+  #   geom_label(aes(x=2.717, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[1]) +
+  #   geom_label(aes(x=2.905, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[2]) +
+  #   geom_label(aes(x=3.095, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[3]) +
+  #   geom_label(aes(x=3.28, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[4]) +
+  #   geom_label(aes(x=3.717, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[1]) +
+  #   geom_label(aes(x=3.905, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[2]) +
+  #   geom_label(aes(x=4.095, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[3]) +
+  #   geom_label(aes(x=4.28, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[4]) +
+  #   geom_label(aes(x=4.717, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[1]) +
+  #   geom_label(aes(x=4.905, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="domain experts") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[2]) +
+  #   geom_label(aes(x=5.095, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="non-domain experts") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[3]) +
+  #   geom_label(aes(x=5.28, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(4)[4])
+  # geom_label(aes(x=0.69, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[1]) +
+  #   geom_label(aes(x=0.82, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="ai") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="ai") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[2]) +
+  #   geom_label(aes(x=0.94, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="biorisk") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="biorisk") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[3]) +
+  #   geom_label(aes(x=1.06, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="climate") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="climate") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[4]) +
+  #   geom_label(aes(x=1.18, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="nuclear") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="nuclear") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[5]) +
+  #   geom_label(aes(x=1.31, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[6]) +
+  #   geom_label(aes(x=1.69, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[1]) +
+  #   geom_label(aes(x=1.82, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="ai") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="ai") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[2]) +
+  #   geom_label(aes(x=1.94, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="biorisk") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="biorisk") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[3]) +
+  #   geom_label(aes(x=2.06, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="climate") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="climate") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[4]) +
+  #   geom_label(aes(x=2.18, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="nuclear") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="nuclear") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[5]) +
+  #   geom_label(aes(x=2.31, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[6]) +
+  #   geom_label(aes(x=2.69, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[1]) +
+  #   geom_label(aes(x=2.82, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="ai") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="ai") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[2]) +
+  #   geom_label(aes(x=2.94, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="biorisk") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="biorisk") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[3]) +
+  #   geom_label(aes(x=3.06, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="climate") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="climate") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[4]) +
+  #   geom_label(aes(x=3.18, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="nuclear") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="nuclear") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[5]) +
+  #   geom_label(aes(x=3.31, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[6]) +
+  #   geom_label(aes(x=3.69, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[1]) +
+  #   geom_label(aes(x=3.82, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="ai") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="ai") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[2]) +
+  #   geom_label(aes(x=3.94, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="biorisk") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="biorisk") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[3]) +
+  #   geom_label(aes(x=4.06, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="climate") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="climate") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[4]) +
+  #   geom_label(aes(x=4.18, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="nuclear") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="nuclear") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[5]) +
+  #   geom_label(aes(x=4.31, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[6]) +
+  #   geom_label(aes(x=4.69, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[1]) +
+  #   geom_label(aes(x=4.82, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="ai") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="ai") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[2]) +
+  #   geom_label(aes(x=4.94, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="biorisk") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="biorisk") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[3]) +
+  #   geom_label(aes(x=5.06, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="climate") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="climate") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[4]) +
+  #   geom_label(aes(x=5.18, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="nuclear") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="nuclear") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[5]) +
+  #   geom_label(aes(x=5.31, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=hue_pal()(6)[6])
+  # geom_label(aes(x=0.75, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  #   geom_label(aes(x=1, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="SMEs") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="SMEs") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
+  #   geom_label(aes(x=1.25, y=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
+  #   geom_label(aes(x=1.75, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  #   geom_label(aes(x=2, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="SMEs") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="SMEs") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
+  #   geom_label(aes(x=2.25, y=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
+  #   geom_label(aes(x=2.75, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  #   geom_label(aes(x=3, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="SMEs") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="SMEs") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
+  #   geom_label(aes(x=3.25, y=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
+  #   geom_label(aes(x=3.75, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  #   geom_label(aes(x=4, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="SMEs") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="SMEs") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
+  #   geom_label(aes(x=4.25, y=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q4") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
+  # geom_label(aes(x=4.75, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="supers") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="supers") %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
+  # geom_label(aes(x=5, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="SMEs") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="SMEs") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
+  # geom_label(aes(x=5.25, y=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q5") %>% filter(userType=="x-risk generalists") %>% select(forecast))$forecast), group=userType), fill=cb_pal[3])
+  plot$labels$colour <- ""
+  plot$labels$fill <- ""
+
+  return(plot)
 }
