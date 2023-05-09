@@ -122,6 +122,9 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
     boxData <- boxData_supers %>% mutate(group = paste0("Superforecasters (n=", nrow(boxData_supers), ")"))
     boxData_experts <- tbl %>% filter(userName %in% expertsG1$userName)
     boxData <- rbind(boxData, boxData_experts %>% mutate(group = paste0("Non-domain Experts (n=", nrow(boxData_experts), ")")))
+    boxData_general <- tbl %>% filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName)
+    boxData <- rbind(boxData, boxData_general %>% mutate(group = paste0("General X-risk Experts (n=", nrow(boxData_general), ")")))
+
     if (specialty != "") {
       field <- specialty
       specialists <- expertsG1 %>% filter(field == specialty1 | field == specialty2 | field == specialty3)
@@ -143,17 +146,15 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
         legend.position = "none",
         axis.title.x = element_blank()) +
       geom_point(position = position_jitterdodge())
+    boxPlot <- boxPlot +
+      geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast), fill = "white")) +
+      geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast), fill = "white")) +
+      geom_label(aes(x = 3, y = median(boxData_general$forecast), label = median(boxData_general$forecast), fill = "white"))
     if (specialty != "") {
       boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast), fill = "white")) +
-        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast), fill = "white")) +
-        geom_label(aes(x = 3, y = median(boxData_special$forecast), label = median(boxData_special$forecast), fill = "white"))
-    } else {
-      boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast))) +
-        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)))
+        geom_label(aes(x = 4, y = median(boxData_special$forecast), label = median(boxData_special$forecast), fill = "white"))
     }
-    boxPlot$labels$color <- ""
+    #boxPlot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 && forecastMax == 100) {
       boxPlot <- boxPlot +
         scale_y_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
