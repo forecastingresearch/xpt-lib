@@ -2,8 +2,8 @@ library(dplyr)
 library(docstring)
 library(ggthemes)
 
-# Generate a colorblind-friendly palette with four colors
-cb_pal <- colorblind_pal()(4)
+# Generate a colorblind-friendly palette with six colors
+cb_pal <- colorblind_pal()(6)
 
 # Exclude black from the palette
 cb_pal <- tail(cb_pal, -1)
@@ -130,27 +130,28 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
     }
     boxData$group <- factor(boxData$group, levels = unique(boxData$group), ordered = TRUE)
 
-    boxPlot <- ggplot(boxData, aes(x = group, y = forecast, color = group)) +
+    boxPlot <- ggplot(boxData, aes(x = group, y = forecast, fill = group)) +
       geom_boxplot(outlier.shape = NA) +
       ylab("Forecast") +
       xlab("Group") +
       labs(title = title, subtitle = subtitle) +
       theme_bw() +
-      scale_color_manual(values = cb_pal) +
+      scale_fill_manual(values = cb_pal) +
       theme(
         plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5),
-        legend.position = "none") +
+        legend.position = "none",
+        axis.title.x = element_blank()) +
       geom_point(position = position_jitterdodge())
     if (specialty != "") {
       boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), color = cb_pal[1]) +
-        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), color = cb_pal[2]) +
-        geom_label(aes(x = 3, y = median(boxData_special$forecast), label = median(boxData_special$forecast)), color = cb_pal[3])
+        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast), fill = "white")) +
+        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast), fill = "white")) +
+        geom_label(aes(x = 3, y = median(boxData_special$forecast), label = median(boxData_special$forecast), fill = "white"))
     } else {
       boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), color = cb_pal[1]) +
-        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), color = cb_pal[2])
+        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast))) +
+        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)))
     }
     boxPlot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 && forecastMax == 100) {
@@ -1188,7 +1189,7 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -1278,7 +1279,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -1366,7 +1367,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -1556,7 +1557,7 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -1642,7 +1643,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -1731,7 +1732,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -1939,7 +1940,7 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -2021,7 +2022,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -2110,7 +2111,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -2258,7 +2259,7 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -2340,7 +2341,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -2429,7 +2430,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -2509,7 +2510,7 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -2592,7 +2593,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -2681,7 +2682,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -2761,7 +2762,7 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -2892,7 +2893,7 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -2974,7 +2975,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -3063,7 +3064,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -3142,7 +3143,7 @@ pointBinaryGraphics_custom <- function(title, csv, currentSetName) {
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = hdTrim, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = hdTrim, group = group, fill = group)) +
     geom_line() +
     ylab("HD Trim") +
     xlab("Date") +
@@ -3221,7 +3222,7 @@ pointDistribGraphics_custom <- function(title, subtitle, csv, currentSetName, di
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = hdTrim, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = hdTrim, group = group, fill = group)) +
     geom_line() +
     ylab("HD Trim") +
     xlab("Date") +
@@ -3339,7 +3340,7 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -3377,7 +3378,7 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -3415,7 +3416,7 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -3523,7 +3524,7 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -3562,7 +3563,7 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -3601,7 +3602,7 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -3736,7 +3737,7 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -3775,7 +3776,7 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -3814,7 +3815,7 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     ylab("Median") +
     xlab("Date") +
@@ -3868,7 +3869,7 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, fill = group)) +
     geom_line() +
     ylab("Optimism (vs end of Stage 1)") +
     xlab("Date") +
@@ -3915,7 +3916,7 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
 
     plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-    plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, color = group)) +
+    plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, fill = group)) +
       geom_line() +
       ylab("Optimism (vs end of Stage 1)") +
       xlab("Date") +
@@ -4010,7 +4011,7 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, fill = group)) +
     geom_line() +
     ylab("Optimism (vs end of Stage 1)") +
     xlab("Date") +
@@ -4044,7 +4045,7 @@ rs_quintile_plot <- function(tbl) {
     coord_trans(y = pseudo_log_trans(base = 10), ylim = c(0, 100)) +
     scale_y_continuous(breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100)) +
     scale_color_manual(values = cb_pal) +
-    # scale_fill_manual(values=cb_pal) +
+    # scale_fill_manual(values = cb_pal) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),

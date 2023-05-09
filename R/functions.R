@@ -830,7 +830,7 @@ multiYearReciprocal <- function(metaTable, data) {
 
           files <- c(paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"))
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - ", currentStage, " Box Plot")
-          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0("Stage ", currentStage, " | ", years[l], " | ", beliefSets[k]), filenameStart, expectedRisk, forecastMin, forecastMax)
+          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[l], "/", beliefSets[k]))
 
