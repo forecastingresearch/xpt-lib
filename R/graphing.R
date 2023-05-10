@@ -12,7 +12,6 @@ cb_pal <- colorblind_pal()(6)
 # Exclude black from the palette
 cb_pal <- tail(cb_pal, -1)
 
-
 boot_fun <- function(data, index) {
   #' Bootstrapping function
   return(median(data[index, "median"]))
@@ -4127,11 +4126,11 @@ rs_quintile_plot <- function(tbl, title, subtitle) {
   #    }
   #  }
     geom_label(aes(x=0.75, y=median((tbl %>% filter(quintile == "Q1") %>% filter(grepl("uper", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(grepl("uper", userType)) %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
-    geom_label(aes(x=1, y=median((tbl %>% filter(quintile == "Q1") %>% filter(grepl("eneral", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(userType=="experts") %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
-    geom_label(aes(x=1.25, y=median((tbl %>% filter(quintile == "Q1") %>% filter(grepl("ther", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(grepl("General", userType)) %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
+    geom_label(aes(x=1, y=median((tbl %>% filter(quintile == "Q1") %>% filter(grepl("eneral", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(grepl("ther", userType)) %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
+    geom_label(aes(x=1.25, y=median((tbl %>% filter(quintile == "Q1") %>% filter(grepl("ther", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q1") %>% filter(grepl("eneral", userType)) %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
     geom_label(aes(x=1.75, y=median((tbl %>% filter(quintile == "Q2") %>% filter(grepl("uper", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(grepl("uper", userType)) %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
     geom_label(aes(x=2, y=median((tbl %>% filter(quintile == "Q2") %>% filter(grepl("eneral", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(grepl("eneral", userType)) %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
-    geom_label(aes(x=2.25, y=median((tbl %>% filter(quintile == "Q2") %>% filter(grepl("ther", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(userType==grepl("General", userType)) %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
+    geom_label(aes(x=2.25, y=median((tbl %>% filter(quintile == "Q2") %>% filter(grepl("ther", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q2") %>% filter(grepl("eneral", userType)) %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +
     geom_label(aes(x=2.75, y=median((tbl %>% filter(quintile == "Q3") %>% filter(grepl("uper", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(grepl("uper", userType)) %>% select(forecast))$forecast), group=userType), fill=cb_pal[1]) +
     geom_label(aes(x=3, y=median((tbl %>% filter(quintile == "Q3") %>% filter(grepl("eneral", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(grepl("eneral", userType)) %>% select(forecast))$forecast), group=userType), fill=cb_pal[2]) +
     geom_label(aes(x=3.25, y=median((tbl %>% filter(quintile == "Q3") %>% filter(grepl("ther", userType)) %>% select(forecast))$forecast), label=median((tbl %>% filter(quintile == "Q3") %>% filter(grepl("ther", userType)) %>% select(forecast))$forecast), group=userType), fill=cb_pal[3]) +

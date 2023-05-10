@@ -7,7 +7,7 @@ library(xpt)
 set.seed(123)
 
 # Define user types and quintiles
-user_types <- c("Supers", "Other Experts", "General X-risk Experts")
+user_types <- c("Supers", "General X-risk Experts", "Other Experts")
 quintiles <- paste0("Q", 1:5)
 
 # Generate data for each user type
