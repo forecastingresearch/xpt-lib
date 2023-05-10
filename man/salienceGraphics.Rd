@@ -7,5 +7,5 @@
 salienceGraphics(salienceTbl, title, subtitle, specialty)
 }
 \description{
-Salience graphics for supers+experts+overal
+Salience graphics for supers+experts+overall
 }

@@ -4,7 +4,7 @@
 \alias{rs_quintile_plot}
 \title{Boxplot for RS quintiles}
 \usage{
-rs_quintile_plot(tbl)
+rs_quintile_plot(tbl, title, subtitle)
 }
 \description{
 Boxplot for RS quintiles

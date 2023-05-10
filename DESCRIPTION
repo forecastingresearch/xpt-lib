@@ -17,6 +17,8 @@ Imports:
     docstring,
     data.table (>= 1.14.6),
     testthat (>= 3.0.0),
-    ggthemes
+    ggthemes,
+    ggplot2,
+    scales
 Suggests: 
 Config/testthat/edition: 3
