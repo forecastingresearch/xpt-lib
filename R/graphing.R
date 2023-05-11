@@ -12,26 +12,26 @@ cb_pal <- colorblind_pal()(6)
 # Exclude black from the palette
 cb_pal <- tail(cb_pal, -1)
 
-boot_fun <- function(data, index) {
-  #' Bootstrapping function
-  return(median(data[index, "median"]))
-}
 
-boot_results <- function(plotTable, width = 0.95) {
+boot_results <- function(plotTable, statistic = median, width = 0.95) {
   #' Get bootstrapped confidence intervals
   #' 
   #' `do` function applies the `boot` function to each combination of (group,
   #' currentDate) and creates a new dataframe with a row for each combination...
-  #' 
-  #' @require tidyr, dplyr, boot
-  #' @export
-
-  plotTable <- plotTable %>% 
-    group_by(group, currentDate) %>%
-    do(tidy(boot(., boot_fun, R = 1000))) %>%
-    mutate(confint_lower = quantile(stat, 1 - (1 - width) / 2),
-           confint_upper = quantile(stat, (1 - width) / 2))
-  return(plotTable)
+  #' Assumes this is being called from within figureDataMetrics (one question,
+  #' one group at a time)
+  #'
+  #'  @export
+  
+  set.seed(123)
+  interval <- plotTable %>%
+    do({
+      x <- .$forecast
+      res <- boot(x, statistic = function(x,i) statistic(x[i]), R = 1000)
+      a <- boot.ci(res, conf = width, type = "perc")
+      data.frame(confint_lower = a$percent[4], confint_upper = a$percent[5])
+    })
+  return(interval)
 }
 
 histogram <- function(questionDataProcessed, filenameStart, title, stage,
@@ -667,6 +667,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   sd <- sd(dateData$forecast)
   geoMean <- geoMeanCalc(dateData$forecast)
   median <- median(dateData$forecast)
+  # Get bootstrapped CI's (for median only)
+  boot_ci <- boot_results(dateData)
+  median_confint_lower <- boot_ci$confint_lower
+  median_confint_upper <- boot_ci$confint_upper
   if (length(dateData$forecast) > 0) {
     hdTrim <- hd_trim(dateData$forecast)
   } else {
@@ -680,6 +684,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   g1Sd <- sd(g1DateData$forecast)
   g1GeoMean <- geoMeanCalc(g1DateData$forecast)
   g1Median <- median(g1DateData$forecast)
+  # Get bootstrapped CI's (for median only)
+  boot_ci <- boot_results(g1DateData)
+  g1Median_confint_lower <- boot_ci$confint_lower
+  g1Median_confint_upper <- boot_ci$confint_upper
   if (length(g1DateData$forecast) > 0) {
     g1HdTrim <- hd_trim(g1DateData$forecast)
   } else {
@@ -693,6 +701,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   supersSd <- sd(supersDateData$forecast)
   supersGeoMean <- geoMeanCalc(supersDateData$forecast)
   supersMedian <- median(supersDateData$forecast)
+  # Get bootstrapped CI's (for median only)
+  boot_ci <- boot_results(supersDateData)
+  supersMedian_confint_lower <- boot_ci$confint_lower
+  supersMedian_confint_upper <- boot_ci$confint_upper
   if (length(supersDateData$forecast) > 0) {
     supersHdTrim <- hd_trim(supersDateData$forecast)
   } else {
@@ -706,6 +718,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   expertsSd <- sd(expertsDateData$forecast)
   expertsGeoMean <- geoMeanCalc(expertsDateData$forecast)
   expertsMedian <- median(expertsDateData$forecast)
+  # Get bootstrapped CI's (for median only)
+  boot_ci <- boot_results(expertsDateData)
+  expertsMedian_confint_lower <- boot_ci$confint_lower
+  expertsMedian_confint_upper <- boot_ci$confint_upper
   if (length(expertsDateData$forecast) > 0) {
     expertsHdTrim <- hd_trim(expertsDateData$forecast)
   } else {
@@ -721,6 +737,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     domainExpertsSd <- sd(domainExpertsDateData$forecast)
     domainExpertsGeoMean <- geoMeanCalc(domainExpertsDateData$forecast)
     domainExpertsMedian <- median(domainExpertsDateData$forecast)
+    # Get bootstrapped CI's (for median only)
+    boot_ci <- boot_results(domainExpertsDateData)
+    domainExpertsMedian_confint_lower <- boot_ci$confint_lower
+    domainExpertsMedian_confint_upper <- boot_ci$confint_upper
     domainExpertsMedian <- median(domainExpertsDateData$forecast)
     if (length(domainExpertsDateData$forecast) > 0) {
       domainExpertsHdTrim <- hd_trim(domainExpertsDateData$forecast)
@@ -734,6 +754,8 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     domainExpertsSd <- NA
     domainExpertsGeoMean <- NA
     domainExpertsMedian <- NA
+    domainExpertsMedian_confint_lower <- NA
+    domainExpertsMedian_confint_upper <- NA
     domainExpertsHdTrim <- NA
     domainExpertsNeymanAgg <- NA
     domainExpertsN <- NA
@@ -746,7 +768,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     nonDomainExpertsSd <- sd(nonDomainExpertsDateData$forecast)
     nonDomainExpertsGeoMean <- geoMeanCalc(nonDomainExpertsDateData$forecast)
     nonDomainExpertsMedian <- median(nonDomainExpertsDateData$forecast)
-    nonDomainExpertsMedian <- median(nonDomainExpertsDateData$forecast)
+    # Get bootstrapped CI's (for median only)
+    boot_ci <- boot_results(nonDomainExpertsDateData)
+    nonDomainExpertsMedian_confint_lower <- boot_ci$confint_lower
+    nonDomainExpertsMedian_confint_upper <- boot_ci$confint_upper
     if (length(nonDomainExpertsDateData$forecast) > 0) {
       nonDomainExpertsHdTrim <- hd_trim(nonDomainExpertsDateData$forecast)
     } else {
@@ -759,6 +784,8 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     nonDomainExpertsSd <- NA
     nonDomainExpertsGeoMean <- NA
     nonDomainExpertsMedian <- NA
+    domainExpertsMedian_confint_lower <- NA
+    domainExpertsMedian_confint_upper <- NA
     nonDomainExpertsHdTrim <- NA
     nonDomainExpertsNeymanAgg <- NA
     nonDomainExpertsN <- NA
@@ -1074,7 +1101,34 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   t345NeymanAgg <- neymanAggCalc(t345DateData$forecast)
   t345N <- nrow(t345DateData)
 
-  return(data.frame(beliefSet, year, currentDate = date, mean, sd, geoMean, median, hdTrim, neymanAgg, n, g1Mean, g1Sd, g1GeoMean, g1Median, g1HdTrim, g1NeymanAgg, g1N, supersMean, supersSd, supersGeoMean, supersMedian, supersHdTrim, supersNeymanAgg, supersN, expertsMean, expertsSd, expertsGeoMean, expertsMedian, expertsHdTrim, expertsNeymanAgg, expertsN, domainExpertsMean, domainExpertsSd, domainExpertsGeoMean, domainExpertsMedian, domainExpertsHdTrim, domainExpertsNeymanAgg, domainExpertsN, nonDomainExpertsMean, nonDomainExpertsSd, nonDomainExpertsGeoMean, nonDomainExpertsMedian, nonDomainExpertsHdTrim, nonDomainExpertsNeymanAgg, nonDomainExpertsN, t336Mean, t336Sd, t336GeoMean, t336Median, t336HdTrim, t336NeymanAgg, t336N, t336SupersMean, t336SupersSd, t336SupersGeoMean, t336SupersMedian, t336SupersHdTrim, t336SupersNeymanAgg, t336SupersN, t336ExpertsMean, t336ExpertsSd, t336ExpertsGeoMean, t336ExpertsMedian, t336ExpertsHdTrim, t336ExpertsNeymanAgg, t336ExpertsN, t337Mean, t337Sd, t337GeoMean, t337Median, t337HdTrim, t337NeymanAgg, t337N, t337SupersMean, t337SupersSd, t337SupersGeoMean, t337SupersMedian, t337SupersHdTrim, t337SupersNeymanAgg, t337SupersN, t337ExpertsMean, t337ExpertsSd, t337ExpertsGeoMean, t337ExpertsMedian, t337ExpertsHdTrim, t337ExpertsNeymanAgg, t337ExpertsN, t338Mean, t338Sd, t338GeoMean, t338Median, t338HdTrim, t338NeymanAgg, t338N, t338SupersMean, t338SupersSd, t338SupersGeoMean, t338SupersMedian, t338SupersHdTrim, t338SupersNeymanAgg, t338SupersN, t338ExpertsMean, t338ExpertsSd, t338ExpertsGeoMean, t338ExpertsMedian, t338ExpertsHdTrim, t338ExpertsNeymanAgg, t338ExpertsN, t339Mean, t339Sd, t339GeoMean, t339Median, t339HdTrim, t339NeymanAgg, t339N, t339SupersMean, t339SupersSd, t339SupersGeoMean, t339SupersMedian, t339SupersHdTrim, t339SupersNeymanAgg, t339SupersN, t339ExpertsMean, t339ExpertsSd, t339ExpertsGeoMean, t339ExpertsMedian, t339ExpertsHdTrim, t339ExpertsNeymanAgg, t339ExpertsN, t340Mean, t340Sd, t340GeoMean, t340Median, t340HdTrim, t340NeymanAgg, t340N, t340SupersMean, t340SupersSd, t340SupersGeoMean, t340SupersMedian, t340SupersHdTrim, t340SupersNeymanAgg, t340SupersN, t340ExpertsMean, t340ExpertsSd, t340ExpertsGeoMean, t340ExpertsMedian, t340ExpertsHdTrim, t340ExpertsNeymanAgg, t340ExpertsN, t341Mean, t341Sd, t341GeoMean, t341Median, t341HdTrim, t341NeymanAgg, t341N, t341SupersMean, t341SupersSd, t341SupersGeoMean, t341SupersMedian, t341SupersHdTrim, t341SupersNeymanAgg, t341SupersN, t341ExpertsMean, t341ExpertsSd, t341ExpertsGeoMean, t341ExpertsMedian, t341ExpertsHdTrim, t341ExpertsNeymanAgg, t341ExpertsN, t342Mean, t342Sd, t342GeoMean, t342Median, t342HdTrim, t342NeymanAgg, t342N, t343Mean, t343Sd, t343GeoMean, t343Median, t343HdTrim, t343NeymanAgg, t343N, t344Mean, t344Sd, t344GeoMean, t344Median, t344HdTrim, t344NeymanAgg, t344N, t345Mean, t345Sd, t345GeoMean, t345Median, t345HdTrim, t345NeymanAgg, t345N))
+  return(data.frame(beliefSet, year, currentDate = date, mean, sd, geoMean, median, hdTrim, neymanAgg, n,
+                    g1Mean, g1Sd, g1GeoMean, g1Median, g1Median_confint_lower, g1Median_confint_upper, g1HdTrim, g1NeymanAgg, g1N,
+                    supersMean, supersSd, supersGeoMean, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper, expertsMedian_confint_lower, expertsMedian_confint_upper, supersHdTrim, supersNeymanAgg, supersN,
+                    expertsMean, expertsSd, expertsGeoMean, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper, expertsHdTrim, expertsNeymanAgg, expertsN,
+                    domainExpertsMean, domainExpertsSd, domainExpertsGeoMean, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper, domainExpertsHdTrim, domainExpertsNeymanAgg, domainExpertsN,
+                    nonDomainExpertsMean, nonDomainExpertsSd, nonDomainExpertsGeoMean, nonDomainExpertsMedian, nonDomainExpertsMedian_confint_lower, nonDomainExpertsMedian_confint_upper, nonDomainExpertsHdTrim, nonDomainExpertsNeymanAgg, nonDomainExpertsN,
+                    t336Mean, t336Sd, t336GeoMean, t336Median, t336HdTrim, t336NeymanAgg, t336N,
+                    t336SupersMean, t336SupersSd, t336SupersGeoMean, t336SupersMedian, t336SupersHdTrim, t336SupersNeymanAgg, t336SupersN,
+                    t336ExpertsMean, t336ExpertsSd, t336ExpertsGeoMean, t336ExpertsMedian, t336ExpertsHdTrim, t336ExpertsNeymanAgg, t336ExpertsN,
+                    t337Mean, t337Sd, t337GeoMean, t337Median, t337HdTrim, t337NeymanAgg, t337N,
+                    t337SupersMean, t337SupersSd, t337SupersGeoMean, t337SupersMedian, t337SupersHdTrim, t337SupersNeymanAgg, t337SupersN,
+                    t337ExpertsMean, t337ExpertsSd, t337ExpertsGeoMean, t337ExpertsMedian, t337ExpertsHdTrim, t337ExpertsNeymanAgg, t337ExpertsN,
+                    t338Mean, t338Sd, t338GeoMean, t338Median, t338HdTrim, t338NeymanAgg, t338N,
+                    t338SupersMean, t338SupersSd, t338SupersGeoMean, t338SupersMedian, t338SupersHdTrim, t338SupersNeymanAgg, t338SupersN,
+                    t338ExpertsMean, t338ExpertsSd, t338ExpertsGeoMean, t338ExpertsMedian, t338ExpertsHdTrim, t338ExpertsNeymanAgg, t338ExpertsN,
+                    t339Mean, t339Sd, t339GeoMean, t339Median, t339HdTrim, t339NeymanAgg, t339N,
+                    t339SupersMean, t339SupersSd, t339SupersGeoMean, t339SupersMedian, t339SupersHdTrim, t339SupersNeymanAgg, t339SupersN,
+                    t339ExpertsMean, t339ExpertsSd, t339ExpertsGeoMean, t339ExpertsMedian, t339ExpertsHdTrim, t339ExpertsNeymanAgg, t339ExpertsN,
+                    t340Mean, t340Sd, t340GeoMean, t340Median, t340HdTrim, t340NeymanAgg, t340N,
+                    t340SupersMean, t340SupersSd, t340SupersGeoMean, t340SupersMedian, t340SupersHdTrim, t340SupersNeymanAgg, t340SupersN,
+                    t340ExpertsMean, t340ExpertsSd, t340ExpertsGeoMean, t340ExpertsMedian, t340ExpertsHdTrim, t340ExpertsNeymanAgg, t340ExpertsN,
+                    t341Mean, t341Sd, t341GeoMean, t341Median, t341HdTrim, t341NeymanAgg, t341N,
+                    t341SupersMean, t341SupersSd, t341SupersGeoMean, t341SupersMedian, t341SupersHdTrim, t341SupersNeymanAgg, t341SupersN,
+                    t341ExpertsMean, t341ExpertsSd, t341ExpertsGeoMean, t341ExpertsMedian, t341ExpertsHdTrim, t341ExpertsNeymanAgg, t341ExpertsN,
+                    t342Mean, t342Sd, t342GeoMean, t342Median, t342HdTrim, t342NeymanAgg, t342N,
+                    t343Mean, t343Sd, t343GeoMean, t343Median, t343HdTrim, t343NeymanAgg, t343N,
+                    t344Mean, t344Sd, t344GeoMean, t344Median, t344HdTrim, t344NeymanAgg, t344N,
+                    t345Mean, t345Sd, t345GeoMean, t345Median, t345HdTrim, t345NeymanAgg, t345N))
 }
 
 multiYearReciprocalFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
