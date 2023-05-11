@@ -21,23 +21,42 @@ boot_results <- function(plotTable, statistic = median, width = 0.95) {
   #' Assumes this is being called from within figureDataMetrics (one question,
   #' one group at a time)
   #'
-  #'  @export
+  #' @importFrom boot boot boot.ci
+  #' @export
   
   set.seed(123)
+  if (nrow(plotTable) == 0) {
+    return(data.frame(confint_lower = NA, confint_upper = NA))
+  }
   interval <- plotTable %>%
     do({
       x <- .$forecast
       res <- boot(x, statistic = function(x,i) statistic(x[i]), R = 1000)
-      a <- boot.ci(res, conf = width, type = "perc")
-      data.frame(confint_lower = a$percent[4], confint_upper = a$percent[5])
+      if (all(res$t == 1)) {
+        data.frame(confint_lower = NA, confint_upper = NA)
+      } else {
+        a <- boot.ci(res, conf = width, type = "perc")
+        data.frame(confint_lower = a$percent[4], confint_upper = a$percent[5])
+      }
     })
   return(interval)
+}
+
+rename_confint_cols <- function(plotTable) {
+  # If there are any variables with "confint_lower" or "confint_upper" in the name, rename them
+  if (any(grepl("confint_lower", names(plotTable)))) {
+    names(plotTable)[grepl("confint_lower", names(plotTable))] <- "confint_lower"
+    names(plotTable)[grepl("confint_upper", names(plotTable))] <- "confint_upper"
+  }
+  return(plotTable)
 }
 
 histogram <- function(questionDataProcessed, filenameStart, title, stage,
                       specialty, expectedRisk, forecastMin, forecastMax) {
   #' Histogram
-  #'
+  #' 
+  #' @import ggplot2
+  #' @import scales
   #' @export
 
   if (grepl("%", filenameStart)) {
@@ -136,6 +155,8 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
                     expectedRisk, forecastMin, forecastMax) {
   #' Basic boxplot function
   #'
+  #' @import ggplot2
+  #' @import scales 
   #' @export
 
   tbl <- read.csv(files[1])
@@ -206,6 +227,8 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
                             stage, year) {
   #' Box Plot for Distribution Questions
   #'
+  #' @import ggplot2
+  #' @import scales
   #' @export
 
   boxData <- tbl %>% filter(userName %in% c(supers, expertsG1$userName))
@@ -394,6 +417,8 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
                                     forecastMax, stage, year) {
   #' Box Plot for Distribution Country Questions
   #'
+  #' @import ggplot2
+  #' @import scales
   #' @export
 
   boxData <- tbl %>% filter(userName %in% c(supers, expertsG1$userName))
@@ -428,6 +453,8 @@ boxPlot_country <- function(tbl, specialty, title,
                             forecastMin, forecastMax, stage) {
   #' Box Plot for Country Questions
   #'
+  #' @import ggplot2
+  #' @import scales
   #' @export
 
   boxData <- tbl %>% filter(userName %in% c(supers, expertsG1$userName))
@@ -1227,11 +1254,15 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = paste("Superforecasters"))
   supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(median = supersMedian,
+           confint_lower = supersMedian_confint_lower,
+           confint_upper = supersMedian_confint_upper,
+           n = supersN)
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -1243,11 +1274,15 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   subtitle <- subtitle
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(median = expertsMedian,
+           confint_lower = expertsMedian_confint_lower,
+           confint_upper = expertsMedian_confint_upper,
+           n = expertsN)
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -1256,11 +1291,15 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(median = domainExpertsMedian,
+           confint_lower = domainExpertsMedian_confint_lower,
+           confint_upper = domainExpertsMedian_confint_upper,
+           n = domainExpertsN)
   if (!all(is.na(domainExpertsTimeSeries$median))) {
     domainExpertsTimeSeries$median[is.na(domainExpertsTimeSeries$median)] <- 0
     for (i in 1:nrow(domainExpertsTimeSeries)) {
@@ -1275,7 +1314,7 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plotTable <- boot_results(plotTable) 
+ 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2) + ylab("Median") +
@@ -1603,10 +1642,14 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(median = supersMedian,
+           confint_lower = supersMedian_confint_lower,
+           confint_upper = supersMedian_confint_upper,
+           n = supersN)
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -1615,10 +1658,14 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(median = expertsMedian,
+           confint_lower = expertsMedian_confint_lower,
+           confint_upper = expertsMedian_confint_upper,
+           n = expertsN)
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -1627,10 +1674,14 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(median = domainExpertsMedian,
+           confint_lower = domainExpertsMedian_confint_lower,
+           confint_upper = domainExpertsMedian_confint_upper,
+           n = domainExpertsN)
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -1987,10 +2038,14 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(median = supersMedian,
+           confint_lower = supersMedian_confint_lower,
+           confint_upper = supersMedian_confint_upper,
+           n = supersN)
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {  # note to self to ask about this
       supersTimeSeries[i, ]$median <- NA
@@ -1999,10 +2054,14 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(median = expertsMedian,
+           confint_lower = expertsMedian_confint_lower,
+           confint_upper = expertsMedian_confint_upper,
+           n = expertsN)
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2011,10 +2070,14 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(median = domainExpertsMedian,
+           confint_lower = domainExpertsMedian_confint_lower,
+           confint_upper = domainExpertsMedian_confint_upper,
+           n = domainExpertsN)
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2307,10 +2370,14 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(median = supersMedian,
+           confint_lower = supersMedian_confint_lower,
+           confint_upper = supersMedian_confint_upper,
+           n = supersN)
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2319,10 +2386,14 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(median = expertsMedian,
+           confint_lower = expertsMedian_confint_lower,
+           confint_upper = expertsMedian_confint_upper,
+           n = expertsN)
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2331,10 +2402,14 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(median = domainExpertsMedian,
+           confint_lower = domainExpertsMedian_confint_lower,
+           confint_upper = domainExpertsMedian_confint_upper,
+           n = domainExpertsN)
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2559,10 +2634,14 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(median = supersMedian,
+           confint_lower = supersMedian_confint_lower,
+           confint_upper = supersMedian_confint_upper,
+           n = supersN)
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2571,10 +2650,14 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(median = expertsMedian,
+           confint_lower = expertsMedian_confint_lower,
+           confint_upper = expertsMedian_confint_upper,
+           n = expertsN)
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2583,10 +2666,14 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(median = domainExpertsMedian,
+           confint_lower = domainExpertsMedian_confint_lower,
+           confint_upper = domainExpertsMedian_confint_upper,
+           n = domainExpertsN)
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2812,10 +2899,14 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(median = supersMedian,
+           confint_lower = supersMedian_confint_lower,
+           confint_upper = supersMedian_confint_upper,
+           n = supersN)
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2824,10 +2915,14 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(median = expertsMedian,
+           confint_lower = expertsMedian_confint_lower,
+           confint_upper = expertsMedian_confint_upper,
+           n = expertsN)
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2836,10 +2931,14 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(median = domainExpertsMedian,
+           confint_lower = domainExpertsMedian_confint_lower,
+           confint_upper = domainExpertsMedian_confint_upper,
+           n = domainExpertsN)
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2944,10 +3043,14 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(median = supersMedian,
+           confint_lower = supersMedian_confint_lower,
+           confint_upper = supersMedian_confint_upper,
+           n = supersN)
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2956,10 +3059,14 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(median = expertsMedian,
+           confint_lower = expertsMedian_confint_lower,
+           confint_upper = expertsMedian_confint_upper,
+           n = expertsN)
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2968,10 +3075,14 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(median = domainExpertsMedian,
+           confint_lower = domainExpertsMedian_confint_lower,
+           confint_upper = domainExpertsMedian_confint_upper,
+           n = domainExpertsN)
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2985,7 +3096,6 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plotTable <- boot_results(plotTable) 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2) + ylab("Median") +
@@ -3433,7 +3543,6 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plotTable <- boot_results(plotTable) 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2) + ylab("Median") +
@@ -3472,7 +3581,6 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plotTable <- boot_results(plotTable) 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group)) +
     geom_line() +
     geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2) + ylab("Median") +
