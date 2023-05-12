@@ -32,7 +32,7 @@ boot_results <- function(plotTable, statistic = median, width = 0.95) {
     do({
       x <- .$forecast
       res <- boot(x, statistic = function(x,i) statistic(x[i]), R = 1000)
-      if (all(res$t == 1)) {
+      if (all(res$t == res$t[1])) {
         data.frame(confint_lower = NA, confint_upper = NA)
       } else {
         a <- boot.ci(res, conf = width, type = "perc")
@@ -1249,19 +1249,21 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
     year = numeric(0),
     currentDate = Date(0),
     median = numeric(0),
+    confint_lower = numeric(0),
+    confint_upper = numeric(0),
     group = character(0),
     n = numeric(0)
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper, supersN) %>%
     mutate(group = paste("Superforecasters"))
   supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries <- supersTimeSeries %>%
-    mutate(median = supersMedian,
+    rename(median = supersMedian,
            confint_lower = supersMedian_confint_lower,
            confint_upper = supersMedian_confint_upper,
-           n = csv$supersN)
+           n = supersN)
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -1273,14 +1275,14 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   subtitle <- subtitle
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper, expertsN) %>%
     mutate(group = "Experts")
   expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries <- expertsTimeSeries %>%
-    mutate(median = expertsMedian,
+    rename(median = expertsMedian,
            confint_lower = expertsMedian_confint_lower,
            confint_upper = expertsMedian_confint_upper,
-           n = csv$expertsN)
+           n = expertsN)
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -1289,14 +1291,14 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper, domainExpertsN) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
-    mutate(median = domainExpertsMedian,
+    rename(median = domainExpertsMedian,
            confint_lower = domainExpertsMedian_confint_lower,
            confint_upper = domainExpertsMedian_confint_upper,
-           n = csv$domainExpertsN)
+           n = domainExpertsN)
   if (!all(is.na(domainExpertsTimeSeries$median))) {
     domainExpertsTimeSeries$median[is.na(domainExpertsTimeSeries$median)] <- 0
     for (i in 1:nrow(domainExpertsTimeSeries)) {
