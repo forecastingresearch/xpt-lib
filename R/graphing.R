@@ -42,13 +42,34 @@ boot_results <- function(plotTable, statistic = median, width = 0.95) {
   return(interval)
 }
 
-rename_confint_cols <- function(plotTable) {
-  # If there are any variables with "confint_lower" or "confint_upper" in the name, rename them
-  if (any(grepl("confint_lower", names(plotTable)))) {
-    names(plotTable)[grepl("confint_lower", names(plotTable))] <- "confint_lower"
-    names(plotTable)[grepl("confint_upper", names(plotTable))] <- "confint_upper"
-  }
-  return(plotTable)
+plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian) {
+  #' Plot time series with confidence interval ribbons.
+  #' 
+  #' @param plotTable Data frame with columns currentDate, median, group
+  #' @param title Title of plot
+  #' @param subtitle Subtitle of plot
+  #' @param phaseTwoMedian Date of median start time for Phase 2 (we cut the plot off on the left
+  #' at this date)
+  #' 
+  #' @export
+
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group, fill = group)) +
+    geom_line() +
+    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent", color = "transparent") + ylab("Median") +
+    xlab("Date") +
+    labs(title = title, subtitle = subtitle) +
+    theme_bw() +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      plot.subtitle = element_text(hjust = 0.5),
+      legend.title = element_blank()
+    ) +
+    scale_color_manual(values = cb_pal) +
+    scale_fill_manual(values = cb_pal) +
+    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") + xlim(phaseTwoMedian, NA)
+  plot$labels$color <- ""
+  return(plot)
 }
 
 histogram <- function(questionDataProcessed, filenameStart, title, stage,
@@ -196,15 +217,15 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
     # If there are domain experts, stick them in between supers and general x-risk experts
     if (specialty != "") {
       boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast), fill = "white")) +
-        geom_label(aes(x = 2, y = median(boxData_special$forecast), label = median(boxData_special$forecast), fill = "white")) +
-        geom_label(aes(x = 3, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast), fill = "white")) +
-        geom_label(aes(x = 4, y = median(boxData_general$forecast), label = median(boxData_general$forecast), fill = "white"))
+        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), fill = "white") +
+        geom_label(aes(x = 2, y = median(boxData_special$forecast), label = median(boxData_special$forecast)), fill = "white") +
+        geom_label(aes(x = 3, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), fill = "white") +
+        geom_label(aes(x = 4, y = median(boxData_general$forecast), label = median(boxData_general$forecast)), fill = "white")
     } else {
       boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast), fill = "white")) +
-        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast), fill = "white")) +
-        geom_label(aes(x = 3, y = median(boxData_general$forecast), label = median(boxData_general$forecast), fill = "white"))
+        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), fill = "white") +
+        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), fill = "white") +
+        geom_label(aes(x = 3, y = median(boxData_general$forecast), label = median(boxData_general$forecast)), fill = "white")
     }
     boxPlot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 && forecastMax == 100) {
@@ -1313,23 +1334,7 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group, fill = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent", color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "by", csv$year[1]), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  plot$labels$color <- ""
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian)
 
   ggsave(paste0(currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -1685,22 +1690,7 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "-", distrib), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", distrib), subtitle, phaseTwoMedian)
 
   if (grepl("%", currentSetName)) {
     ggsave(paste0(currentSetName, "% - Figure One (", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -2079,22 +2069,7 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "-", year, "-", currentDistrib), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", year, "-", currentDistrib), subtitle, phaseTwoMedian)
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, " - ", currentDistrib, ").png")), plot, device = "png", width = 9.18, height = 5.78, units = c("in"))
 }
@@ -2409,22 +2384,7 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "-", year), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", year), subtitle, phaseTwoMedian)
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -2671,23 +2631,7 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "-", country, "-", year), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal)
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  plot$labels$color <- ""
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", country, "-", year), subtitle, phaseTwoMedian)
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -2934,23 +2878,7 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "-", country), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  plot$labels$color <- ""
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", country), subtitle, phaseTwoMedian)
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -3076,22 +3004,7 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
+  plot <- plot_with_ribbons(plotTable, title, subtitle, phaseTwoMedian)
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -3525,24 +3438,7 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "by", csv$year[1], "(All)"), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = cb_pal(length(unique(plotTable$group))))
-  plot$labels$color <- ""
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian)
 
   ggsave(paste0(currentSetName, " - Teams [All] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3565,24 +3461,7 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "by", csv$year[1], "(Supers)"), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = cb_pal(length(unique(plotTable$group))))
-  plot$labels$color <- ""
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1], "(Supers)"), subtitle, phaseTwoMedian)
 
   ggsave(paste0(currentSetName, " - Teams [Supers] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3605,24 +3484,7 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "by", csv$year[1], "(Experts)"), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = cb_pal(length(unique(plotTable$group))))
-  plot$labels$color <- ""
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1], "(Experts)"), subtitle, phaseTwoMedian)
 
   ggsave(paste0(currentSetName, " - Teams [Experts] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -3715,25 +3577,7 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "(All)"), subtitle = distrib) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
-    ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$color <- ""
+  plot <- plot_with_ribbons(plotTable, paste(title, "(All)"), distrib, phaseTwoMedian)
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [All] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3756,25 +3600,7 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "(Supers)"), subtitle = distrib) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
-    ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$color <- ""
+  plot <- plot_with_ribbons(plotTable, paste(title, "(Supers)"), distrib, phaseTwoMedian)
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [Supers] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3797,25 +3623,7 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "(Experts)"), subtitle = distrib) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
-    ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$color <- ""
+  plot <- plot_with_ribbons(plotTable, paste(title, "(Experts)"), distrib, phaseTwoMedian)
 
   ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [Experts] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -3949,8 +3757,7 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     scale_fill_manual(values = cb_pal) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") + xlim(phaseTwoMedian, NA) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
   plot$labels$color <- ""
 
@@ -3990,8 +3797,7 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     scale_fill_manual(values = cb_pal) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") + xlim(phaseTwoMedian, NA) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
   plot$labels$color <- ""
 
@@ -4031,8 +3837,7 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     scale_fill_manual(values = cb_pal) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = cb_pal(length(unique(plotTable$group)))) +
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") + xlim(phaseTwoMedian, NA) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
   plot$labels$color <- ""
 

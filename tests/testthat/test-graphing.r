@@ -1,4 +1,4 @@
-ibrary(dplyr)
+library(dplyr)
 library(purrr)
 library(stringr)
 library(xpt)
@@ -50,21 +50,7 @@ test_boot <- function() {
 
 test_plot_ci_ribbon <- function() {
   plotTable <- read.csv("/home/molly/fri/plotTable_sample.csv")
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group, fill = group)) +
-    geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
-    xlab("Date") +
-    labs(title = paste("test", "by", 2345)) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_blank()
-    ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal)
-  plot$labels$color <- ""
-  plot
+  plot_with_ribbons(plotTable, "fake data", "fake subtitle", ymd("2022 06 16"))
 }
 
 test_plot_ci_ribbon()
