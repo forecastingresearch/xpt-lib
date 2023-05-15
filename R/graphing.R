@@ -15,7 +15,7 @@ cb_pal <- tail(cb_pal, -1)
 
 boot_results <- function(plotTable, statistic = median, width = 0.95) {
   #' Get bootstrapped confidence intervals
-  #' 
+  #'
   #' `do` function applies the `boot` function to each combination of (group,
   #' currentDate) and creates a new dataframe with a row for each combination...
   #' Assumes this is being called from within figureDataMetrics (one question,
@@ -23,7 +23,7 @@ boot_results <- function(plotTable, statistic = median, width = 0.95) {
   #'
   #' @importFrom boot boot boot.ci
   #' @export
-  
+
   set.seed(123)
   if (nrow(plotTable) == 0) {
     return(data.frame(confint_lower = NA, confint_upper = NA))
@@ -42,20 +42,20 @@ boot_results <- function(plotTable, statistic = median, width = 0.95) {
   return(interval)
 }
 
-plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian) {
+plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, ribbon = FALSE) {
   #' Plot time series with confidence interval ribbons.
-  #' 
+  #'
   #' @param plotTable Data frame with columns currentDate, median, group
   #' @param title Title of plot
   #' @param subtitle Subtitle of plot
   #' @param phaseTwoMedian Date of median start time for Phase 2 (we cut the plot off on the left
   #' at this date)
-  #' 
+  #'
   #' @export
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group, fill = group)) +
     geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent", color = "transparent") + ylab("Median") +
+    ylab("Median") +
     xlab("Date") +
     labs(title = title, subtitle = subtitle) +
     theme_bw() +
@@ -65,10 +65,16 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian) {
       legend.title = element_blank()
     ) +
     scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") + xlim(phaseTwoMedian, NA)
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    xlim(phaseTwoMedian, NA)
   plot$labels$color <- ""
+
+  if (ribbon) {
+    plot <- plot +
+      geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group, color = group), alpha = 0.2, linetype = "dotted")
+  }
+
   return(plot)
 }
 

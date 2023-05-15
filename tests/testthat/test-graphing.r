@@ -48,11 +48,5 @@ test_boot <- function() {
   return(aa)
 }
 
-test_plot_ci_ribbon <- function() {
-  plotTable <- read.csv("/home/molly/fri/plotTable_sample.csv")
-  plot_with_ribbons(plotTable, "fake data", "fake subtitle", ymd("2022 06 16"))
-}
-
-test_plot_ci_ribbon()
 #test_boot()
 #test_rs_quintile()
