@@ -49,4 +49,4 @@ test_boot <- function() {
 }
 
 #test_boot()
-#test_rs_quintile()
+test_rs_quintile()

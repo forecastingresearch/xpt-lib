@@ -5,6 +5,8 @@ RSInit <- function() {
   #' Initialize reciprocal scoring dataframe.
   #'
   #' @return An empty dataframe with the reciprocal scoring columns.
+  #'
+  #' @export
 
   return(data.frame(
     currentSetName = character(0),
@@ -31,6 +33,8 @@ RSRankingInit <- function() {
   #' Initialize reciprocal scoring ranking dataframe.
   #'
   #' @return An empty dataframe that will hold the reciprocal scoring ranking for each user.
+  #'
+  #' @export
 
   return(data.frame(
     userId = numeric(0),
@@ -113,6 +117,7 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
 
         otherBeliefSets <- beliefSets[!grepl("Your", beliefSets)]
 
+        browser()
         medianBeliefs <- summaryTable %>%
           filter(currentSetName == sn) %>%
           filter(currentQuestionName == paste(years[k], beliefSets[grepl("Your", beliefSets)])) %>%
