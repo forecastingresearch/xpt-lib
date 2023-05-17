@@ -42,7 +42,7 @@ boot_results <- function(plotTable, statistic = median, width = 0.95) {
   return(interval)
 }
 
-plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, ribbon = FALSE) {
+plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname) {
   #' Plot time series with confidence interval ribbons.
   #'
   #' @param plotTable Data frame with columns currentDate, median, group
@@ -65,15 +65,17 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, ribbon
       legend.title = element_blank()
     ) +
     scale_color_manual(values = cb_pal) +
+    scale_fill_manual(values = cb_pal) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
     xlim(phaseTwoMedian, NA)
   plot$labels$color <- ""
 
-  if (ribbon) {
+  ggsave(paste0(fname, ".png"), plot, width = 9.18, height = 5.78, units = c("in"))
+
     plot <- plot +
-      geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group, color = group), alpha = 0.2, linetype = "dotted")
-  }
+      geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group, color = group), alpha = 0.1, linetype = "dotted")
+    ggsave(paste0(fname, "_with_CI.png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
   return(plot)
 }
@@ -1333,9 +1335,8 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian)
-
-  ggsave(paste0(currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- paste0(currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ")")
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian, fname)
 }
 
 multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
@@ -1689,13 +1690,14 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "-", distrib), subtitle, phaseTwoMedian)
-
   if (grepl("%", currentSetName)) {
-    ggsave(paste0(currentSetName, "% - Figure One (", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
+    fname = paste0(currentSetName, "% - Figure One (", distrib, "%)")
   } else {
-    ggsave(paste0(currentSetName, " - Figure One (", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
+    fname = paste0(currentSetName, " - Figure One (", distrib, "%)")
   }
+
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", distrib), subtitle, phaseTwoMedian, fname)
+
 }
 
 pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, currentDistrib) {
@@ -2068,9 +2070,8 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "-", year, "-", currentDistrib), subtitle, phaseTwoMedian)
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, " - ", currentDistrib, ").png")), plot, device = "png", width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, " - ", currentDistrib, ")"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", year, "-", currentDistrib), subtitle, phaseTwoMedian, fname)
 }
 
 multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, year, currentDistrib) {
@@ -2383,9 +2384,8 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "-", year), subtitle, phaseTwoMedian)
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ")"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", year), subtitle, phaseTwoMedian, fname)
 }
 
 multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName, year) {
@@ -2630,9 +2630,8 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "-", country, "-", year), subtitle, phaseTwoMedian)
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ")"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", country, "-", year), subtitle, phaseTwoMedian, fname)
 }
 
 multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetName, year, country) {
@@ -2877,9 +2876,8 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "-", country), subtitle, phaseTwoMedian)
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", country, ")"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", country), subtitle, phaseTwoMedian, fname)
 }
 
 pointBinaryFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
@@ -3003,9 +3001,8 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- plot_with_ribbons(plotTable, title, subtitle, phaseTwoMedian)
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One"))
+  plot <- plot_with_ribbons(plotTable, title, subtitle, phaseTwoMedian, fname)
 }
 
 pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
@@ -3437,9 +3434,8 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian)
-
-  ggsave(paste0(currentSetName, " - Teams [All] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- paste0(currentSetName, " - Teams [All] (", csv$year[1], " ", csv$beliefSet[1], ")")
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian, fname)
 
   # Supers
   plotTable <- data.frame(
@@ -3460,9 +3456,8 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1], "(Supers)"), subtitle, phaseTwoMedian)
-
-  ggsave(paste0(currentSetName, " - Teams [Supers] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- paste0(currentSetName, " - Teams [Supers] (", csv$year[1], " ", csv$beliefSet[1], ")")
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1], "(Supers)"), subtitle, phaseTwoMedian, fname)
 
   # Experts
   plotTable <- data.frame(
@@ -3483,9 +3478,8 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1], "(Experts)"), subtitle, phaseTwoMedian)
-
-  ggsave(paste0(currentSetName, " - Teams [Experts] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- paste0(currentSetName, " - Teams [Experts] (", csv$year[1], " ", csv$beliefSet[1], ")")
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1], "(Experts)"), subtitle, phaseTwoMedian, fname)
 }
 
 pointDistrib_teams <- function(metaTable, data) {
@@ -3576,9 +3570,8 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "(All)"), distrib, phaseTwoMedian)
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [All] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Teams [All] (", distrib, "%)"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "(All)"), distrib, phaseTwoMedian, fname)
 
   # Supers
   plotTable <- data.frame(
@@ -3599,9 +3592,8 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "(Supers)"), distrib, phaseTwoMedian)
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [Supers] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Teams [Supers] (", distrib, "%)"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "(Supers)"), distrib, phaseTwoMedian, fname)
 
   # Experts
   plotTable <- data.frame(
@@ -3622,9 +3614,8 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- plot_with_ribbons(plotTable, paste(title, "(Experts)"), distrib, phaseTwoMedian)
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [Experts] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Teams [Experts] (", distrib, "%)"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "(Experts)"), distrib, phaseTwoMedian, fname)
 }
 
 multiYearDistrib_teams <- function(metaTable, data) {
