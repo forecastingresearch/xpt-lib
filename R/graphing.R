@@ -207,32 +207,25 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
 
     boxData$group <- factor(boxData$group, levels = unique(boxData$group), ordered = TRUE)
 
-    boxPlot <- ggplot(boxData, aes(x = group, y = forecast, fill = group)) +
+    boxPlot <- ggplot(boxData, aes(x = group, y = forecast, color = group)) +
       geom_boxplot(outlier.shape = NA) +
       ylab("Forecast") +
       xlab("Group") +
       labs(title = title, subtitle = subtitle) +
       theme_bw() +
-      scale_fill_manual(values = cb_pal) +
+      scale_color_manual(values = cb_pal) +
       theme(
         plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5),
         legend.position = "none",
         axis.title.x = element_blank()) +
-      geom_point(position = position_jitterdodge())
-    # If there are domain experts, stick them in between supers and general x-risk experts
-    if (specialty != "") {
-      boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), fill = "white") +
-        geom_label(aes(x = 2, y = median(boxData_special$forecast), label = median(boxData_special$forecast)), fill = "white") +
-        geom_label(aes(x = 3, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), fill = "white") +
-        geom_label(aes(x = 4, y = median(boxData_general$forecast), label = median(boxData_general$forecast)), fill = "white")
-    } else {
-      boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), fill = "white") +
-        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), fill = "white") +
-        geom_label(aes(x = 3, y = median(boxData_general$forecast), label = median(boxData_general$forecast)), fill = "white")
-    }
+      geom_point(position = position_jitterdodge()) +
+      stat_summary(fun.y = median, geom = "label", aes(label = round(..y.., 2)),
+                   position = position_dodge2(width = 0.75, preserve = "single"),
+                   vjust = 0.5,
+                   size = 3,
+                   fill = "white",
+                   show.legend = FALSE)
     boxPlot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 && forecastMax == 100) {
       boxPlot <- boxPlot +
@@ -1409,7 +1402,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -1497,7 +1490,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -1769,7 +1762,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -1858,7 +1851,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -2144,7 +2137,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -2233,7 +2226,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -2459,7 +2452,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -2548,7 +2541,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -2706,7 +2699,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -2795,7 +2788,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -3079,7 +3072,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("SD") +
     xlab("Date") +
@@ -3168,7 +3161,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -3247,7 +3240,7 @@ pointBinaryGraphics_custom <- function(title, csv, currentSetName) {
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = hdTrim, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = hdTrim, group = group, color = group)) +
     geom_line() +
     ylab("HD Trim") +
     xlab("Date") +
@@ -3326,7 +3319,7 @@ pointDistribGraphics_custom <- function(title, subtitle, csv, currentSetName, di
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = hdTrim, group = group, fill = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = hdTrim, group = group, color = group)) +
     geom_line() +
     ylab("HD Trim") +
     xlab("Date") +
