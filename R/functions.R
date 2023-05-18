@@ -854,7 +854,7 @@ multiYearReciprocal <- function(metaTable, data) {
         phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
         phase1median <- median(phase1$forecast)
         phase1sd <- sd(phase1$forecast)
-        phase1 <- phase1 %>%   # note to self to ask about this (seems bad)
+        phase1 <- phase1 %>%
           filter(forecast > phase1median - (10 * phase1sd)) %>%
           filter(forecast < phase1median + (10 * phase1sd))
         phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
@@ -946,7 +946,7 @@ multiYearReciprocal <- function(metaTable, data) {
             dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
           }
           users <- unique(dateDataRaw$userName)
-          users <- users[users %in% c(supers, expertsG1$userName, expertsG2)]  # should this include expertsG2?
+          users <- users[users %in% c(supers, expertsG1$userName, expertsG2)]
 
           # some of these are NA? what is happening
           dateDataProcessed <- data.frame(row.names = names(dateDataRaw))
