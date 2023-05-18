@@ -117,7 +117,6 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
 
         otherBeliefSets <- beliefSets[!grepl("Your", beliefSets)]
 
-        browser()
         medianBeliefs <- summaryTable %>%
           filter(currentSetName == sn) %>%
           filter(currentQuestionName == paste(years[k], beliefSets[grepl("Your", beliefSets)])) %>%

@@ -43,7 +43,7 @@ boot_results <- function(plotTable, statistic = median, width = 0.95) {
   interval <- plotTable %>%
     do({
       x <- .$forecast
-      res <- boot(x, statistic = function(x,i) statistic(x[i]), R = 1000)
+      res <- boot(x, statistic = function(x, i) statistic(x[i]), R = 1000)
       if (all(res$t == res$t[1])) {
         data.frame(confint_lower = NA, confint_upper = NA)
       } else {
@@ -85,9 +85,9 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
 
   ggsave(paste0(fname, ".png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
-    plot <- plot +
-      geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group, color = group), alpha = 0.1, linetype = "dotted")
-    ggsave(paste0(fname, "_with_CI.png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  plot <- plot +
+    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group, color = group), alpha = 0.1, linetype = "dotted")
+  ggsave(paste0(fname, "_with_CI.png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
   return(plot)
 }
@@ -95,7 +95,7 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
 histogram <- function(questionDataProcessed, filenameStart, title, stage,
                       specialty, expectedRisk, forecastMin, forecastMax) {
   #' Histogram
-  #' 
+  #'
   #' @import ggplot2
   #' @import scales
   #' @export
@@ -197,7 +197,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
   #' Basic boxplot function
   #'
   #' @import ggplot2
-  #' @import scales 
+  #' @import scales
   #' @export
 
   tbl <- read.csv(files[1])
@@ -232,14 +232,17 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
         plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5),
         legend.position = "none",
-        axis.title.x = element_blank()) +
+        axis.title.x = element_blank()
+      ) +
       geom_point(position = position_jitterdodge()) +
-      stat_summary(fun.y = median, geom = "label", aes(label = round(..y.., 2)),
-                   position = position_dodge2(width = 0.75, preserve = "single"),
-                   vjust = 0.5,
-                   size = 3,
-                   fill = "white",
-                   show.legend = FALSE)
+      stat_summary(
+        fun.y = median, geom = "label", aes(label = round(..y.., 2)),
+        position = position_dodge2(width = 0.75, preserve = "single"),
+        vjust = 0.5,
+        size = 3,
+        fill = "white",
+        show.legend = FALSE
+      )
 
     # Add (n=numrows) for the x-axis labels
     boxPlot <- boxPlot +
@@ -1170,34 +1173,36 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   t345NeymanAgg <- neymanAggCalc(t345DateData$forecast)
   t345N <- nrow(t345DateData)
 
-  return(data.frame(beliefSet, year, currentDate = date, mean, sd, geoMean, median, hdTrim, neymanAgg, n,
-                    g1Mean, g1Sd, g1GeoMean, g1Median, g1Median_confint_lower, g1Median_confint_upper, g1HdTrim, g1NeymanAgg, g1N,
-                    supersMean, supersSd, supersGeoMean, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper, expertsMedian_confint_lower, expertsMedian_confint_upper, supersHdTrim, supersNeymanAgg, supersN,
-                    expertsMean, expertsSd, expertsGeoMean, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper, expertsHdTrim, expertsNeymanAgg, expertsN,
-                    domainExpertsMean, domainExpertsSd, domainExpertsGeoMean, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper, domainExpertsHdTrim, domainExpertsNeymanAgg, domainExpertsN,
-                    nonDomainExpertsMean, nonDomainExpertsSd, nonDomainExpertsGeoMean, nonDomainExpertsMedian, nonDomainExpertsMedian_confint_lower, nonDomainExpertsMedian_confint_upper, nonDomainExpertsHdTrim, nonDomainExpertsNeymanAgg, nonDomainExpertsN,
-                    t336Mean, t336Sd, t336GeoMean, t336Median, t336HdTrim, t336NeymanAgg, t336N,
-                    t336SupersMean, t336SupersSd, t336SupersGeoMean, t336SupersMedian, t336SupersHdTrim, t336SupersNeymanAgg, t336SupersN,
-                    t336ExpertsMean, t336ExpertsSd, t336ExpertsGeoMean, t336ExpertsMedian, t336ExpertsHdTrim, t336ExpertsNeymanAgg, t336ExpertsN,
-                    t337Mean, t337Sd, t337GeoMean, t337Median, t337HdTrim, t337NeymanAgg, t337N,
-                    t337SupersMean, t337SupersSd, t337SupersGeoMean, t337SupersMedian, t337SupersHdTrim, t337SupersNeymanAgg, t337SupersN,
-                    t337ExpertsMean, t337ExpertsSd, t337ExpertsGeoMean, t337ExpertsMedian, t337ExpertsHdTrim, t337ExpertsNeymanAgg, t337ExpertsN,
-                    t338Mean, t338Sd, t338GeoMean, t338Median, t338HdTrim, t338NeymanAgg, t338N,
-                    t338SupersMean, t338SupersSd, t338SupersGeoMean, t338SupersMedian, t338SupersHdTrim, t338SupersNeymanAgg, t338SupersN,
-                    t338ExpertsMean, t338ExpertsSd, t338ExpertsGeoMean, t338ExpertsMedian, t338ExpertsHdTrim, t338ExpertsNeymanAgg, t338ExpertsN,
-                    t339Mean, t339Sd, t339GeoMean, t339Median, t339HdTrim, t339NeymanAgg, t339N,
-                    t339SupersMean, t339SupersSd, t339SupersGeoMean, t339SupersMedian, t339SupersHdTrim, t339SupersNeymanAgg, t339SupersN,
-                    t339ExpertsMean, t339ExpertsSd, t339ExpertsGeoMean, t339ExpertsMedian, t339ExpertsHdTrim, t339ExpertsNeymanAgg, t339ExpertsN,
-                    t340Mean, t340Sd, t340GeoMean, t340Median, t340HdTrim, t340NeymanAgg, t340N,
-                    t340SupersMean, t340SupersSd, t340SupersGeoMean, t340SupersMedian, t340SupersHdTrim, t340SupersNeymanAgg, t340SupersN,
-                    t340ExpertsMean, t340ExpertsSd, t340ExpertsGeoMean, t340ExpertsMedian, t340ExpertsHdTrim, t340ExpertsNeymanAgg, t340ExpertsN,
-                    t341Mean, t341Sd, t341GeoMean, t341Median, t341HdTrim, t341NeymanAgg, t341N,
-                    t341SupersMean, t341SupersSd, t341SupersGeoMean, t341SupersMedian, t341SupersHdTrim, t341SupersNeymanAgg, t341SupersN,
-                    t341ExpertsMean, t341ExpertsSd, t341ExpertsGeoMean, t341ExpertsMedian, t341ExpertsHdTrim, t341ExpertsNeymanAgg, t341ExpertsN,
-                    t342Mean, t342Sd, t342GeoMean, t342Median, t342HdTrim, t342NeymanAgg, t342N,
-                    t343Mean, t343Sd, t343GeoMean, t343Median, t343HdTrim, t343NeymanAgg, t343N,
-                    t344Mean, t344Sd, t344GeoMean, t344Median, t344HdTrim, t344NeymanAgg, t344N,
-                    t345Mean, t345Sd, t345GeoMean, t345Median, t345HdTrim, t345NeymanAgg, t345N))
+  return(data.frame(beliefSet, year,
+    currentDate = date, mean, sd, geoMean, median, hdTrim, neymanAgg, n,
+    g1Mean, g1Sd, g1GeoMean, g1Median, g1Median_confint_lower, g1Median_confint_upper, g1HdTrim, g1NeymanAgg, g1N,
+    supersMean, supersSd, supersGeoMean, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper, expertsMedian_confint_lower, expertsMedian_confint_upper, supersHdTrim, supersNeymanAgg, supersN,
+    expertsMean, expertsSd, expertsGeoMean, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper, expertsHdTrim, expertsNeymanAgg, expertsN,
+    domainExpertsMean, domainExpertsSd, domainExpertsGeoMean, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper, domainExpertsHdTrim, domainExpertsNeymanAgg, domainExpertsN,
+    nonDomainExpertsMean, nonDomainExpertsSd, nonDomainExpertsGeoMean, nonDomainExpertsMedian, nonDomainExpertsMedian_confint_lower, nonDomainExpertsMedian_confint_upper, nonDomainExpertsHdTrim, nonDomainExpertsNeymanAgg, nonDomainExpertsN,
+    t336Mean, t336Sd, t336GeoMean, t336Median, t336HdTrim, t336NeymanAgg, t336N,
+    t336SupersMean, t336SupersSd, t336SupersGeoMean, t336SupersMedian, t336SupersHdTrim, t336SupersNeymanAgg, t336SupersN,
+    t336ExpertsMean, t336ExpertsSd, t336ExpertsGeoMean, t336ExpertsMedian, t336ExpertsHdTrim, t336ExpertsNeymanAgg, t336ExpertsN,
+    t337Mean, t337Sd, t337GeoMean, t337Median, t337HdTrim, t337NeymanAgg, t337N,
+    t337SupersMean, t337SupersSd, t337SupersGeoMean, t337SupersMedian, t337SupersHdTrim, t337SupersNeymanAgg, t337SupersN,
+    t337ExpertsMean, t337ExpertsSd, t337ExpertsGeoMean, t337ExpertsMedian, t337ExpertsHdTrim, t337ExpertsNeymanAgg, t337ExpertsN,
+    t338Mean, t338Sd, t338GeoMean, t338Median, t338HdTrim, t338NeymanAgg, t338N,
+    t338SupersMean, t338SupersSd, t338SupersGeoMean, t338SupersMedian, t338SupersHdTrim, t338SupersNeymanAgg, t338SupersN,
+    t338ExpertsMean, t338ExpertsSd, t338ExpertsGeoMean, t338ExpertsMedian, t338ExpertsHdTrim, t338ExpertsNeymanAgg, t338ExpertsN,
+    t339Mean, t339Sd, t339GeoMean, t339Median, t339HdTrim, t339NeymanAgg, t339N,
+    t339SupersMean, t339SupersSd, t339SupersGeoMean, t339SupersMedian, t339SupersHdTrim, t339SupersNeymanAgg, t339SupersN,
+    t339ExpertsMean, t339ExpertsSd, t339ExpertsGeoMean, t339ExpertsMedian, t339ExpertsHdTrim, t339ExpertsNeymanAgg, t339ExpertsN,
+    t340Mean, t340Sd, t340GeoMean, t340Median, t340HdTrim, t340NeymanAgg, t340N,
+    t340SupersMean, t340SupersSd, t340SupersGeoMean, t340SupersMedian, t340SupersHdTrim, t340SupersNeymanAgg, t340SupersN,
+    t340ExpertsMean, t340ExpertsSd, t340ExpertsGeoMean, t340ExpertsMedian, t340ExpertsHdTrim, t340ExpertsNeymanAgg, t340ExpertsN,
+    t341Mean, t341Sd, t341GeoMean, t341Median, t341HdTrim, t341NeymanAgg, t341N,
+    t341SupersMean, t341SupersSd, t341SupersGeoMean, t341SupersMedian, t341SupersHdTrim, t341SupersNeymanAgg, t341SupersN,
+    t341ExpertsMean, t341ExpertsSd, t341ExpertsGeoMean, t341ExpertsMedian, t341ExpertsHdTrim, t341ExpertsNeymanAgg, t341ExpertsN,
+    t342Mean, t342Sd, t342GeoMean, t342Median, t342HdTrim, t342NeymanAgg, t342N,
+    t343Mean, t343Sd, t343GeoMean, t343Median, t343HdTrim, t343NeymanAgg, t343N,
+    t344Mean, t344Sd, t344GeoMean, t344Median, t344HdTrim, t344NeymanAgg, t344N,
+    t345Mean, t345Sd, t345GeoMean, t345Median, t345HdTrim, t345NeymanAgg, t345N
+  ))
 }
 
 multiYearReciprocalFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
@@ -1302,10 +1307,12 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
     mutate(group = paste("Superforecasters"))
   supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries <- supersTimeSeries %>%
-    rename(median = supersMedian,
-           confint_lower = supersMedian_confint_lower,
-           confint_upper = supersMedian_confint_upper,
-           n = supersN)
+    rename(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -1321,10 +1328,12 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
     mutate(group = "Experts")
   expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries <- expertsTimeSeries %>%
-    rename(median = expertsMedian,
-           confint_lower = expertsMedian_confint_lower,
-           confint_upper = expertsMedian_confint_upper,
-           n = expertsN)
+    rename(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -1337,10 +1346,12 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
-    rename(median = domainExpertsMedian,
-           confint_lower = domainExpertsMedian_confint_lower,
-           confint_upper = domainExpertsMedian_confint_upper,
-           n = domainExpertsN)
+    rename(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median))) {
     domainExpertsTimeSeries$median[is.na(domainExpertsTimeSeries$median)] <- 0
     for (i in 1:nrow(domainExpertsTimeSeries)) {
@@ -1651,10 +1662,12 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
     select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- supersTimeSeries %>%
-    mutate(median = supersMedian,
-           confint_lower = supersMedian_confint_lower,
-           confint_upper = supersMedian_confint_upper,
-           n = csv$supersN)
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -1666,10 +1679,12 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
     select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- expertsTimeSeries %>%
-    mutate(median = expertsMedian,
-           confint_lower = expertsMedian_confint_lower,
-           confint_upper = expertsMedian_confint_upper,
-           n = csv$expertsN)
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -1681,10 +1696,12 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
     select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
-    mutate(median = domainExpertsMedian,
-           confint_lower = domainExpertsMedian_confint_lower,
-           confint_upper = domainExpertsMedian_confint_upper,
-           n = csv$domainExpertsN)
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -1699,13 +1716,12 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
   if (grepl("%", currentSetName)) {
-    fname = paste0(currentSetName, "% - Figure One (", distrib, "%)")
+    fname <- paste0(currentSetName, "% - Figure One (", distrib, "%)")
   } else {
-    fname = paste0(currentSetName, " - Figure One (", distrib, "%)")
+    fname <- paste0(currentSetName, " - Figure One (", distrib, "%)")
   }
 
   plot <- plot_with_ribbons(plotTable, paste(title, "-", distrib), subtitle, phaseTwoMedian, fname)
-
 }
 
 pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, currentDistrib) {
@@ -2019,12 +2035,14 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
     select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- supersTimeSeries %>%
-    mutate(median = supersMedian,
-           confint_lower = supersMedian_confint_lower,
-           confint_upper = supersMedian_confint_upper,
-           n = csv$supersN)
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
-    if (supersTimeSeries[i, ]$n < 10) {  # note to self to ask about this
+    if (supersTimeSeries[i, ]$n < 10) { # note to self to ask about this
       supersTimeSeries[i, ]$median <- NA
     }
   }
@@ -2034,10 +2052,12 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
     select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- expertsTimeSeries %>%
-    mutate(median = expertsMedian,
-           confint_lower = expertsMedian_confint_lower,
-           confint_upper = expertsMedian_confint_upper,
-           n = csv$expertsN)
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2049,10 +2069,12 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
     select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
-    mutate(median = domainExpertsMedian,
-           confint_lower = domainExpertsMedian_confint_lower,
-           confint_upper = domainExpertsMedian_confint_upper,
-           n = csv$domainExpertsN)
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2321,10 +2343,12 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
     select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- supersTimeSeries %>%
-    mutate(median = supersMedian,
-           confint_lower = supersMedian_confint_lower,
-           confint_upper = supersMedian_confint_upper,
-           n = csv$supersN)
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2336,10 +2360,12 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
     select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- expertsTimeSeries %>%
-    mutate(median = expertsMedian,
-           confint_lower = expertsMedian_confint_lower,
-           confint_upper = expertsMedian_confint_upper,
-           n = csv$expertsN)
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2351,10 +2377,12 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
     select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
-    mutate(median = domainExpertsMedian,
-           confint_lower = domainExpertsMedian_confint_lower,
-           confint_upper = domainExpertsMedian_confint_upper,
-           n = csv$domainExpertsN)
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2555,10 +2583,12 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
     select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- supersTimeSeries %>%
-    mutate(median = supersMedian,
-           confint_lower = supersMedian_confint_lower,
-           confint_upper = supersMedian_confint_upper,
-           n = csv$supersN)
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2570,10 +2600,12 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
     select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- expertsTimeSeries %>%
-    mutate(median = expertsMedian,
-           confint_lower = expertsMedian_confint_lower,
-           confint_upper = expertsMedian_confint_upper,
-           n = csv$expertsN)
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2585,10 +2617,12 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
     select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
-    mutate(median = domainExpertsMedian,
-           confint_lower = domainExpertsMedian_confint_lower,
-           confint_upper = domainExpertsMedian_confint_upper,
-           n = csv$domainExpertsN)
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2789,10 +2823,12 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
     select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- supersTimeSeries %>%
-    mutate(median = supersMedian,
-           confint_lower = supersMedian_confint_lower,
-           confint_upper = supersMedian_confint_upper,
-           n = csv$supersN)
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2804,10 +2840,12 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
     select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- expertsTimeSeries %>%
-    mutate(median = expertsMedian,
-           confint_lower = expertsMedian_confint_lower,
-           confint_upper = expertsMedian_confint_upper,
-           n = csv$expertsN)
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2819,10 +2857,12 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
     select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
-    mutate(median = domainExpertsMedian,
-           confint_lower = domainExpertsMedian_confint_lower,
-           confint_upper = domainExpertsMedian_confint_upper,
-           n = csv$domainExpertsN)
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2914,10 +2954,12 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
     select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
   supersTimeSeries <- supersTimeSeries %>%
-    mutate(median = supersMedian,
-           confint_lower = supersMedian_confint_lower,
-           confint_upper = supersMedian_confint_upper,
-           n = csv$supersN)
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2929,10 +2971,12 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
     select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
   expertsTimeSeries <- expertsTimeSeries %>%
-    mutate(median = expertsMedian,
-           confint_lower = expertsMedian_confint_lower,
-           confint_upper = expertsMedian_confint_upper,
-           n = csv$expertsN)
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2944,10 +2988,12 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
     select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
-    mutate(median = domainExpertsMedian,
-           confint_lower = domainExpertsMedian_confint_lower,
-           confint_upper = domainExpertsMedian_confint_upper,
-           n = csv$domainExpertsN)
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -3682,7 +3728,8 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
     geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
+    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") +
+    ylab("Median") +
     xlab("Date") +
     labs(title = paste(title, "(All)"), subtitle = paste(year, distrib)) +
     theme_bw() +
@@ -3695,7 +3742,8 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     scale_fill_manual(values = unlist(group_colors)) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") + xlim(phaseTwoMedian, NA) +
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    xlim(phaseTwoMedian, NA) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
   plot$labels$color <- ""
 
@@ -3722,7 +3770,8 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
     geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
+    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") +
+    ylab("Median") +
     xlab("Date") +
     labs(title = paste(title, "(Supers)"), subtitle = paste(year, distrib)) +
     theme_bw() +
@@ -3735,7 +3784,8 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     scale_fill_manual(values = unlist(group_colors)) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") + xlim(phaseTwoMedian, NA) +
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    xlim(phaseTwoMedian, NA) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
   plot$labels$color <- ""
 
@@ -3762,7 +3812,8 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
     geom_line() +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") + ylab("Median") +
+    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") +
+    ylab("Median") +
     xlab("Date") +
     labs(title = paste(title, "(Experts)"), subtitle = paste(year, distrib)) +
     theme_bw() +
@@ -3775,7 +3826,8 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     scale_fill_manual(values = unlist(group_colors)) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") + xlim(phaseTwoMedian, NA) +
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    xlim(phaseTwoMedian, NA) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
   plot$labels$color <- ""
 
@@ -3979,11 +4031,11 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
 
 rs_quintile_plot <- function(tbl, title, subtitle) {
   #' Boxplot for RS quintiles
-  #' 
+  #'
   #' @export
 
-  #plot <- ggplot(tbl, aes(x = quintile, y = forecast, group = quintile)) +
-  plot <-  ggplot(tbl, aes(x=quintile, y=forecast, color = userType)) +
+  # plot <- ggplot(tbl, aes(x = quintile, y = forecast, group = quintile)) +
+  plot <- ggplot(tbl, aes(x = quintile, y = forecast, color = userType)) +
     geom_boxplot(outlier.shape = NA) +
     ylab("Forecast") +
     xlab("Quintile") +
@@ -3992,19 +4044,21 @@ rs_quintile_plot <- function(tbl, title, subtitle) {
     coord_trans(y = pseudo_log_trans(base = 10), ylim = c(0, 100)) +
     scale_y_continuous(breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100)) +
     scale_color_manual(values = unlist(group_colors)) +
-    #scale_fill_manual(values = unlist(group_colors)) +
+    # scale_fill_manual(values = unlist(group_colors)) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_blank()
     ) +
-    geom_point(position=position_jitterdodge(), aes(x=quintile, y=forecast, group=userType)) +
-    stat_summary(fun.y = median, geom = "label", aes(label = round(..y.., 4)),
-                 position = position_dodge2(width = 0.75, preserve = "single"),
-                 vjust = 0.5,
-                 size = 3,
-                 fill = "white",
-                 show.legend = FALSE)
+    geom_point(position = position_jitterdodge(), aes(x = quintile, y = forecast, group = userType)) +
+    stat_summary(
+      fun.y = median, geom = "label", aes(label = round(..y.., 4)),
+      position = position_dodge2(width = 0.75, preserve = "single"),
+      vjust = 0.5,
+      size = 3,
+      fill = "white",
+      show.legend = FALSE
+    )
 
   plot$labels$colour <- ""
   plot$labels$fill <- ""
