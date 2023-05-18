@@ -7,11 +7,23 @@ library(ggplot2)
 library(scales)
 
 # Generate a colorblind-friendly palette with six colors
-cb_pal <- colorblind_pal()(6)
+cb_pal <- colorblind_pal()(8)
 
 # Exclude black from the palette
 cb_pal <- tail(cb_pal, -1)
 
+group_colors <- list(
+  "Superforecasters" = cb_pal[1],
+  "Domain Experts" = cb_pal[2],
+  "Other Experts" = cb_pal[2],
+  "General X-risk Experts" = cb_pal[3],
+  "Non-domain Experts" = cb_pal[4],
+  "Numerate Citizens" = cb_pal[5],
+  "Biorisk Experts" = cb_pal[2],
+  "AI Experts" = cb_pal[2],
+  "Climate Experts" = cb_pal[2],
+  "Nuclear Experts" = cb_pal[2]
+)
 
 boot_results <- function(plotTable, statistic = median, width = 0.95) {
   #' Get bootstrapped confidence intervals
@@ -64,8 +76,8 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_blank()
     ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
+    scale_color_manual(values = unlist(group_colors)) +
+    scale_fill_manual(values = unlist(group_colors)) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
     xlim(phaseTwoMedian, NA)
@@ -195,17 +207,17 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
 
   if (type == "regGroups") {
     boxData_supers <- tbl %>% filter(userName %in% supers)
-    boxData <- boxData_supers %>% mutate(group = paste0("Superforecasters (n=", nrow(boxData_supers), ")"))
+    boxData <- boxData_supers %>% mutate(group = "Superforecasters")
     boxData_experts <- tbl %>% filter(userName %in% expertsG1$userName)
     if (specialty != "") {
       field <- specialty
       specialists <- expertsG1 %>% filter(field == specialty1 | field == specialty2 | field == specialty3)
       boxData_special <- tbl %>% filter(userName %in% specialists$userName)
-      boxData <- rbind(boxData, boxData_special %>% mutate(group = paste0(field, " Experts (n=", nrow(boxData_special), ")")))
+      boxData <- rbind(boxData, boxData_special %>% mutate(group = paste0(field, " Experts")))
     }
-    boxData <- rbind(boxData, boxData_experts %>% mutate(group = paste0("Non-domain Experts (n=", nrow(boxData_experts), ")")))
+    boxData <- rbind(boxData, boxData_experts %>% mutate(group = "Non-domain Experts"))
     boxData_general <- tbl %>% filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName)
-    boxData <- rbind(boxData, boxData_general %>% mutate(group = paste0("General X-risk Experts (n=", nrow(boxData_general), ")")))
+    boxData <- rbind(boxData, boxData_general %>% mutate(group = "General X-risk Experts"))
 
     boxData$group <- factor(boxData$group, levels = unique(boxData$group), ordered = TRUE)
 
@@ -215,7 +227,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
       xlab("Group") +
       labs(title = title, subtitle = subtitle) +
       theme_bw() +
-      scale_color_manual(values = cb_pal) +
+      scale_color_manual(values = unlist(group_colors)) +
       theme(
         plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5),
@@ -228,6 +240,14 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
                    size = 3,
                    fill = "white",
                    show.legend = FALSE)
+
+    # Add (n=numrows) for the x-axis labels
+    boxPlot <- boxPlot +
+      scale_x_discrete(labels = function(x) {
+        x <- as.character(x)
+        paste0(x, " (n=", table(boxData$group)[x], ")")
+      })
+
     boxPlot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 && forecastMax == 100) {
       boxPlot <- boxPlot +
@@ -272,7 +292,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = cb_pal) +
+    scale_color_manual(values = unlist(group_colors)) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
@@ -313,7 +333,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "Superforecasters (n=", length(unique(boxData_supers$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = cb_pal) +
+    scale_color_manual(values = unlist(group_colors)) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
@@ -354,7 +374,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "Experts (n=", length(unique(boxData_experts$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = cb_pal) +
+    scale_color_manual(values = unlist(group_colors)) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
@@ -397,7 +417,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
         xlab("Percentile") +
         labs(title = title, subtitle = paste0("Stage ", stage, " | ", specialty, " Specialists (n=", length(unique(boxData_special$userName)), ")")) +
         theme_bw() +
-        scale_color_manual(values = cb_pal) +
+        scale_color_manual(values = unlist(group_colors)) +
         theme(
           plot.title = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5),
@@ -1415,14 +1435,8 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(paste0("VARIANCE - ", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -1503,14 +1517,8 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(paste0("PERCENT VARIANCE -", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -1776,14 +1784,8 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -1865,14 +1867,8 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -2150,14 +2146,8 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -2239,14 +2229,8 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -2464,14 +2448,8 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -2553,14 +2531,8 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -2710,14 +2682,8 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", year, " ", country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -2799,14 +2765,8 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", year, country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -3081,14 +3041,8 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -3170,14 +3124,8 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
       legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = cb_pal[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = cb_pal)
-  }
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -3743,8 +3691,8 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_blank()
     ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
+    scale_color_manual(values = unlist(group_colors)) +
+    scale_fill_manual(values = unlist(group_colors)) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") + xlim(phaseTwoMedian, NA) +
@@ -3783,8 +3731,8 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_blank()
     ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
+    scale_color_manual(values = unlist(group_colors)) +
+    scale_fill_manual(values = unlist(group_colors)) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") + xlim(phaseTwoMedian, NA) +
@@ -3823,8 +3771,8 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_blank()
     ) +
-    scale_color_manual(values = cb_pal) +
-    scale_fill_manual(values = cb_pal) +
+    scale_color_manual(values = unlist(group_colors)) +
+    scale_fill_manual(values = unlist(group_colors)) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") + xlim(phaseTwoMedian, NA) +
@@ -4043,22 +3991,20 @@ rs_quintile_plot <- function(tbl, title, subtitle) {
     theme_bw() +
     coord_trans(y = pseudo_log_trans(base = 10), ylim = c(0, 100)) +
     scale_y_continuous(breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100)) +
-    scale_color_manual(values = cb_pal) +
-    #scale_fill_manual(values = cb_pal) +
+    scale_color_manual(values = unlist(group_colors)) +
+    #scale_fill_manual(values = unlist(group_colors)) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_blank()
     ) +
     geom_point(position=position_jitterdodge(), aes(x=quintile, y=forecast, group=userType)) +
-    stat_summary(fun.y = median, geom = "label", aes(label = round(..y.., 2)),
+    stat_summary(fun.y = median, geom = "label", aes(label = round(..y.., 4)),
                  position = position_dodge2(width = 0.75, preserve = "single"),
                  vjust = 0.5,
                  size = 3,
                  fill = "white",
                  show.legend = FALSE)
-
-    #stat_summary(fun.y = median, geom = "text", aes(label = round(..y.., 2)), size = 3, position = position_dodge(width = 0.9), vjust = -1)
 
   plot$labels$colour <- ""
   plot$labels$fill <- ""

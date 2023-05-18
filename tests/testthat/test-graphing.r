@@ -11,7 +11,7 @@ test_rs_quintile <- function() {
   set.seed(123)
 
   # Define user types and quintiles
-  user_types <- c("Supers", "General X-risk Experts", "Other Experts")
+  user_types <- c("Superforecasters", "General X-risk Experts", "Other Experts")
   quintiles <- paste0("Q", 1:5)
 
   # Generate data for each user type
