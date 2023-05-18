@@ -2,11 +2,11 @@ library(dplyr)
 library(testthat)
 library(data.table)
 
-forecasts <- c(rep(.1, 5), rep(.2, 5), rep(.4, 5), rep(.5, 2), rep(.9, 2), 1.0)
+forecasts <- c(rep(.1, 5), rep(.2, 5), rep(.4, 5), rep(.5, 2), .8, .9, 1.0)
 
 test_that("trimmed mean works", {
-  # Untrimmed, the mean is .345. Trimmed, it's .325.
-  expect_equal(trim(forecasts), .325)
+  # Untrimmed, the mean is .36. Trimmed, it's .31875.
+  expect_equal(round(trim(forecasts), 2), .32)
 }
 )
 

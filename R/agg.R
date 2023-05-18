@@ -46,7 +46,7 @@ trim <- function(x, p = 0.1) {
 }
 
 hd_trim <- function(x, p = 0.1) {
-  #' High-Density Trimming/Winsorizing
+  #' Highest-Density Trimmed Mean
   #'
   #' @description This code comes from an email from Ben Powell.
   #'
@@ -65,10 +65,13 @@ hd_trim <- function(x, p = 0.1) {
   n_out <- floor(length(x) * p)
   n_in <- length(x) - n_out
   d <- c()
+  # Get all the intervals of length n_in
   for (i in 1:(n_out + 1)) {
     d[i] <- x[i + n_in - 1] - x[i]
   }
+  # Which of those intervals is the smallest?
   i <- which.min(d)
+  # Take the mean that starts at that index and goes for n_in
   mean(x[i:(i + n_in - 1)])
 }
 
