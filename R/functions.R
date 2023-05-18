@@ -830,7 +830,7 @@ multiYearReciprocal <- function(metaTable, data) {
 
           files <- c(paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"))
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - ", currentStage, " Box Plot")
-          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0("Stage ", currentStage, " | ", years[l], " | ", beliefSets[k]), filenameStart, expectedRisk, forecastMin, forecastMax)
+          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[l], "/", beliefSets[k]))
 
@@ -930,7 +930,7 @@ multiYearReciprocal <- function(metaTable, data) {
           filter(setName == currentSetName) %>%
           filter(questionName == currentQuestionName) %>%
           filter(forecast != defaultForecast)
-
+        
         totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
         totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
         totalDomainExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName[expertsG1$specialty1 == qSpecialty | expertsG1$specialty2 == qSpecialty | expertsG1$specialty3 == qSpecialty]) %>% select(userName)))
@@ -948,8 +948,10 @@ multiYearReciprocal <- function(metaTable, data) {
           users <- unique(dateDataRaw$userName)
           users <- users[users %in% c(supers, expertsG1$userName, expertsG2)]
 
+          # some of these are NA? what is happening
           dateDataProcessed <- data.frame(row.names = names(dateDataRaw))
 
+          # For each day (row), get most recent forecast from each user
           for (m in 1:length(users)) {
             user <- users[m]
             userForecasts <- dateDataRaw %>% filter(userName == user)
@@ -958,7 +960,6 @@ multiYearReciprocal <- function(metaTable, data) {
 
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
-
           currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = beliefSets[j], year = years[k], date = currentDate, qSpecialty))
         }
 

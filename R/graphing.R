@@ -1,10 +1,103 @@
 library(dplyr)
 library(docstring)
+library(ggthemes)
+library(lubridate)
+library(boot)
+library(ggplot2)
+library(scales)
+
+# Generate a colorblind-friendly palette with six colors
+cb_pal <- colorblind_pal()(8)
+
+# Exclude black from the palette
+cb_pal <- tail(cb_pal, -1)
+
+group_colors <- list(
+  "Superforecasters" = cb_pal[1],
+  "Domain Experts" = cb_pal[2],
+  "Other Experts" = cb_pal[2],
+  "General X-risk Experts" = cb_pal[3],
+  "Non-domain Experts" = cb_pal[4],
+  "Numerate Citizens" = cb_pal[5],
+  "Biorisk Experts" = cb_pal[2],
+  "AI Experts" = cb_pal[2],
+  "Climate Experts" = cb_pal[2],
+  "Nuclear Experts" = cb_pal[2]
+)
+
+boot_results <- function(plotTable, statistic = median, width = 0.95) {
+  #' Get bootstrapped confidence intervals
+  #'
+  #' `do` function applies the `boot` function to each combination of (group,
+  #' currentDate) and creates a new dataframe with a row for each combination...
+  #' Assumes this is being called from within figureDataMetrics (one question,
+  #' one group at a time)
+  #'
+  #' @importFrom boot boot boot.ci
+  #' @export
+
+  set.seed(123)
+  if (nrow(plotTable) == 0) {
+    return(data.frame(confint_lower = NA, confint_upper = NA))
+  }
+  interval <- plotTable %>%
+    do({
+      x <- .$forecast
+      res <- boot(x, statistic = function(x, i) statistic(x[i]), R = 1000)
+      if (all(res$t == res$t[1])) {
+        data.frame(confint_lower = NA, confint_upper = NA)
+      } else {
+        a <- boot.ci(res, conf = width, type = "perc")
+        data.frame(confint_lower = a$percent[4], confint_upper = a$percent[5])
+      }
+    })
+  return(interval)
+}
+
+plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname) {
+  #' Plot time series with confidence interval ribbons.
+  #'
+  #' @param plotTable Data frame with columns currentDate, median, group
+  #' @param title Title of plot
+  #' @param subtitle Subtitle of plot
+  #' @param phaseTwoMedian Date of median start time for Phase 2 (we cut the plot off on the left
+  #' at this date)
+  #'
+  #' @export
+
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group, fill = group)) +
+    geom_line() +
+    ylab("Median") +
+    xlab("Date") +
+    labs(title = title, subtitle = subtitle) +
+    theme_bw() +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      plot.subtitle = element_text(hjust = 0.5),
+      legend.title = element_blank()
+    ) +
+    scale_color_manual(values = unlist(group_colors)) +
+    scale_fill_manual(values = unlist(group_colors)) +
+    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    xlim(phaseTwoMedian, NA)
+  plot$labels$color <- ""
+
+  ggsave(paste0(fname, ".png"), plot, width = 9.18, height = 5.78, units = c("in"))
+
+  plot <- plot +
+    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group, color = group), alpha = 0.1, linetype = "dotted")
+  ggsave(paste0(fname, "_with_CI.png"), plot, width = 9.18, height = 5.78, units = c("in"))
+
+  return(plot)
+}
 
 histogram <- function(questionDataProcessed, filenameStart, title, stage,
                       specialty, expectedRisk, forecastMin, forecastMax) {
   #' Histogram
   #'
+  #' @import ggplot2
+  #' @import scales
   #' @export
 
   if (grepl("%", filenameStart)) {
@@ -22,9 +115,9 @@ histogram <- function(questionDataProcessed, filenameStart, title, stage,
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     )
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
   if (expectedRisk == "low" & forecastMin == 0 & forecastMax == 100) {
     plot <- plot +
       scale_x_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
@@ -43,9 +136,9 @@ histogram <- function(questionDataProcessed, filenameStart, title, stage,
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     )
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
   if (expectedRisk == "low" & forecastMin == 0 & forecastMax == 100) {
     plot <- plot +
       scale_x_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
@@ -64,9 +157,9 @@ histogram <- function(questionDataProcessed, filenameStart, title, stage,
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     )
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
   if (expectedRisk == "low" & forecastMin == 0 & forecastMax == 100) {
     plot <- plot +
       scale_x_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
@@ -88,9 +181,9 @@ histogram <- function(questionDataProcessed, filenameStart, title, stage,
       theme(
         plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5),
-        legend.title = element_text(size = 9, vjust = -37)
+        legend.title = element_blank()
       )
-    plot$labels$colour <- ""
+    plot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 & forecastMax == 100) {
       plot <- plot +
         scale_x_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
@@ -103,6 +196,8 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
                     expectedRisk, forecastMin, forecastMax) {
   #' Basic boxplot function
   #'
+  #' @import ggplot2
+  #' @import scales
   #' @export
 
   tbl <- read.csv(files[1])
@@ -112,15 +207,18 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
 
   if (type == "regGroups") {
     boxData_supers <- tbl %>% filter(userName %in% supers)
-    boxData <- boxData_supers %>% mutate(group = paste0("Superforecasters (n=", nrow(boxData_supers), ")"))
+    boxData <- boxData_supers %>% mutate(group = "Superforecasters")
     boxData_experts <- tbl %>% filter(userName %in% expertsG1$userName)
-    boxData <- rbind(boxData, boxData_experts %>% mutate(group = paste0("Experts (n=", nrow(boxData_experts), ")")))
     if (specialty != "") {
       field <- specialty
       specialists <- expertsG1 %>% filter(field == specialty1 | field == specialty2 | field == specialty3)
       boxData_special <- tbl %>% filter(userName %in% specialists$userName)
-      boxData <- rbind(boxData, boxData_special %>% mutate(group = paste0(field, " Experts (n=", nrow(boxData_special), ")")))
+      boxData <- rbind(boxData, boxData_special %>% mutate(group = paste0(field, " Experts")))
     }
+    boxData <- rbind(boxData, boxData_experts %>% mutate(group = "Non-domain Experts"))
+    boxData_general <- tbl %>% filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName)
+    boxData <- rbind(boxData, boxData_general %>% mutate(group = "General X-risk Experts"))
+
     boxData$group <- factor(boxData$group, levels = unique(boxData$group), ordered = TRUE)
 
     boxPlot <- ggplot(boxData, aes(x = group, y = forecast, color = group)) +
@@ -129,24 +227,31 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
       xlab("Group") +
       labs(title = title, subtitle = subtitle) +
       theme_bw() +
-      scale_color_manual(values = hue_pal()(3)) +
+      scale_color_manual(values = unlist(group_colors)) +
       theme(
         plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5),
-        legend.title = element_text(size = 9, vjust = -37)
+        legend.position = "none",
+        axis.title.x = element_blank()
       ) +
-      geom_point(position = position_jitterdodge())
-    if (specialty != "") {
-      boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), color = hue_pal()(3)[1]) +
-        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), color = hue_pal()(3)[2]) +
-        geom_label(aes(x = 3, y = median(boxData_special$forecast), label = median(boxData_special$forecast)), color = hue_pal()(3)[3])
-    } else {
-      boxPlot <- boxPlot +
-        geom_label(aes(x = 1, y = median(boxData_supers$forecast), label = median(boxData_supers$forecast)), color = hue_pal()(3)[1]) +
-        geom_label(aes(x = 2, y = median(boxData_experts$forecast), label = median(boxData_experts$forecast)), color = hue_pal()(3)[2])
-    }
-    boxPlot$labels$colour <- ""
+      geom_point(position = position_jitterdodge()) +
+      stat_summary(
+        fun.y = median, geom = "label", aes(label = round(..y.., 2)),
+        position = position_dodge2(width = 0.75, preserve = "single"),
+        vjust = 0.5,
+        size = 3,
+        fill = "white",
+        show.legend = FALSE
+      )
+
+    # Add (n=numrows) for the x-axis labels
+    boxPlot <- boxPlot +
+      scale_x_discrete(labels = function(x) {
+        x <- as.character(x)
+        paste0(x, " (n=", table(boxData$group)[x], ")")
+      })
+
+    boxPlot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 && forecastMax == 100) {
       boxPlot <- boxPlot +
         scale_y_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
@@ -167,6 +272,8 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
                             stage, year) {
   #' Box Plot for Distribution Questions
   #'
+  #' @import ggplot2
+  #' @import scales
   #' @export
 
   boxData <- tbl %>% filter(userName %in% c(supers, expertsG1$userName))
@@ -188,18 +295,18 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = hue_pal()(5)) +
+    scale_color_manual(values = unlist(group_colors)) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_point(position = position_jitterdodge()) +
-    geom_label(aes(x = 1, y = median((boxData %>% filter(answerText == "5th %"))$forecast), label = median((boxData %>% filter(answerText == "5th %"))$forecast)), colour = hue_pal()(5)[1]) +
-    geom_label(aes(x = 2, y = median((boxData %>% filter(answerText == "25th %"))$forecast), label = median((boxData %>% filter(answerText == "25th %"))$forecast)), colour = hue_pal()(5)[2]) +
-    geom_label(aes(x = 3, y = median((boxData %>% filter(answerText == "50th %"))$forecast), label = median((boxData %>% filter(answerText == "50th %"))$forecast)), colour = hue_pal()(5)[3]) +
-    geom_label(aes(x = 4, y = median((boxData %>% filter(answerText == "75th %"))$forecast), label = median((boxData %>% filter(answerText == "75th %"))$forecast)), colour = hue_pal()(5)[4]) +
-    geom_label(aes(x = 5, y = median((boxData %>% filter(answerText == "95th %"))$forecast), label = median((boxData %>% filter(answerText == "95th %"))$forecast)), colour = hue_pal()(5)[5])
+    geom_label(aes(x = 1, y = median((boxData %>% filter(answerText == "5th %"))$forecast), label = median((boxData %>% filter(answerText == "5th %"))$forecast)), color = cb_pal[1]) +
+    geom_label(aes(x = 2, y = median((boxData %>% filter(answerText == "25th %"))$forecast), label = median((boxData %>% filter(answerText == "25th %"))$forecast)), color = cb_pal[2]) +
+    geom_label(aes(x = 3, y = median((boxData %>% filter(answerText == "50th %"))$forecast), label = median((boxData %>% filter(answerText == "50th %"))$forecast)), color = cb_pal[3]) +
+    geom_label(aes(x = 4, y = median((boxData %>% filter(answerText == "75th %"))$forecast), label = median((boxData %>% filter(answerText == "75th %"))$forecast)), color = cb_pal[4]) +
+    geom_label(aes(x = 5, y = median((boxData %>% filter(answerText == "95th %"))$forecast), label = median((boxData %>% filter(answerText == "95th %"))$forecast)), color = cb_pal[5])
   if (is.na(forecastMax)) {
     if ((max(boxData$forecast) > 10 * as.numeric(quantile(boxData$forecast, 0.95)))) {
       boxPlot <- boxPlot +
@@ -212,7 +319,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     boxPlot <- boxPlot +
       coord_cartesian(ylim = c(forecastMin, forecastMax))
   }
-  boxPlot$labels$colour <- ""
+  boxPlot$labels$color <- ""
   if (year != "") {
     boxPlot$labels$subtitle <- paste0("Stage ", stage, " | ", year, " | All Forecasters (n=", length(unique(boxData$userName)), ")")
   }
@@ -229,18 +336,18 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "Superforecasters (n=", length(unique(boxData_supers$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = hue_pal()(5)) +
+    scale_color_manual(values = unlist(group_colors)) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_point(position = position_jitterdodge()) +
-    geom_label(aes(x = 1, y = median((boxData_supers %>% filter(answerText == "5th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "5th %"))$forecast)), colour = hue_pal()(5)[1]) +
-    geom_label(aes(x = 2, y = median((boxData_supers %>% filter(answerText == "25th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "25th %"))$forecast)), colour = hue_pal()(5)[2]) +
-    geom_label(aes(x = 3, y = median((boxData_supers %>% filter(answerText == "50th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "50th %"))$forecast)), colour = hue_pal()(5)[3]) +
-    geom_label(aes(x = 4, y = median((boxData_supers %>% filter(answerText == "75th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "75th %"))$forecast)), colour = hue_pal()(5)[4]) +
-    geom_label(aes(x = 5, y = median((boxData_supers %>% filter(answerText == "95th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "95th %"))$forecast)), colour = hue_pal()(5)[5])
+    geom_label(aes(x = 1, y = median((boxData_supers %>% filter(answerText == "5th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "5th %"))$forecast)), color = cb_pal[1]) +
+    geom_label(aes(x = 2, y = median((boxData_supers %>% filter(answerText == "25th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "25th %"))$forecast)), color = cb_pal[2]) +
+    geom_label(aes(x = 3, y = median((boxData_supers %>% filter(answerText == "50th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "50th %"))$forecast)), color = cb_pal[3]) +
+    geom_label(aes(x = 4, y = median((boxData_supers %>% filter(answerText == "75th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "75th %"))$forecast)), color = cb_pal[4]) +
+    geom_label(aes(x = 5, y = median((boxData_supers %>% filter(answerText == "95th %"))$forecast), label = median((boxData_supers %>% filter(answerText == "95th %"))$forecast)), color = cb_pal[5])
   if (is.na(forecastMax)) {
     if ((max(boxData_supers$forecast) > 10 * as.numeric(quantile(boxData_supers$forecast, 0.95)))) {
       boxPlot <- boxPlot +
@@ -253,7 +360,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     boxPlot <- boxPlot +
       coord_cartesian(ylim = c(forecastMin, forecastMax))
   }
-  boxPlot$labels$colour <- ""
+  boxPlot$labels$color <- ""
   if (year != "") {
     boxPlot$labels$subtitle <- paste0("Stage ", stage, " | ", year, " | Superforecasters (n=", length(unique(boxData_supers$userName)), ")")
   }
@@ -270,18 +377,18 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "Experts (n=", length(unique(boxData_experts$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = hue_pal()(5)) +
+    scale_color_manual(values = unlist(group_colors)) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_point(position = position_jitterdodge()) +
-    geom_label(aes(x = 1, y = median((boxData_experts %>% filter(answerText == "5th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "5th %"))$forecast)), colour = hue_pal()(5)[1]) +
-    geom_label(aes(x = 2, y = median((boxData_experts %>% filter(answerText == "25th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "25th %"))$forecast)), colour = hue_pal()(5)[2]) +
-    geom_label(aes(x = 3, y = median((boxData_experts %>% filter(answerText == "50th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "50th %"))$forecast)), colour = hue_pal()(5)[3]) +
-    geom_label(aes(x = 4, y = median((boxData_experts %>% filter(answerText == "75th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "75th %"))$forecast)), colour = hue_pal()(5)[4]) +
-    geom_label(aes(x = 5, y = median((boxData_experts %>% filter(answerText == "95th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "95th %"))$forecast)), colour = hue_pal()(5)[5])
+    geom_label(aes(x = 1, y = median((boxData_experts %>% filter(answerText == "5th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "5th %"))$forecast)), color = cb_pal[1]) +
+    geom_label(aes(x = 2, y = median((boxData_experts %>% filter(answerText == "25th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "25th %"))$forecast)), color = cb_pal[2]) +
+    geom_label(aes(x = 3, y = median((boxData_experts %>% filter(answerText == "50th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "50th %"))$forecast)), color = cb_pal[3]) +
+    geom_label(aes(x = 4, y = median((boxData_experts %>% filter(answerText == "75th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "75th %"))$forecast)), color = cb_pal[4]) +
+    geom_label(aes(x = 5, y = median((boxData_experts %>% filter(answerText == "95th %"))$forecast), label = median((boxData_experts %>% filter(answerText == "95th %"))$forecast)), color = cb_pal[5])
   if (is.na(forecastMax)) {
     if ((max(boxData_experts$forecast) > 10 * as.numeric(quantile(boxData_experts$forecast, 0.95)))) {
       boxPlot <- boxPlot +
@@ -294,7 +401,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
     boxPlot <- boxPlot +
       coord_cartesian(ylim = c(forecastMin, forecastMax))
   }
-  boxPlot$labels$colour <- ""
+  boxPlot$labels$color <- ""
   if (year != "") {
     boxPlot$labels$subtitle <- paste0("Stage ", stage, " | ", year, " | Experts (n=", length(unique(boxData_experts$userName)), ")")
   }
@@ -313,18 +420,18 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
         xlab("Percentile") +
         labs(title = title, subtitle = paste0("Stage ", stage, " | ", specialty, " Specialists (n=", length(unique(boxData_special$userName)), ")")) +
         theme_bw() +
-        scale_color_manual(values = hue_pal()(5)) +
+        scale_color_manual(values = unlist(group_colors)) +
         theme(
           plot.title = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5),
-          legend.title = element_text(size = 9, vjust = -37)
+          legend.title = element_blank()
         ) +
         geom_point(position = position_jitterdodge()) +
-        geom_label(aes(x = 1, y = median((boxData_special %>% filter(answerText == "5th %"))$forecast), label = median((boxData_special %>% filter(answerText == "5th %"))$forecast)), colour = hue_pal()(5)[1]) +
-        geom_label(aes(x = 2, y = median((boxData_special %>% filter(answerText == "25th %"))$forecast), label = median((boxData_special %>% filter(answerText == "25th %"))$forecast)), colour = hue_pal()(5)[2]) +
-        geom_label(aes(x = 3, y = median((boxData_special %>% filter(answerText == "50th %"))$forecast), label = median((boxData_special %>% filter(answerText == "50th %"))$forecast)), colour = hue_pal()(5)[3]) +
-        geom_label(aes(x = 4, y = median((boxData_special %>% filter(answerText == "75th %"))$forecast), label = median((boxData_special %>% filter(answerText == "75th %"))$forecast)), colour = hue_pal()(5)[4]) +
-        geom_label(aes(x = 5, y = median((boxData_special %>% filter(answerText == "95th %"))$forecast), label = median((boxData_special %>% filter(answerText == "95th %"))$forecast)), colour = hue_pal()(5)[5])
+        geom_label(aes(x = 1, y = median((boxData_special %>% filter(answerText == "5th %"))$forecast), label = median((boxData_special %>% filter(answerText == "5th %"))$forecast)), color = cb_pal[1]) +
+        geom_label(aes(x = 2, y = median((boxData_special %>% filter(answerText == "25th %"))$forecast), label = median((boxData_special %>% filter(answerText == "25th %"))$forecast)), color = cb_pal[2]) +
+        geom_label(aes(x = 3, y = median((boxData_special %>% filter(answerText == "50th %"))$forecast), label = median((boxData_special %>% filter(answerText == "50th %"))$forecast)), color = cb_pal[3]) +
+        geom_label(aes(x = 4, y = median((boxData_special %>% filter(answerText == "75th %"))$forecast), label = median((boxData_special %>% filter(answerText == "75th %"))$forecast)), color = cb_pal[4]) +
+        geom_label(aes(x = 5, y = median((boxData_special %>% filter(answerText == "95th %"))$forecast), label = median((boxData_special %>% filter(answerText == "95th %"))$forecast)), color = cb_pal[5])
       if (is.na(forecastMax)) {
         if ((max(boxData_special$forecast) > 10 * as.numeric(quantile(boxData_special$forecast, 0.95)))) {
           boxPlot <- boxPlot +
@@ -337,7 +444,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
         boxPlot <- boxPlot +
           coord_cartesian(ylim = c(forecastMin, forecastMax))
       }
-      boxPlot$labels$colour <- ""
+      boxPlot$labels$color <- ""
       if (year != "") {
         boxPlot$labels$subtitle <- paste0("Stage ", stage, " | ", year, " | ", specialty, "Specialists (n=", length(unique(boxData_special$userName)), ")")
       }
@@ -355,6 +462,8 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
                                     forecastMax, stage, year) {
   #' Box Plot for Distribution Country Questions
   #'
+  #' @import ggplot2
+  #' @import scales
   #' @export
 
   boxData <- tbl %>% filter(userName %in% c(supers, expertsG1$userName))
@@ -366,18 +475,18 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
     xlab("Country") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = hue_pal()(length(unique(boxData$questionName)))) +
+    scale_color_manual(values = cb_pal(length(unique(boxData$questionName)))) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_point(position = position_jitterdodge())
   # for(i in 1:length(unique(boxData$questionName))){
   #   boxPlot = boxPlot +
-  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), colour=hue_pal()(length(unique(boxData$questionName)))[i])
+  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), color=cb_pal(length(unique(boxData$questionName)))[i])
   # }
-  boxPlot$labels$colour <- ""
+  boxPlot$labels$color <- ""
   if (year != "") {
     boxPlot$labels$subtitle <- paste0("Stage ", stage, " | ", year, " | All Forecasters (n=", length(unique(boxData$userName)), ")")
   }
@@ -389,6 +498,8 @@ boxPlot_country <- function(tbl, specialty, title,
                             forecastMin, forecastMax, stage) {
   #' Box Plot for Country Questions
   #'
+  #' @import ggplot2
+  #' @import scales
   #' @export
 
   boxData <- tbl %>% filter(userName %in% c(supers, expertsG1$userName))
@@ -400,18 +511,18 @@ boxPlot_country <- function(tbl, specialty, title,
     xlab("Country") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = hue_pal()(length(unique(boxData$answerText)))) +
+    scale_color_manual(values = cb_pal(length(unique(boxData$answerText)))) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_point(position = position_jitterdodge())
   # for(i in 1:length(unique(boxData$questionName))){
   #   boxPlot = boxPlot +
-  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), colour=hue_pal()(length(unique(boxData$questionName)))[i])
+  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), color=cb_pal(length(unique(boxData$questionName)))[i])
   # }
-  boxPlot$labels$colour <- ""
+  boxPlot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0(boxPlot$data$setName[1], " (All Forecasters) - Stage ", stage, " - Box Plot.png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -628,6 +739,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   sd <- sd(dateData$forecast)
   geoMean <- geoMeanCalc(dateData$forecast)
   median <- median(dateData$forecast)
+  # Get bootstrapped CI's (for median only)
+  boot_ci <- boot_results(dateData)
+  median_confint_lower <- boot_ci$confint_lower
+  median_confint_upper <- boot_ci$confint_upper
   if (length(dateData$forecast) > 0) {
     hdTrim <- hd_trim(dateData$forecast)
   } else {
@@ -641,6 +756,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   g1Sd <- sd(g1DateData$forecast)
   g1GeoMean <- geoMeanCalc(g1DateData$forecast)
   g1Median <- median(g1DateData$forecast)
+  # Get bootstrapped CI's (for median only)
+  boot_ci <- boot_results(g1DateData)
+  g1Median_confint_lower <- boot_ci$confint_lower
+  g1Median_confint_upper <- boot_ci$confint_upper
   if (length(g1DateData$forecast) > 0) {
     g1HdTrim <- hd_trim(g1DateData$forecast)
   } else {
@@ -654,6 +773,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   supersSd <- sd(supersDateData$forecast)
   supersGeoMean <- geoMeanCalc(supersDateData$forecast)
   supersMedian <- median(supersDateData$forecast)
+  # Get bootstrapped CI's (for median only)
+  boot_ci <- boot_results(supersDateData)
+  supersMedian_confint_lower <- boot_ci$confint_lower
+  supersMedian_confint_upper <- boot_ci$confint_upper
   if (length(supersDateData$forecast) > 0) {
     supersHdTrim <- hd_trim(supersDateData$forecast)
   } else {
@@ -667,6 +790,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   expertsSd <- sd(expertsDateData$forecast)
   expertsGeoMean <- geoMeanCalc(expertsDateData$forecast)
   expertsMedian <- median(expertsDateData$forecast)
+  # Get bootstrapped CI's (for median only)
+  boot_ci <- boot_results(expertsDateData)
+  expertsMedian_confint_lower <- boot_ci$confint_lower
+  expertsMedian_confint_upper <- boot_ci$confint_upper
   if (length(expertsDateData$forecast) > 0) {
     expertsHdTrim <- hd_trim(expertsDateData$forecast)
   } else {
@@ -682,6 +809,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     domainExpertsSd <- sd(domainExpertsDateData$forecast)
     domainExpertsGeoMean <- geoMeanCalc(domainExpertsDateData$forecast)
     domainExpertsMedian <- median(domainExpertsDateData$forecast)
+    # Get bootstrapped CI's (for median only)
+    boot_ci <- boot_results(domainExpertsDateData)
+    domainExpertsMedian_confint_lower <- boot_ci$confint_lower
+    domainExpertsMedian_confint_upper <- boot_ci$confint_upper
     domainExpertsMedian <- median(domainExpertsDateData$forecast)
     if (length(domainExpertsDateData$forecast) > 0) {
       domainExpertsHdTrim <- hd_trim(domainExpertsDateData$forecast)
@@ -695,6 +826,8 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     domainExpertsSd <- NA
     domainExpertsGeoMean <- NA
     domainExpertsMedian <- NA
+    domainExpertsMedian_confint_lower <- NA
+    domainExpertsMedian_confint_upper <- NA
     domainExpertsHdTrim <- NA
     domainExpertsNeymanAgg <- NA
     domainExpertsN <- NA
@@ -707,7 +840,10 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     nonDomainExpertsSd <- sd(nonDomainExpertsDateData$forecast)
     nonDomainExpertsGeoMean <- geoMeanCalc(nonDomainExpertsDateData$forecast)
     nonDomainExpertsMedian <- median(nonDomainExpertsDateData$forecast)
-    nonDomainExpertsMedian <- median(nonDomainExpertsDateData$forecast)
+    # Get bootstrapped CI's (for median only)
+    boot_ci <- boot_results(nonDomainExpertsDateData)
+    nonDomainExpertsMedian_confint_lower <- boot_ci$confint_lower
+    nonDomainExpertsMedian_confint_upper <- boot_ci$confint_upper
     if (length(nonDomainExpertsDateData$forecast) > 0) {
       nonDomainExpertsHdTrim <- hd_trim(nonDomainExpertsDateData$forecast)
     } else {
@@ -720,6 +856,8 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     nonDomainExpertsSd <- NA
     nonDomainExpertsGeoMean <- NA
     nonDomainExpertsMedian <- NA
+    domainExpertsMedian_confint_lower <- NA
+    domainExpertsMedian_confint_upper <- NA
     nonDomainExpertsHdTrim <- NA
     nonDomainExpertsNeymanAgg <- NA
     nonDomainExpertsN <- NA
@@ -1035,7 +1173,36 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   t345NeymanAgg <- neymanAggCalc(t345DateData$forecast)
   t345N <- nrow(t345DateData)
 
-  return(data.frame(beliefSet, year, currentDate = date, mean, sd, geoMean, median, hdTrim, neymanAgg, n, g1Mean, g1Sd, g1GeoMean, g1Median, g1HdTrim, g1NeymanAgg, g1N, supersMean, supersSd, supersGeoMean, supersMedian, supersHdTrim, supersNeymanAgg, supersN, expertsMean, expertsSd, expertsGeoMean, expertsMedian, expertsHdTrim, expertsNeymanAgg, expertsN, domainExpertsMean, domainExpertsSd, domainExpertsGeoMean, domainExpertsMedian, domainExpertsHdTrim, domainExpertsNeymanAgg, domainExpertsN, nonDomainExpertsMean, nonDomainExpertsSd, nonDomainExpertsGeoMean, nonDomainExpertsMedian, nonDomainExpertsHdTrim, nonDomainExpertsNeymanAgg, nonDomainExpertsN, t336Mean, t336Sd, t336GeoMean, t336Median, t336HdTrim, t336NeymanAgg, t336N, t336SupersMean, t336SupersSd, t336SupersGeoMean, t336SupersMedian, t336SupersHdTrim, t336SupersNeymanAgg, t336SupersN, t336ExpertsMean, t336ExpertsSd, t336ExpertsGeoMean, t336ExpertsMedian, t336ExpertsHdTrim, t336ExpertsNeymanAgg, t336ExpertsN, t337Mean, t337Sd, t337GeoMean, t337Median, t337HdTrim, t337NeymanAgg, t337N, t337SupersMean, t337SupersSd, t337SupersGeoMean, t337SupersMedian, t337SupersHdTrim, t337SupersNeymanAgg, t337SupersN, t337ExpertsMean, t337ExpertsSd, t337ExpertsGeoMean, t337ExpertsMedian, t337ExpertsHdTrim, t337ExpertsNeymanAgg, t337ExpertsN, t338Mean, t338Sd, t338GeoMean, t338Median, t338HdTrim, t338NeymanAgg, t338N, t338SupersMean, t338SupersSd, t338SupersGeoMean, t338SupersMedian, t338SupersHdTrim, t338SupersNeymanAgg, t338SupersN, t338ExpertsMean, t338ExpertsSd, t338ExpertsGeoMean, t338ExpertsMedian, t338ExpertsHdTrim, t338ExpertsNeymanAgg, t338ExpertsN, t339Mean, t339Sd, t339GeoMean, t339Median, t339HdTrim, t339NeymanAgg, t339N, t339SupersMean, t339SupersSd, t339SupersGeoMean, t339SupersMedian, t339SupersHdTrim, t339SupersNeymanAgg, t339SupersN, t339ExpertsMean, t339ExpertsSd, t339ExpertsGeoMean, t339ExpertsMedian, t339ExpertsHdTrim, t339ExpertsNeymanAgg, t339ExpertsN, t340Mean, t340Sd, t340GeoMean, t340Median, t340HdTrim, t340NeymanAgg, t340N, t340SupersMean, t340SupersSd, t340SupersGeoMean, t340SupersMedian, t340SupersHdTrim, t340SupersNeymanAgg, t340SupersN, t340ExpertsMean, t340ExpertsSd, t340ExpertsGeoMean, t340ExpertsMedian, t340ExpertsHdTrim, t340ExpertsNeymanAgg, t340ExpertsN, t341Mean, t341Sd, t341GeoMean, t341Median, t341HdTrim, t341NeymanAgg, t341N, t341SupersMean, t341SupersSd, t341SupersGeoMean, t341SupersMedian, t341SupersHdTrim, t341SupersNeymanAgg, t341SupersN, t341ExpertsMean, t341ExpertsSd, t341ExpertsGeoMean, t341ExpertsMedian, t341ExpertsHdTrim, t341ExpertsNeymanAgg, t341ExpertsN, t342Mean, t342Sd, t342GeoMean, t342Median, t342HdTrim, t342NeymanAgg, t342N, t343Mean, t343Sd, t343GeoMean, t343Median, t343HdTrim, t343NeymanAgg, t343N, t344Mean, t344Sd, t344GeoMean, t344Median, t344HdTrim, t344NeymanAgg, t344N, t345Mean, t345Sd, t345GeoMean, t345Median, t345HdTrim, t345NeymanAgg, t345N))
+  return(data.frame(beliefSet, year,
+    currentDate = date, mean, sd, geoMean, median, hdTrim, neymanAgg, n,
+    g1Mean, g1Sd, g1GeoMean, g1Median, g1Median_confint_lower, g1Median_confint_upper, g1HdTrim, g1NeymanAgg, g1N,
+    supersMean, supersSd, supersGeoMean, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper, expertsMedian_confint_lower, expertsMedian_confint_upper, supersHdTrim, supersNeymanAgg, supersN,
+    expertsMean, expertsSd, expertsGeoMean, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper, expertsHdTrim, expertsNeymanAgg, expertsN,
+    domainExpertsMean, domainExpertsSd, domainExpertsGeoMean, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper, domainExpertsHdTrim, domainExpertsNeymanAgg, domainExpertsN,
+    nonDomainExpertsMean, nonDomainExpertsSd, nonDomainExpertsGeoMean, nonDomainExpertsMedian, nonDomainExpertsMedian_confint_lower, nonDomainExpertsMedian_confint_upper, nonDomainExpertsHdTrim, nonDomainExpertsNeymanAgg, nonDomainExpertsN,
+    t336Mean, t336Sd, t336GeoMean, t336Median, t336HdTrim, t336NeymanAgg, t336N,
+    t336SupersMean, t336SupersSd, t336SupersGeoMean, t336SupersMedian, t336SupersHdTrim, t336SupersNeymanAgg, t336SupersN,
+    t336ExpertsMean, t336ExpertsSd, t336ExpertsGeoMean, t336ExpertsMedian, t336ExpertsHdTrim, t336ExpertsNeymanAgg, t336ExpertsN,
+    t337Mean, t337Sd, t337GeoMean, t337Median, t337HdTrim, t337NeymanAgg, t337N,
+    t337SupersMean, t337SupersSd, t337SupersGeoMean, t337SupersMedian, t337SupersHdTrim, t337SupersNeymanAgg, t337SupersN,
+    t337ExpertsMean, t337ExpertsSd, t337ExpertsGeoMean, t337ExpertsMedian, t337ExpertsHdTrim, t337ExpertsNeymanAgg, t337ExpertsN,
+    t338Mean, t338Sd, t338GeoMean, t338Median, t338HdTrim, t338NeymanAgg, t338N,
+    t338SupersMean, t338SupersSd, t338SupersGeoMean, t338SupersMedian, t338SupersHdTrim, t338SupersNeymanAgg, t338SupersN,
+    t338ExpertsMean, t338ExpertsSd, t338ExpertsGeoMean, t338ExpertsMedian, t338ExpertsHdTrim, t338ExpertsNeymanAgg, t338ExpertsN,
+    t339Mean, t339Sd, t339GeoMean, t339Median, t339HdTrim, t339NeymanAgg, t339N,
+    t339SupersMean, t339SupersSd, t339SupersGeoMean, t339SupersMedian, t339SupersHdTrim, t339SupersNeymanAgg, t339SupersN,
+    t339ExpertsMean, t339ExpertsSd, t339ExpertsGeoMean, t339ExpertsMedian, t339ExpertsHdTrim, t339ExpertsNeymanAgg, t339ExpertsN,
+    t340Mean, t340Sd, t340GeoMean, t340Median, t340HdTrim, t340NeymanAgg, t340N,
+    t340SupersMean, t340SupersSd, t340SupersGeoMean, t340SupersMedian, t340SupersHdTrim, t340SupersNeymanAgg, t340SupersN,
+    t340ExpertsMean, t340ExpertsSd, t340ExpertsGeoMean, t340ExpertsMedian, t340ExpertsHdTrim, t340ExpertsNeymanAgg, t340ExpertsN,
+    t341Mean, t341Sd, t341GeoMean, t341Median, t341HdTrim, t341NeymanAgg, t341N,
+    t341SupersMean, t341SupersSd, t341SupersGeoMean, t341SupersMedian, t341SupersHdTrim, t341SupersNeymanAgg, t341SupersN,
+    t341ExpertsMean, t341ExpertsSd, t341ExpertsGeoMean, t341ExpertsMedian, t341ExpertsHdTrim, t341ExpertsNeymanAgg, t341ExpertsN,
+    t342Mean, t342Sd, t342GeoMean, t342Median, t342HdTrim, t342NeymanAgg, t342N,
+    t343Mean, t343Sd, t343GeoMean, t343Median, t343HdTrim, t343NeymanAgg, t343N,
+    t344Mean, t344Sd, t344GeoMean, t344Median, t344HdTrim, t344NeymanAgg, t344N,
+    t345Mean, t345Sd, t345GeoMean, t345Median, t345HdTrim, t345NeymanAgg, t345N
+  ))
 }
 
 multiYearReciprocalFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
@@ -1129,16 +1296,23 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
     year = numeric(0),
     currentDate = Date(0),
     median = numeric(0),
+    confint_lower = numeric(0),
+    confint_upper = numeric(0),
     group = character(0),
     n = numeric(0)
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper, supersN) %>%
     mutate(group = paste("Superforecasters"))
   supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
-  supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    rename(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -1150,11 +1324,16 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   subtitle <- subtitle
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper, expertsN) %>%
     mutate(group = "Experts")
   expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
-  expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    rename(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -1163,11 +1342,16 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper, domainExpertsN) %>%
     mutate(group = "Domain Experts")
   domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
-  domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    rename(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median))) {
     domainExpertsTimeSeries$median[is.na(domainExpertsTimeSeries$median)] <- 0
     for (i in 1:nrow(domainExpertsTimeSeries)) {
@@ -1182,30 +1366,8 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "by", csv$year[1]), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
-
-  ggsave(paste0(currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- paste0(currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ")")
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian, fname)
 }
 
 multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
@@ -1281,18 +1443,12 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(paste0("VARIANCE - ", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -1369,18 +1525,12 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(paste0("PERCENT VARIANCE -", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -1509,10 +1659,15 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
-  supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -1521,10 +1676,15 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
-  expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -1533,10 +1693,15 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
-  domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -1550,26 +1715,13 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "-", distrib), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-
   if (grepl("%", currentSetName)) {
-    ggsave(paste0(currentSetName, "% - Figure One (", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
+    fname <- paste0(currentSetName, "% - Figure One (", distrib, "%)")
   } else {
-    ggsave(paste0(currentSetName, " - Figure One (", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
+    fname <- paste0(currentSetName, " - Figure One (", distrib, "%)")
   }
+
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", distrib), subtitle, phaseTwoMedian, fname)
 }
 
 pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, currentDistrib) {
@@ -1645,18 +1797,12 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -1734,18 +1880,12 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -1892,22 +2032,32 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
-  supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
-    if (supersTimeSeries[i, ]$n < 10) {
+    if (supersTimeSeries[i, ]$n < 10) { # note to self to ask about this
       supersTimeSeries[i, ]$median <- NA
     }
   }
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
-  expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -1916,10 +2066,15 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
-  domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -1933,22 +2088,8 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "-", year, "-", currentDistrib), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, " - ", currentDistrib, ").png")), plot, device = "png", width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, " - ", currentDistrib, ")"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", year, "-", currentDistrib), subtitle, phaseTwoMedian, fname)
 }
 
 multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, year, currentDistrib) {
@@ -2024,18 +2165,12 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -2113,18 +2248,12 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -2211,10 +2340,15 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
-  supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2223,10 +2357,15 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
-  expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2235,10 +2374,15 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
-  domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2252,22 +2396,8 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "-", year), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ")"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", year), subtitle, phaseTwoMedian, fname)
 }
 
 multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName, year) {
@@ -2343,18 +2473,12 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -2432,18 +2556,12 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -2462,10 +2580,15 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
-  supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2474,10 +2597,15 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
-  expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2486,10 +2614,15 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
-  domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2503,23 +2636,8 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "-", country, "-", year), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  plot$labels$colour <- ""
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ")"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", country, "-", year), subtitle, phaseTwoMedian, fname)
 }
 
 multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetName, year, country) {
@@ -2595,18 +2713,12 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", year, " ", country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -2684,18 +2796,12 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", year, country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -2714,10 +2820,15 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
-  supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2726,10 +2837,15 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
-  expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2738,10 +2854,15 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
-  domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2755,23 +2876,8 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "-", country), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  plot$labels$colour <- ""
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One (", country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", country, ")"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "-", country), subtitle, phaseTwoMedian, fname)
 }
 
 pointBinaryFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
@@ -2845,10 +2951,15 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
   )
 
   supersTimeSeries <- csv %>%
-    select(year, currentDate, supersMedian) %>%
+    select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper) %>%
     mutate(group = "Superforecasters")
-  supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
-  names(supersTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  supersTimeSeries <- supersTimeSeries %>%
+    mutate(
+      median = supersMedian,
+      confint_lower = supersMedian_confint_lower,
+      confint_upper = supersMedian_confint_upper,
+      n = csv$supersN
+    )
   for (i in 1:nrow(supersTimeSeries)) {
     if (supersTimeSeries[i, ]$n < 10) {
       supersTimeSeries[i, ]$median <- NA
@@ -2857,10 +2968,15 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
   plotTable <- rbind(plotTable, supersTimeSeries)
 
   expertsTimeSeries <- csv %>%
-    select(year, currentDate, expertsMedian) %>%
+    select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper) %>%
     mutate(group = "Experts")
-  expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
-  names(expertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  expertsTimeSeries <- expertsTimeSeries %>%
+    mutate(
+      median = expertsMedian,
+      confint_lower = expertsMedian_confint_lower,
+      confint_upper = expertsMedian_confint_upper,
+      n = csv$expertsN
+    )
   for (i in 1:nrow(expertsTimeSeries)) {
     if (expertsTimeSeries[i, ]$n < 10) {
       expertsTimeSeries[i, ]$median <- NA
@@ -2869,10 +2985,15 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
-    select(year, currentDate, domainExpertsMedian) %>%
+    select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper) %>%
     mutate(group = "Domain Experts")
-  domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
-  names(domainExpertsTimeSeries) <- c("year", "currentDate", "median", "group", "n")
+  domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
+    mutate(
+      median = domainExpertsMedian,
+      confint_lower = domainExpertsMedian_confint_lower,
+      confint_upper = domainExpertsMedian_confint_upper,
+      n = csv$domainExpertsN
+    )
   if (!all(is.na(domainExpertsTimeSeries$median)) & any(domainExpertsTimeSeries$n > 4)) {
     for (i in 1:nrow(domainExpertsTimeSeries)) {
       if (domainExpertsTimeSeries[i, ]$n < 4) {
@@ -2886,22 +3007,8 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
 
   plotTable$currentDate <- ymd(plotTable$currentDate)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One"))
+  plot <- plot_with_ribbons(plotTable, title, subtitle, phaseTwoMedian, fname)
 }
 
 pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
@@ -2977,18 +3084,12 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3066,18 +3167,12 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
-  if (length(unique(plotTable$group)) == 2) {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3)[1:2])
-  } else {
-    plot <- plot +
-      scale_color_manual(values = hue_pal()(3))
-  }
-  plot$labels$colour <- ""
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
+    scale_color_manual(values = unlist(group_colors))
+  plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -3145,14 +3240,14 @@ pointBinaryGraphics_custom <- function(title, csv, currentSetName) {
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
 
   plot$labels$group <- ""
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   if (grepl("%", currentSetName)) {
     ggsave(paste0(currentSetName, "% - Figure One.png"), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -3224,13 +3319,13 @@ pointDistribGraphics_custom <- function(title, subtitle, csv, currentSetName, di
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed")
 
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   if (grepl("%", currentSetName)) {
     ggsave(paste0(currentSetName, "% - Figure One (", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -3333,24 +3428,8 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "by", csv$year[1], "(All)"), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group))))
-  plot$labels$colour <- ""
-
-  ggsave(paste0(currentSetName, " - Teams [All] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- paste0(currentSetName, " - Teams [All] (", csv$year[1], " ", csv$beliefSet[1], ")")
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian, fname)
 
   # Supers
   plotTable <- data.frame(
@@ -3371,24 +3450,8 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "by", csv$year[1], "(Supers)"), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group))))
-  plot$labels$colour <- ""
-
-  ggsave(paste0(currentSetName, " - Teams [Supers] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- paste0(currentSetName, " - Teams [Supers] (", csv$year[1], " ", csv$beliefSet[1], ")")
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1], "(Supers)"), subtitle, phaseTwoMedian, fname)
 
   # Experts
   plotTable <- data.frame(
@@ -3409,24 +3472,8 @@ multiYearReciprocalTeamGraphics <- function(title, subtitle, csv, currentSetName
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "by", csv$year[1], "(Experts)"), subtitle = subtitle) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group))))
-  plot$labels$colour <- ""
-
-  ggsave(paste0(currentSetName, " - Teams [Experts] (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- paste0(currentSetName, " - Teams [Experts] (", csv$year[1], " ", csv$beliefSet[1], ")")
+  plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1], "(Experts)"), subtitle, phaseTwoMedian, fname)
 }
 
 pointDistrib_teams <- function(metaTable, data) {
@@ -3517,25 +3564,8 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "(All)"), subtitle = distrib) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
-    ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [All] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Teams [All] (", distrib, "%)"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "(All)"), distrib, phaseTwoMedian, fname)
 
   # Supers
   plotTable <- data.frame(
@@ -3556,25 +3586,8 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "(Supers)"), subtitle = distrib) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
-    ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [Supers] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Teams [Supers] (", distrib, "%)"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "(Supers)"), distrib, phaseTwoMedian, fname)
 
   # Experts
   plotTable <- data.frame(
@@ -3595,25 +3608,8 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
-    geom_line() +
-    ylab("Median") +
-    xlab("Date") +
-    labs(title = paste(title, "(Experts)"), subtitle = distrib) +
-    theme_bw() +
-    theme(
-      plot.title = element_text(hjust = 0.5),
-      plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
-    ) +
-    geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
-    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
-    ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
-
-  ggsave(gsub("%", "%%", paste0(currentSetName, " - Teams [Experts] (", distrib, "%).png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  fname <- gsub("%", "%%", paste0(currentSetName, " - Teams [Experts] (", distrib, "%)"))
+  plot <- plot_with_ribbons(plotTable, paste(title, "(Experts)"), distrib, phaseTwoMedian, fname)
 }
 
 multiYearDistrib_teams <- function(metaTable, data) {
@@ -3730,8 +3726,9 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
     geom_line() +
+    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") +
     ylab("Median") +
     xlab("Date") +
     labs(title = paste(title, "(All)"), subtitle = paste(year, distrib)) +
@@ -3739,14 +3736,16 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
+    scale_color_manual(values = unlist(group_colors)) +
+    scale_fill_manual(values = unlist(group_colors)) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
+    xlim(phaseTwoMedian, NA) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(paste0(currentSetName, " - Teams [All] (", year, " ", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3769,8 +3768,9 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
     geom_line() +
+    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") +
     ylab("Median") +
     xlab("Date") +
     labs(title = paste(title, "(Supers)"), subtitle = paste(year, distrib)) +
@@ -3778,14 +3778,16 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
+    scale_color_manual(values = unlist(group_colors)) +
+    scale_fill_manual(values = unlist(group_colors)) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
+    xlim(phaseTwoMedian, NA) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(paste0(currentSetName, " - Teams [Supers] (", year, " ", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -3808,8 +3810,9 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, fill = group, color = group)) +
     geom_line() +
+    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group), alpha = 0.2, color = "transparent") +
     ylab("Median") +
     xlab("Date") +
     labs(title = paste(title, "(Experts)"), subtitle = paste(year, distrib)) +
@@ -3817,14 +3820,16 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
+    scale_color_manual(values = unlist(group_colors)) +
+    scale_fill_manual(values = unlist(group_colors)) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = hue_pal()(length(unique(plotTable$group)))) +
+    xlim(phaseTwoMedian, NA) +
     ylim(NA, as.numeric(quantile(plotTable$median, 0.95, na.rm = TRUE)))
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
 
   ggsave(paste0(currentSetName, " - Teams [Experts] (", year, " ", distrib, "%).png"), plot, width = 9.18, height = 5.78, units = c("in"))
 }
@@ -3832,7 +3837,7 @@ multiYearDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, d
 salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
   #' Salience Graphics
   #'
-  #' @description Salience graphics for supers+experts+overal
+  #' @description Salience graphics for supers+experts+overall
   #'
   #' @export
 
@@ -3862,23 +3867,23 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, fill = group)) +
     geom_line() +
     ylab("Optimism (vs end of Stage 1)") +
     xlab("Date") +
     labs(title = paste(title), subtitle = subtitle) +
     theme_bw() +
-    scale_color_manual(values = c(hue_pal()(3)[1:2], "black")) +
+    scale_color_manual(values = c(cb_pal[1:2], "black")) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
     geom_hline(yintercept = 0)
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
   ggsave(gsub("%", "%%", paste0(title, " OVERALL SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
   if (specialty != "") {
@@ -3909,23 +3914,23 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
 
     plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-    plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, color = group)) +
+    plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, fill = group)) +
       geom_line() +
       ylab("Optimism (vs end of Stage 1)") +
       xlab("Date") +
       labs(title = paste(title), subtitle = subtitle) +
       theme_bw() +
-      scale_color_manual(values = c(hue_pal()(3))) +
+      scale_color_manual(values = c(cb_pal)) +
       theme(
         plot.title = element_text(hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5),
-        legend.title = element_text(size = 9, vjust = -37)
+        legend.title = element_blank()
       ) +
       geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
       geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
       geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
       geom_hline(yintercept = 0)
-    plot$labels$colour <- ""
+    plot$labels$color <- ""
     ggsave(gsub("%", "%%", paste0(title, " SUPERS VS DOMAIN EXP VS GENERALISTS SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
   }
 
@@ -4004,22 +4009,59 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = date, y = opt, group = group, fill = group)) +
     geom_line() +
     ylab("Optimism (vs end of Stage 1)") +
     xlab("Date") +
     labs(title = paste(title), subtitle = subtitle) +
     theme_bw() +
-    scale_color_manual(values = c(hue_pal()(10), "black")) +
+    scale_color_manual(values = c(cb_pal(10), "black")) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
-      legend.title = element_text(size = 9, vjust = -37)
+      legend.title = element_blank()
     ) +
     geom_vline(xintercept = phaseTwoMedian, linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
     geom_hline(yintercept = 0)
-  plot$labels$colour <- ""
+  plot$labels$color <- ""
   ggsave(gsub("%", "%%", paste0(title, " TEAMS SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
+}
+
+rs_quintile_plot <- function(tbl, title, subtitle) {
+  #' Boxplot for RS quintiles
+  #'
+  #' @export
+
+  # plot <- ggplot(tbl, aes(x = quintile, y = forecast, group = quintile)) +
+  plot <- ggplot(tbl, aes(x = quintile, y = forecast, color = userType)) +
+    geom_boxplot(outlier.shape = NA) +
+    ylab("Forecast") +
+    xlab("Quintile") +
+    labs(title = title, subtitle = subtitle) +
+    theme_bw() +
+    coord_trans(y = pseudo_log_trans(base = 10), ylim = c(0, 100)) +
+    scale_y_continuous(breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100)) +
+    scale_color_manual(values = unlist(group_colors)) +
+    # scale_fill_manual(values = unlist(group_colors)) +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      plot.subtitle = element_text(hjust = 0.5),
+      legend.title = element_blank()
+    ) +
+    geom_point(position = position_jitterdodge(), aes(x = quintile, y = forecast, group = userType)) +
+    stat_summary(
+      fun.y = median, geom = "label", aes(label = round(..y.., 4)),
+      position = position_dodge2(width = 0.75, preserve = "single"),
+      vjust = 0.5,
+      size = 3,
+      fill = "white",
+      show.legend = FALSE
+    )
+
+  plot$labels$colour <- ""
+  plot$labels$fill <- ""
+
+  return(plot)
 }

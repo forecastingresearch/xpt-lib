@@ -16,6 +16,10 @@ Imports:
     lubridate,
     docstring,
     data.table (>= 1.14.6),
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    ggthemes,
+    ggplot2,
+    scales,
+    boot
 Suggests: 
 Config/testthat/edition: 3
