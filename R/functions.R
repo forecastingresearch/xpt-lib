@@ -1079,7 +1079,7 @@ pointDistrib <- function(metaTable, data) {
             filter(timestamp == exclude[l, ]$timestamp)
           for (m in 1:nrow(removeRow)) {
             currRow <- removeRow[m, ]
-            questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$timestamp == currRow$timestamp)]
+            questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$timestamp == currRow$timestamp),]
           }
         }
 
@@ -1488,7 +1488,7 @@ multiYearDistrib <- function(metaTable, data) {
                 filter(timestamp == exclude[m, ]$timestamp)
               for (n in 1:nrow(removeRow)) {
                 currRow <- removeRow[n, ]
-                questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$timestamp == currRow$timestamp)]
+                questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$timestamp == currRow$timestamp),]
               }
             }
           }
