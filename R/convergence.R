@@ -1626,6 +1626,8 @@ convergenceAdd_active <- function(phase1, phase2, phase3, phase4, convergenceTab
   #' @param phase3 TODO
   #' @param phase4 TODO
   #' @param convergenceTable TODO
+  #' 
+  #' @export
 
   active_s4_forecasters <- phase4 %>%
     filter(timestamp > ymd("2022 10 02")) %>%

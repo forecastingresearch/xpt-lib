@@ -45,6 +45,8 @@ RSRankingInit <- function() {
 }
 
 log_score <- function(actual, forecast) {
+  #' @export
+  
   return(log(1 - abs(actual / 100 - forecast / 100)))
 }
 

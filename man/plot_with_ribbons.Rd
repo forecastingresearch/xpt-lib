@@ -4,7 +4,7 @@
 \alias{plot_with_ribbons}
 \title{Plot time series with confidence interval ribbons.}
 \usage{
-plot_with_ribbons(plotTable, title, subtitle, phaseTwoMedian, ribbon = FALSE)
+plot_with_ribbons(plotTable, title, subtitle, phaseTwoMedian, fname)
 }
 \arguments{
 \item{plotTable}{Data frame with columns currentDate, median, group}

@@ -530,6 +530,8 @@ boxPlot_country <- function(tbl, specialty, title,
 # FUNCTIONS THAT GENERATE THE FIGURES
 
 figureDataInit <- function() {
+  #' @export
+
   return(data.frame(
     beliefSet = character(0),
     year = numeric(0),
@@ -734,6 +736,8 @@ figureDataInit <- function() {
 }
 
 figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecialty) {
+  #' @export
+  
   dateData <- dateDataProcessed
   mean <- mean(dateData$forecast)
   sd <- sd(dateData$forecast)
@@ -1292,6 +1296,8 @@ multiYearReciprocalFigureData <- function(metaTable, data, phaseTwoMedian, timel
 }
 
 multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
+  #' @export
+  
   plotTable <- data.frame(
     year = numeric(0),
     currentDate = Date(0),

@@ -13,6 +13,8 @@ newAddInit <- function() {
   #' domainExperts - ONLY the g1 experts from the domain of the question
   #' nonDomainExperts - experts from not the domain of the question, and supers
   #' *_exc - filter out extreme outliers (based on standard deviation; different from trimmed mean)
+  #' 
+  #' @export
 
   return(data.frame(
     setName = character(0),
@@ -194,6 +196,8 @@ newAddInit <- function() {
 newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
                        currentQuestionName, answerText, stage, specialty) {
   #' TODO Molly :)
+  #' 
+  #' @export
   mean <- mean(questionDataProcessed$forecast)
   median <- median(questionDataProcessed$forecast)
   sd <- sd(questionDataProcessed$forecast)
