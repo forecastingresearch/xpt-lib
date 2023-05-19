@@ -1347,6 +1347,7 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
       expertsTimeSeries[i, ]$median <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -1367,6 +1368,7 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
         domainExpertsTimeSeries[i, ]$median <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -1420,6 +1422,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -1435,6 +1438,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -1501,6 +1505,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -1517,6 +1522,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -1778,6 +1784,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -1793,6 +1800,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -1860,6 +1868,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -1876,6 +1885,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -2075,6 +2085,7 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
       expertsTimeSeries[i, ]$median <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -2094,6 +2105,7 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
       }
     }
     if (any(!is.na(domainExpertsTimeSeries$n))) {
+      names(domainExpertsTimeSeries) <- names(plotTable)
       plotTable <- rbind(plotTable, domainExpertsTimeSeries)
     }
   }
@@ -2146,6 +2158,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -2161,6 +2174,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -2228,6 +2242,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -2244,6 +2259,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -2383,6 +2399,7 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
       expertsTimeSeries[i, ]$median <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -2402,6 +2419,7 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
       }
     }
     if (any(!is.na(domainExpertsTimeSeries$n))) {
+      names(domainExpertsTimeSeries) <- names(plotTable)
       plotTable <- rbind(plotTable, domainExpertsTimeSeries)
     }
   }
@@ -2454,6 +2472,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -2469,6 +2488,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -2536,6 +2556,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -2552,6 +2573,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -2623,6 +2645,7 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
       expertsTimeSeries[i, ]$median <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -2642,6 +2665,7 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
       }
     }
     if (any(!is.na(domainExpertsTimeSeries$n))) {
+      names(domainExpertsTimeSeries) <- names(plotTable)
       plotTable <- rbind(plotTable, domainExpertsTimeSeries)
     }
   }
@@ -2694,6 +2718,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -2709,6 +2734,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -2776,6 +2802,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -2792,6 +2819,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -2863,6 +2891,7 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
       expertsTimeSeries[i, ]$median <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -2882,6 +2911,7 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
       }
     }
     if (any(!is.na(domainExpertsTimeSeries$n))) {
+      names(domainExpertsTimeSeries) <- names(plotTable)
       plotTable <- rbind(plotTable, domainExpertsTimeSeries)
     }
   }
@@ -2994,6 +3024,7 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
       expertsTimeSeries[i, ]$median <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -3013,6 +3044,7 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
       }
     }
     if (any(!is.na(domainExpertsTimeSeries$n))) {
+      names(domainExpertsTimeSeries) <- names(plotTable)
       plotTable <- rbind(plotTable, domainExpertsTimeSeries)
     }
   }
@@ -3065,6 +3097,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -3080,6 +3113,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -3147,6 +3181,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
       expertsTimeSeries[i, ]$sd <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -3163,6 +3198,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
         domainExpertsTimeSeries[i, ]$sd <- NA
       }
     }
+    names(domainExpertsTimeSeries) <- names(plotTable)
     plotTable <- rbind(plotTable, domainExpertsTimeSeries)
   }
 
@@ -3237,6 +3273,7 @@ pointBinaryGraphics_custom <- function(title, csv, currentSetName) {
     }
     if (any(!is.na(domainExpertsTimeSeries$n))) {
       domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (N = ", domainExpertsTimeSeries[nrow(domainExpertsTimeSeries), ]$n, ")")
+      names(domainExpertsTimeSeries) <- names(plotTable)
       plotTable <- rbind(plotTable, domainExpertsTimeSeries)
     }
   }
