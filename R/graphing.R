@@ -737,7 +737,7 @@ figureDataInit <- function() {
 
 figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecialty) {
   #' @export
-  
+
   dateData <- dateDataProcessed
   mean <- mean(dateData$forecast)
   sd <- sd(dateData$forecast)
@@ -1299,7 +1299,7 @@ multiYearReciprocalFigureData <- function(metaTable, data, phaseTwoMedian, timel
 
 multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   #' @export
-  
+
   plotTable <- data.frame(
     year = numeric(0),
     currentDate = Date(0),
@@ -1313,7 +1313,7 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper, supersN) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries <- supersTimeSeries %>%
     rename(
       median = supersMedian,
@@ -1334,7 +1334,7 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper, expertsN) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries <- expertsTimeSeries %>%
     rename(
       median = expertsMedian,
@@ -1352,7 +1352,7 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper, domainExpertsN) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries <- domainExpertsTimeSeries %>%
     rename(
       median = domainExpertsMedian,
@@ -1396,7 +1396,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(supersTimeSeries)) {
@@ -1412,7 +1412,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(expertsTimeSeries)) {
@@ -1425,7 +1425,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   if (!all(is.na(domainExpertsTimeSeries$sd))) {
@@ -1475,7 +1475,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries$supersSd <- 100 * (supersTimeSeries$supersSd / supersTimeSeries$supersSd[1])
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -1492,7 +1492,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries$expertsSd <- 100 * (expertsTimeSeries$expertsSd / expertsTimeSeries$expertsSd[1])
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -1506,7 +1506,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries$domainExpertsSd <- 100 * (domainExpertsTimeSeries$domainExpertsSd / domainExpertsTimeSeries$domainExpertsSd[1])
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -1698,6 +1698,7 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
       expertsTimeSeries[i, ]$median <- NA
     }
   }
+  names(expertsTimeSeries) <- names(plotTable)
   plotTable <- rbind(plotTable, expertsTimeSeries)
 
   domainExpertsTimeSeries <- csv %>%
@@ -1717,6 +1718,7 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
       }
     }
     if (any(!is.na(domainExpertsTimeSeries$n))) {
+      names(domainExpertsTimeSeries) <- names(plotTable)
       plotTable <- rbind(plotTable, domainExpertsTimeSeries)
     }
   }
@@ -1728,6 +1730,8 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
   } else {
     fname <- paste0(currentSetName, " - Figure One (", distrib, "%)")
   }
+
+  plotTable <- select(plotTable, year, currentDate, group, median, confint_lower, confint_upper, n)
 
   plot <- plot_with_ribbons(plotTable, paste(title, "-", distrib), subtitle, phaseTwoMedian, fname)
 }
@@ -1750,7 +1754,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(supersTimeSeries)) {
@@ -1766,7 +1770,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(expertsTimeSeries)) {
@@ -1779,7 +1783,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   if (!all(is.na(domainExpertsTimeSeries$sd))) {
@@ -1830,7 +1834,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries$supersSd <- 100 * (supersTimeSeries$supersSd / supersTimeSeries$supersSd[1])
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -1847,7 +1851,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries$expertsSd <- 100 * (expertsTimeSeries$expertsSd / expertsTimeSeries$expertsSd[1])
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -1861,7 +1865,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries$domainExpertsSd <- 100 * (domainExpertsTimeSeries$domainExpertsSd / domainExpertsTimeSeries$domainExpertsSd[1])
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -2118,7 +2122,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(supersTimeSeries)) {
@@ -2134,7 +2138,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(expertsTimeSeries)) {
@@ -2147,7 +2151,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   if (!all(is.na(domainExpertsTimeSeries$sd))) {
@@ -2198,7 +2202,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries$supersSd <- 100 * (supersTimeSeries$supersSd / supersTimeSeries$supersSd[1])
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -2215,7 +2219,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries$expertsSd <- 100 * (expertsTimeSeries$expertsSd / expertsTimeSeries$expertsSd[1])
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -2229,7 +2233,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries$domainExpertsSd <- 100 * (domainExpertsTimeSeries$domainExpertsSd / domainExpertsTimeSeries$domainExpertsSd[1])
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -2426,7 +2430,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(supersTimeSeries)) {
@@ -2442,7 +2446,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(expertsTimeSeries)) {
@@ -2455,7 +2459,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   if (!all(is.na(domainExpertsTimeSeries$sd))) {
@@ -2506,7 +2510,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries$supersSd <- 100 * (supersTimeSeries$supersSd / supersTimeSeries$supersSd[1])
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -2523,7 +2527,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries$expertsSd <- 100 * (expertsTimeSeries$expertsSd / expertsTimeSeries$expertsSd[1])
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -2537,7 +2541,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries$domainExpertsSd <- 100 * (domainExpertsTimeSeries$domainExpertsSd / domainExpertsTimeSeries$domainExpertsSd[1])
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -2666,7 +2670,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(supersTimeSeries)) {
@@ -2682,7 +2686,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(expertsTimeSeries)) {
@@ -2695,7 +2699,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   if (!all(is.na(domainExpertsTimeSeries$sd))) {
@@ -2746,7 +2750,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries$supersSd <- 100 * (supersTimeSeries$supersSd / supersTimeSeries$supersSd[1])
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -2763,7 +2767,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries$expertsSd <- 100 * (expertsTimeSeries$expertsSd / expertsTimeSeries$expertsSd[1])
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -2777,7 +2781,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries$domainExpertsSd <- 100 * (domainExpertsTimeSeries$domainExpertsSd / domainExpertsTimeSeries$domainExpertsSd[1])
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -3037,7 +3041,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(supersTimeSeries)) {
@@ -3053,7 +3057,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   for (i in 1:nrow(expertsTimeSeries)) {
@@ -3066,7 +3070,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
   if (!all(is.na(domainExpertsTimeSeries$sd))) {
@@ -3117,7 +3121,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
   supersTimeSeries <- csv %>%
     select(year, currentDate, supersSd) %>%
     mutate(group = paste("Superforecasters"))
-  #supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
+  # supersTimeSeries$group <- paste0(supersTimeSeries$group[1], " (n=", csv$supersN[nrow(csv)], ")")
   supersTimeSeries$supersSd <- 100 * (supersTimeSeries$supersSd / supersTimeSeries$supersSd[1])
   supersTimeSeries <- cbind(supersTimeSeries, csv$supersN)
   names(supersTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -3134,7 +3138,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
   expertsTimeSeries <- csv %>%
     select(year, currentDate, expertsSd) %>%
     mutate(group = "Experts")
-  #expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
+  # expertsTimeSeries$group <- paste0(expertsTimeSeries$group[1], " (n=", csv$expertsN[nrow(csv)], ")")
   expertsTimeSeries$expertsSd <- 100 * (expertsTimeSeries$expertsSd / expertsTimeSeries$expertsSd[1])
   expertsTimeSeries <- cbind(expertsTimeSeries, csv$expertsN)
   names(expertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
@@ -3148,7 +3152,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
   domainExpertsTimeSeries <- csv %>%
     select(year, currentDate, domainExpertsSd) %>%
     mutate(group = "Domain Experts")
-  #domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
+  # domainExpertsTimeSeries$group <- paste0(domainExpertsTimeSeries$group[1], " (n=", csv$domainExpertsN[nrow(csv)], ")")
   domainExpertsTimeSeries$domainExpertsSd <- 100 * (domainExpertsTimeSeries$domainExpertsSd / domainExpertsTimeSeries$domainExpertsSd[1])
   domainExpertsTimeSeries <- cbind(domainExpertsTimeSeries, csv$domainExpertsN)
   names(domainExpertsTimeSeries) <- c("year", "currentDate", "sd", "group", "n")
