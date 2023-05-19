@@ -7,6 +7,8 @@ convergenceInit <- function() {
   #' How much did teams converge (within-team)?
   #'
   #' @return Empty table with convergence columns.
+  #' 
+  #' @export
 
   return(data.frame(
     setName = character(0),
