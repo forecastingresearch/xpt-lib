@@ -862,6 +862,8 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     nonDomainExpertsMedian <- NA
     domainExpertsMedian_confint_lower <- NA
     domainExpertsMedian_confint_upper <- NA
+    nonDomainExpertsMedian_confint_lower <- NA
+    nonDomainExpertsMedian_confint_upper <- NA
     nonDomainExpertsHdTrim <- NA
     nonDomainExpertsNeymanAgg <- NA
     nonDomainExpertsN <- NA
