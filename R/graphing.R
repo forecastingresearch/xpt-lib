@@ -468,6 +468,14 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
 
   boxData <- tbl %>% filter(userName %in% c(supers, expertsG1$userName))
   boxData$questionName <- factor(boxData$questionName, levels = unique(boxData$questionName), ordered = TRUE)
+  
+  if(length(unique(boxData$questionName)) <= 7){
+    countryPal <- cb_pal
+  } else{
+    countryPal <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", 
+                                 "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888")
+  }
+  
 
   boxPlot <- ggplot(boxData, aes(x = questionName, y = forecast, color = questionName)) +
     geom_boxplot(outlier.shape = NA) +
@@ -475,7 +483,7 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
     xlab("Country") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = cb_pal(length(unique(boxData$questionName)))) +
+    scale_color_manual(values = countryPal) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
@@ -484,7 +492,7 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
     geom_point(position = position_jitterdodge())
   # for(i in 1:length(unique(boxData$questionName))){
   #   boxPlot = boxPlot +
-  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), color=cb_pal(length(unique(boxData$questionName)))[i])
+  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), color=countryPal[i])
   # }
   boxPlot$labels$color <- ""
   if (year != "") {
@@ -504,6 +512,13 @@ boxPlot_country <- function(tbl, specialty, title,
 
   boxData <- tbl %>% filter(userName %in% c(supers, expertsG1$userName))
   boxData$answerText <- factor(boxData$answerText, levels = unique(boxData$answerText), ordered = TRUE)
+  
+  if(length(unique(boxData$answerText)) <= 7){
+    countryPal <- cb_pal
+  } else{
+    countryPal <- c("#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499", 
+                    "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888")
+  }
 
   boxPlot <- ggplot(boxData, aes(x = answerText, y = forecast, color = answerText)) +
     geom_boxplot(outlier.shape = NA) +
@@ -511,7 +526,7 @@ boxPlot_country <- function(tbl, specialty, title,
     xlab("Country") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
     theme_bw() +
-    scale_color_manual(values = cb_pal(length(unique(boxData$answerText)))) +
+    scale_color_manual(values = countryPal) +
     theme(
       plot.title = element_text(hjust = 0.5),
       plot.subtitle = element_text(hjust = 0.5),
@@ -520,7 +535,7 @@ boxPlot_country <- function(tbl, specialty, title,
     geom_point(position = position_jitterdodge())
   # for(i in 1:length(unique(boxData$questionName))){
   #   boxPlot = boxPlot +
-  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), color=cb_pal(length(unique(boxData$questionName)))[i])
+  #     geom_label(aes(x=i, y=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast), label=median((boxData %>% filter(questionName == unique(boxData$questionName)[i]))$forecast)), color=countryPal[i])
   # }
   boxPlot$labels$color <- ""
 
