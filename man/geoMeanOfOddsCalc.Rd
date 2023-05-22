@@ -4,14 +4,12 @@
 \alias{geoMeanOfOddsCalc}
 \title{Geometric Mean of Odds}
 \usage{
-geoMeanOfOddsCalc(x, q = 0.05, drop_zeroes = FALSE)
+geoMeanOfOddsCalc(x, q = 0.05)
 }
 \arguments{
 \item{x}{A vector of forecasts (probabilities!)}
 
 \item{q}{The quantile to use for replacing 0s (between 0 and 1)}
-
-\item{drop_zeroes}{Whether to drop zeroes from the vector}
 }
 \description{
 Convert probabilities to odds, and calculate the geometric mean of the

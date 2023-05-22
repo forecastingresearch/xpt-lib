@@ -6,6 +6,13 @@
 \usage{
 boot_results(plotTable, statistic = median, width = 0.95)
 }
+\arguments{
+\item{plotTable}{Data frame with column forecast, OR vector of forecasts}
+
+\item{statistic}{Statistic to calculate (default is median)}
+
+\item{width}{Width of confidence interval (default is 0.95)}
+}
 \description{
 \code{do} function applies the \code{boot} function to each combination of (group,
 currentDate) and creates a new dataframe with a row for each combination...

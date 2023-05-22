@@ -4,14 +4,12 @@
 \alias{geoMeanCalc}
 \title{Geometric Mean}
 \usage{
-geoMeanCalc(x, q = 0.05, drop_zeroes = FALSE)
+geoMeanCalc(x, q = 0.05)
 }
 \arguments{
 \item{x}{A vector of forecasts}
 
 \item{q}{The quantile to use for replacing 0s (between 0 and 1)}
-
-\item{drop_zeroes}{Whether to drop zeroes from the vector}
 }
 \description{
 Calculate the geometric mean of a vector of forecasts. We handle 0s by

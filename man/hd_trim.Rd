@@ -2,16 +2,14 @@
 % Please edit documentation in R/agg.R
 \name{hd_trim}
 \alias{hd_trim}
-\title{High-Density Trimming/Winsorizing}
+\title{Highest-Density Trimmed Mean}
 \usage{
-hd_trim(x, p = 0.1, drop_zeroes = FALSE)
+hd_trim(x, p = 0.1)
 }
 \arguments{
 \item{x}{A vector of forecasts}
 
 \item{p}{The proportion of forecasts to trim (between 0 and 1)}
-
-\item{drop_zeroes}{Whether to drop zeroes from the vector}
 }
 \description{
 This code comes from an email from Ben Powell.
