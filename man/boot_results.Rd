@@ -4,7 +4,7 @@
 \alias{boot_results}
 \title{Get bootstrapped confidence intervals}
 \usage{
-boot_results(plotTable, statistic = median, width = 0.95)
+boot_results(plotTable, statistic = "median", width = 0.95)
 }
 \arguments{
 \item{plotTable}{Data frame with column forecast, OR vector of forecasts}

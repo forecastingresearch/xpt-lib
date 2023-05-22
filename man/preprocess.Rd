@@ -14,8 +14,8 @@ preprocess(x, q = 0)
 \item{specific_function}{The specific aggregation function to be generated}
 }
 \description{
-This is sort of a base class or a template for the individual
-aggregation functions. It does the things that they all have in common.
+This does the preprocessing steps that all the agg methods
+have in common.
 }
 \note{
 ASSUMES FORECASTS ARE IN THE RANGE \link{0, 100}!

@@ -1,12 +1,11 @@
 library(dplyr)
 library(docstring)
 
-# Create an aggregation class that these all inherit from
 preprocess <- function(x, q = 0) {
   #' Preprocessing function for agg methods
   #'
-  #' @description This is sort of a base class or a template for the individual
-  #' aggregation functions. It does the things that they all have in common.
+  #' @description This does the preprocessing steps that all the agg methods
+  #' have in common.
   #'
   #' @param specific_function The specific aggregation function to be generated
   #' @param x A vector of forecasts
@@ -50,8 +49,8 @@ hd_trim <- function(x, p = 0.1) {
   #'
   #' @description This code comes from an email from Ben Powell.
   #'
-  #' You find the shortest interval containing (1-p) * 100% of the data and take the
-  #' mean of the forecasts within that interval.
+  #' You find the shortest interval containing (1-p) * 100% of the data and take
+  #' the mean of the forecasts within that interval.
   #'
   #' @note As p gets bigger this acts like a mode in a similar way to
   #' the symmetrically-trimmed mean acting like a median.
