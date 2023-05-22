@@ -182,7 +182,7 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
             if (phase_csv$userName[m] %in% supers) {
               phase_csv$group[m] <- "supers"
             } else if (phase_csv$userName[m] %in% expertsG1$userName) {
-              if (specialty != "" & expertsG1[expertsG1$userName == phase_csv$userName[m],]$specialty == specialty) {
+              if (specialty != "" & specialty %in% unlist(expertsG1 %>% filter(userId == phase_csv$userId[m]) %>% select(specialty1, specialty2, specialty3))) {
                 phase_csv$group[m] <- "domain experts"
               } else {
                 phase_csv$group[m] <- "non-domain experts"
