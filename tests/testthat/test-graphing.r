@@ -48,5 +48,21 @@ test_boot <- function() {
   return(aa)
 }
 
+test_percentogram <- function() {
+  data <- read.csv("/home/molly/fri/xpt-basic-analysis/sources/FORECASTS.csv") %>%
+    mutate(questionName = tolower(questionName)) %>%
+    filter(grepl("AI Catastrophic Risk", setName),
+           questionName == paste0(2100, " (your beliefs)")) %>%
+    mutate(timestamp = ymd_hms(timestamp)) %>%
+    group_by(userId) %>%
+    slice_max(timestamp) %>%
+    ungroup() %>%
+    select(userId, forecast, timestamp, setName) %>%
+    mutate(forecast = as.numeric(forecast))
+
+  ggplot(data, aes(forecast)) +
+    geom_histogram(stat = StatQuantileBin, aes(fill = after_stat(quantile)))
+}
+
 #test_boot()
 test_rs_quintile()

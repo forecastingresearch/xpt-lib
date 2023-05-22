@@ -4065,3 +4065,51 @@ rs_quintile_plot <- function(tbl, title, subtitle) {
 
   return(plot)
 }
+
+StatQuantileBin <- ggplot2::ggproto("StatQuantileBin", ggplot2::StatBin, 
+  default_aes = ggplot2::aes(x = ggplot2::after_stat(density), y = ggplot2::after_stat(density), weight = 1),                                   
+  compute_group = function(data, scales, 
+                          binwidth = NULL, bins = 30, breaks = NULL, trim = 0,
+                          closed = c("right", "left"), pad = FALSE,
+                          flipped_aes = FALSE,
+                          # The following arguments are not used, but must
+                          # be listed so parameters are computed correctly
+                          origin = NULL, right = NULL, drop = NULL,
+                          width = NULL) {
+  #' Percentogram
+  #' 
+  #' @description Histogram with bins of equal number of observations
+  #' 
+  #' @references https://gist.github.com/eliocamp/c73ab8d2c87fc9a668ea88d04ad8ca20
+  #'
+  #' @export
+
+  x <- ggplot2::flipped_names(flipped_aes)$x
+
+  if (is.null(breaks)) {  # If breaks is not provided, we need to compute them
+    if (!is.null(binwidth)) {   # Either with binwidth
+      trim <- trim/2
+      quantiles <- seq(trim, 1 - trim, binwidth)
+    } else {    # or the number of bins
+      quantiles <- seq(trim, 1 - trim, length.out = bins)
+    }
+  } else {
+    quantiles <- breaks
+  }
+
+  breaks <- quantile(data[[x]], quantiles)
+  
+  keep <- !duplicated(breaks)
+  
+  # If quantiles is too close, sometimes you get duplicates
+  breaks <- breaks[keep] 
+  quantiles <- quantiles[keep]
+  
+  bins <- ggplot2:::bin_breaks(breaks, closed)
+  bins <- ggplot2:::bin_vector(data[[x]], bins, weight = data$weight, pad = pad)
+  
+  bins$quantile <- quantiles[-length(quantiles)]
+  bins$flipped_aes <- flipped_aes
+  ggplot2::flip_data(bins, flipped_aes)
+}
+)
