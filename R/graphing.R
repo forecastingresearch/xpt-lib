@@ -38,7 +38,6 @@ boot_results <- function(plotTable, statistic = "median", width = 0.95) {
   #' @param width Width of confidence interval (default is 0.95)
   #'
   #' @importFrom boot boot boot.ci
-  #' @importFrom memoise memoise
   #' @export
 
   set.seed(123)
