@@ -257,7 +257,7 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
                 increment <- RSRanking_unincentivized[RSRanking_unincentivized$userId == g1RS$userId[m], ]$numQuestions + 1
                 RSRanking_unincentivized[RSRanking_unincentivized$userId == g1RS$userId[m], ]$rankSum <- RSRanking_unincentivized[RSRanking_unincentivized$userId == g1RS$userId[m], ]$rankSum + g1RS[g1RS$userId == g1RS$userId[m], ]$g1Rank_unincentivized
                 # RSRanking_unincentivized[RSRanking_unincentivized$userId==g1RS$userId[m],]$rankSum = RSRanking_unincentivized[RSRanking_unincentivized$userId==g1RS$userId[m],]$rankSum+g1RS[g1RS$userId==g1RS$userId[m],]$g1Rank_RS
-                RSRanking_unincentivized[RSRanking_unincentivized$userId == g1RS$userId[m], ]$n <- increment
+                RSRanking_unincentivized[RSRanking_unincentivized$userId == g1RS$userId[m], ]$numQuestions <- increment
               } else { # initializing (this is the first time we've seen this user)
                 RSRanking_unincentivized <- rbind(RSRanking_unincentivized, data.frame(
                   userId = g1RS$userId[m],
@@ -285,7 +285,7 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
   }
   setwd(paste0(yourHome, "Summary Data"))
   RSRanking_unincentivized <- read.csv("RSRanking_unincentivized.csv")
-  RSRanking_unincentivized <- RSRanking_unincentivized %>% mutate(avgRank = rankSum / n)
+  RSRanking_unincentivized <- RSRanking_unincentivized %>% mutate(avgRank = rankSum / numQuestions)
   write.csv(RSRanking_unincentivized, "RSRanking_unincentivized_first10.csv", row.names = FALSE)
 }
 
