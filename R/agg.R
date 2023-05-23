@@ -61,6 +61,9 @@ hd_trim <- function(x, p = 0.1) {
   #' @export
 
   x <- preprocess(x, q = 0)
+  if (length(x) == 0) {
+    return(NA)
+  }
   n_out <- floor(length(x) * p)
   n_in <- length(x) - n_out
   d <- c()

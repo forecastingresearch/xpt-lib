@@ -592,9 +592,11 @@ figureDataInit <- function() {
     geom_mean_of_odds_confint.confint_upper = numeric(0)))
 }
 
-bindWithGrp <- function(dfNames) {
+bindWithGrp <- function(dfNames, envir = parent.frame()) {
   do.call(rbind, lapply(dfNames, function(x) {
-    cbind(get(x), group = x)
+    df <- get(x, envir = envir)
+    rownames(df) <- NULL
+    cbind(df, group = x)
   }))
 }
 
@@ -623,12 +625,14 @@ figureDataBasics <- function(dateDataProcessed, subsetUserName = NULL, subsetTea
               neyman_confint = boot_results(forecast, statistic = "neymanAggCalc"),
               geom_mean_of_odds = geoMeanOfOddsCalc(forecast),
               geom_mean_of_odds_confint = boot_results(forecast, statistic = "geoMeanOfOddsCalc"))
+  
+  return(dateData)
 }
 
 figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecialty) {
   #' @export
   
-  all <- figureDataBasics(dateDataProcessed)
+  everyone <- figureDataBasics(dateDataProcessed)
   
   g1 <- figureDataBasics(dateDataProcessed, c(supers, expertsG1$userName))
   
@@ -744,14 +748,14 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
 
   t345 <- figureDataBasics(dateDataProcessed, subsetTeamId = 345)
 
-  rbound <- bindWithGrp(c(all, g1, supers, experts, domainExperts, nonDomainExperts,
-                          t336, t336Supers, t336Experts,
-                          t337, t337Supers, t337Experts,
-                          t338, t338Supers, t338Experts,
-                          t339, t339Supers, t339Experts,
-                          t340, t340Supers, t340Experts,
-                          t341, t341Supers, t341Experts,
-                          t342, t343, t344, t345))
+  rbound <- bindWithGrp(c("everyone", "g1", "supers", "experts", "domainExperts", "nonDomainExperts",
+                          "t336", "t336Supers", "t336Experts",
+                          "t337", "t337Supers", "t337Experts",
+                          "t338", "t338Supers", "t338Experts",
+                          "t339", "t339Supers", "t339Experts",
+                          "t340", "t340Supers", "t340Experts",
+                          "t341", "t341Supers", "t341Experts",
+                          "t342", "t343", "t344", "t345"))
   
   rbound$beliefSet <- beliefSet
   rbound$year <- year
