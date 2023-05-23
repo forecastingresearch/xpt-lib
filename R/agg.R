@@ -1,18 +1,42 @@
 library(dplyr)
 library(docstring)
 
+preprocess <- function(x, q = 0) {
+  #' Preprocessing function for agg methods
+  #'
+  #' @description This does the preprocessing steps that all the agg methods
+  #' have in common.
+  #'
+  #' @param specific_function The specific aggregation function to be generated
+  #' @param x A vector of forecasts
+  #' @param q The quantile to use for replacing 0s and 1s (between 0 and 1)
+  #'
+  #' @note ASSUMES FORECASTS ARE IN THE RANGE [0, 100]!
+
+  x <- sort(x)
+
+  if (q != 0) {
+    x[x == 100] <- as.numeric(quantile(x[x != 100], 1 - q))
+    x[x == 0] <- as.numeric(quantile(x[x != 0], q))
+  }
+
+  return(x)
+}
+
 trim <- function(x, p = 0.1) {
   #' Trimmed mean
   #'
   #' Trim the top and bottom (p*100)% of forecasts
   #'
-  #' @param questionData The processed question data table (needs to have a forecast column)
-  #' @param p The proportion of forecasts to trim from each end (between 0 and 1)
+  #' @param questionData The processed question data table (needs to have a
+  #' forecast column)
+  #' @param p The proportion of forecasts to trim from each end (between 0 and
+  #' 1)
   #' @return The trimmed mean
   #'
   #' @export
 
-  x <- sort(x)
+  x <- preprocess(x, q = 0)
   trimN <- round(p * length(x))
   lastRow <- length(x) - trimN
   trimVec <- x[(trimN + 1):lastRow]
@@ -20,13 +44,13 @@ trim <- function(x, p = 0.1) {
   return(trimmedMean)
 }
 
-hd_trim <- function(x, p = 0.5) {
-  #' High-Density Trimming/Winsorizing
+hd_trim <- function(x, p = 0.1) {
+  #' Highest-Density Trimmed Mean
   #'
   #' @description This code comes from an email from Ben Powell.
   #'
-  #' You find the shortest interval containing (1-p) * 100% of the data and take the
-  #' mean of the forecasts within that interval.
+  #' You find the shortest interval containing (1-p) * 100% of the data and take
+  #' the mean of the forecasts within that interval.
   #'
   #' @note As p gets bigger this acts like a mode in a similar way to
   #' the symmetrically-trimmed mean acting like a median.
@@ -36,15 +60,42 @@ hd_trim <- function(x, p = 0.5) {
   #'
   #' @export
 
-  x <- sort(x)
+  x <- preprocess(x, q = 0)
   n_out <- floor(length(x) * p)
   n_in <- length(x) - n_out
   d <- c()
+  # Get all the intervals of length n_in
   for (i in 1:(n_out + 1)) {
     d[i] <- x[i + n_in - 1] - x[i]
   }
+  # Which of those intervals is the smallest?
   i <- which.min(d)
+  # Take the mean that starts at that index and goes for n_in
   mean(x[i:(i + n_in - 1)])
+}
+
+soften_mean <- function(x, p = 0.1) {
+  #' Soften the mean.
+  #'
+  #' If the mean is > .5, trim the top trim%; if < .5, the bottom trim%. Return
+  #' the new mean (i.e. soften the mean).
+  #'
+  #' @param x A vector of forecasts
+  #' @param trim The proportion of forecasts to trim from each end (between 0
+  #' and 1)
+  #'
+  #' @note This goes against usual wisdom of extremizing the mean, but performs
+  #' well when the crowd has some overconfident forecasters in it.
+  #'
+  #' @export
+
+  x <- preprocess(x, q = 0)
+  mymean <- mean(x)
+  if (mymean > .5) {
+    return(mean(x[1:floor(length(x) * (1 - p))]))
+  } else {
+    return(mean(x[ceiling(length(x) * p):length(x)]))
+  }
 }
 
 neymanAggCalc <- function(x) {
@@ -65,6 +116,7 @@ neymanAggCalc <- function(x) {
   #'
   #' @export
 
+  x <- preprocess(x, q = 0)
   x <- (x / 100)
   n <- length(x)
   d <- (n * (sqrt((3 * n^2) - (3 * n) + 1) - 2)) / (n^2 - n - 1)
@@ -84,7 +136,30 @@ geoMeanCalc <- function(x, q = 0.05) {
   #'
   #' @export
 
-  x[x == 0] <- as.numeric(quantile(x[x != 0], q))
+  x <- preprocess(x, q)
   geoMean <- exp(mean(log(x)))
   return(geoMean)
+}
+
+geoMeanOfOddsCalc <- function(x, q = 0.05) {
+  #' Geometric Mean of Odds
+  #'
+  #' Convert probabilities to odds, and calculate the geometric mean of the
+  #' odds. We handle 0s by replacing them with the qth quantile of the non-zero
+  #' forecasts, before converting.
+  #'
+  #' @param x A vector of forecasts (probabilities!)
+  #' @param q The quantile to use for replacing 0s (between 0 and 1)
+  #' @note agg(a) + agg(not a) does not sum to 1 for this aggregation method.
+  #'
+  #' @export
+
+  x <- preprocess(x, q)
+  x <- x / 100
+  odds <- x / (1 - x)
+  geoMeanOfOdds <- exp(mean(log(odds)))
+
+  # Convert back to probability
+  geoMeanOfOdds <- geoMeanOfOdds / (geoMeanOfOdds + 1)
+  return(geoMeanOfOdds * 100)
 }

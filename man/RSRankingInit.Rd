@@ -7,7 +7,8 @@
 RSRankingInit()
 }
 \value{
-An empty dataframe that will hold the reciprocal scoring ranking for each user.
+An empty dataframe that will hold the reciprocal scoring ranking
+for each user.
 }
 \description{
 Initialize reciprocal scoring ranking dataframe.

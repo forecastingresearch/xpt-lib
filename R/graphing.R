@@ -25,7 +25,7 @@ group_colors <- list(
   "Nuclear Experts" = cb_pal[2]
 )
 
-boot_results <- function(plotTable, statistic = median, width = 0.95) {
+boot_results <- function(plotTable, statistic = "median", width = 0.95) {
   #' Get bootstrapped confidence intervals
   #'
   #' `do` function applies the `boot` function to each combination of (group,
@@ -33,17 +33,32 @@ boot_results <- function(plotTable, statistic = median, width = 0.95) {
   #' Assumes this is being called from within figureDataMetrics (one question,
   #' one group at a time)
   #'
+  #' @param plotTable Data frame with column forecast, OR vector of forecasts
+  #' @param statistic Statistic to calculate (default is median)
+  #' @param width Width of confidence interval (default is 0.95)
+  #'
   #' @importFrom boot boot boot.ci
   #' @export
 
   set.seed(123)
+
+  stat_fun <- match.fun(statistic)
+
+  # If plotTable is NOT a dataframe, make it one
+  if (!is.data.frame(plotTable)) {
+    plotTable <- data.frame(plotTable) %>%
+      rename(forecast = plotTable)
+  }
+
+  # If plotTable is empty, return NA's
   if (nrow(plotTable) == 0) {
     return(data.frame(confint_lower = NA, confint_upper = NA))
   }
+
   interval <- plotTable %>%
     do({
       x <- .$forecast
-      res <- boot(x, statistic = function(x, i) statistic(x[i]), R = 1000)
+      res <- boot(x, statistic = function(x, i) stat_fun(x[i]), R = 1000)
       if (all(res$t == res$t[1])) {
         data.frame(confint_lower = NA, confint_upper = NA)
       } else {
