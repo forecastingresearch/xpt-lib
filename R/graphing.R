@@ -551,679 +551,198 @@ figureDataInit <- function() {
     beliefSet = character(0),
     year = numeric(0),
     date = Date(0),
+    group = character(0),
+    n_ids = numeric(0),
     mean = numeric(0),
+    mean_confint.confint_lower = numeric(0),
+    mean_confint.confint_upper = numeric(0),
     sd = numeric(0),
-    geoMean = numeric(0),
     median = numeric(0),
-    hdTrim = numeric(0),
-    neymanAgg = numeric(0),
-    n = numeric(0),
-    g1Mean = numeric(0),
-    g1Sd = numeric(0),
-    g1GeoMean = numeric(0),
-    g1Median = numeric(0),
-    g1HdTrim = numeric(0),
-    g1NeymanAgg = numeric(0),
-    g1N = numeric(0),
-    supersMean = numeric(0),
-    supersSd = numeric(0),
-    supersGeoMean = numeric(0),
-    supersMedian = numeric(0),
-    supersHdTrim = numeric(0),
-    supersNeymanAgg = numeric(0),
-    supersN = numeric(0),
-    expertsMean = numeric(0),
-    expertsSd = numeric(0),
-    expertsGeoMean = numeric(0),
-    expertsMedian = numeric(0),
-    expertsHdTrim = numeric(0),
-    expertsNeymanAgg = numeric(0),
-    expertsN = numeric(0),
-    domainExpertsMean = numeric(0),
-    domainExpertsSd = numeric(0),
-    domainExpertsGeoMean = numeric(0),
-    domainExpertsMedian = numeric(0),
-    domainExpertsHdTrim = numeric(0),
-    domainExpertsNeymanAgg = numeric(0),
-    domainExpertsN = numeric(0),
-    nonDomainExpertsMean = numeric(0),
-    nonDomainExpertsSd = numeric(0),
-    nonDomainExpertsGeoMean = numeric(0),
-    nonDomainExpertsMedian = numeric(0),
-    nonDomainExpertsHdTrim = numeric(0),
-    nonDomainExpertsNeymanAgg = numeric(0),
-    nonDomainExpertsN = numeric(0),
-    t336Mean = numeric(0),
-    t336Sd = numeric(0),
-    t336GeoMean = numeric(0),
-    t336Median = numeric(0),
-    t336HdTrim = numeric(0),
-    t336NeymanAgg = numeric(0),
-    t336N = numeric(0),
-    t336SupersMean = numeric(0),
-    t336SupersSd = numeric(0),
-    t336SupersGeoMean = numeric(0),
-    t336SupersMedian = numeric(0),
-    t336SupersHdTrim = numeric(0),
-    t336SupersNeymanAgg = numeric(0),
-    t336SupersN = numeric(0),
-    t336ExpertsMean = numeric(0),
-    t336ExpertsSd = numeric(0),
-    t336ExpertsGeoMean = numeric(0),
-    t336ExpertsMedian = numeric(0),
-    t336ExpertsHdTrim = numeric(0),
-    t336ExpertsNeymanAgg = numeric(0),
-    t336ExpertsN = numeric(0),
-    t337Mean = numeric(0),
-    t337Sd = numeric(0),
-    t337GeoMean = numeric(0),
-    t337Median = numeric(0),
-    t337HdTrim = numeric(0),
-    t337NeymanAgg = numeric(0),
-    t337N = numeric(0),
-    t337SupersMean = numeric(0),
-    t337SupersSd = numeric(0),
-    t337SupersGeoMean = numeric(0),
-    t337SupersMedian = numeric(0),
-    t337SupersHdTrim = numeric(0),
-    t337SupersNeymanAgg = numeric(0),
-    t337SupersN = numeric(0),
-    t337ExpertsMean = numeric(0),
-    t337ExpertsSd = numeric(0),
-    t337ExpertsGeoMean = numeric(0),
-    t337ExpertsMedian = numeric(0),
-    t337ExpertsHdTrim = numeric(0),
-    t337ExpertsNeymanAgg = numeric(0),
-    t337ExpertsN = numeric(0),
-    t338Mean = numeric(0),
-    t338Sd = numeric(0),
-    t338GeoMean = numeric(0),
-    t338Median = numeric(0),
-    t338HdTrim = numeric(0),
-    t338NeymanAgg = numeric(0),
-    t338N = numeric(0),
-    t338SupersMean = numeric(0),
-    t338SupersSd = numeric(0),
-    t338SupersGeoMean = numeric(0),
-    t338SupersMedian = numeric(0),
-    t338SupersHdTrim = numeric(0),
-    t338SupersNeymanAgg = numeric(0),
-    t338SupersN = numeric(0),
-    t338ExpertsMean = numeric(0),
-    t338ExpertsSd = numeric(0),
-    t338ExpertsGeoMean = numeric(0),
-    t338ExpertsMedian = numeric(0),
-    t338ExpertsHdTrim = numeric(0),
-    t338ExpertsNeymanAgg = numeric(0),
-    t338ExpertsN = numeric(0),
-    t339Mean = numeric(0),
-    t339Sd = numeric(0),
-    t339GeoMean = numeric(0),
-    t339Median = numeric(0),
-    t339HdTrim = numeric(0),
-    t339NeymanAgg = numeric(0),
-    t339N = numeric(0),
-    t339SupersMean = numeric(0),
-    t339SupersSd = numeric(0),
-    t339SupersGeoMean = numeric(0),
-    t339SupersMedian = numeric(0),
-    t339SupersHdTrim = numeric(0),
-    t339SupersNeymanAgg = numeric(0),
-    t339SupersN = numeric(0),
-    t339ExpertsMean = numeric(0),
-    t339ExpertsSd = numeric(0),
-    t339ExpertsGeoMean = numeric(0),
-    t339ExpertsMedian = numeric(0),
-    t339ExpertsHdTrim = numeric(0),
-    t339ExpertsNeymanAgg = numeric(0),
-    t339ExpertsN = numeric(0),
-    t340Mean = numeric(0),
-    t340Sd = numeric(0),
-    t340GeoMean = numeric(0),
-    t340Median = numeric(0),
-    t340HdTrim = numeric(0),
-    t340NeymanAgg = numeric(0),
-    t340N = numeric(0),
-    t340SupersMean = numeric(0),
-    t340SupersSd = numeric(0),
-    t340SupersGeoMean = numeric(0),
-    t340SupersMedian = numeric(0),
-    t340SupersHdTrim = numeric(0),
-    t340SupersNeymanAgg = numeric(0),
-    t340SupersN = numeric(0),
-    t340ExpertsMean = numeric(0),
-    t340ExpertsSd = numeric(0),
-    t340ExpertsGeoMean = numeric(0),
-    t340ExpertsMedian = numeric(0),
-    t340ExpertsHdTrim = numeric(0),
-    t340ExpertsNeymanAgg = numeric(0),
-    t340ExpertsN = numeric(0),
-    t341Mean = numeric(0),
-    t341Sd = numeric(0),
-    t341GeoMean = numeric(0),
-    t341Median = numeric(0),
-    t341HdTrim = numeric(0),
-    t341NeymanAgg = numeric(0),
-    t341N = numeric(0),
-    t341SupersMean = numeric(0),
-    t341SupersSd = numeric(0),
-    t341SupersGeoMean = numeric(0),
-    t341SupersMedian = numeric(0),
-    t341SupersHdTrim = numeric(0),
-    t341SupersNeymanAgg = numeric(0),
-    t341SupersN = numeric(0),
-    t341ExpertsMean = numeric(0),
-    t341ExpertsSd = numeric(0),
-    t341ExpertsGeoMean = numeric(0),
-    t341ExpertsMedian = numeric(0),
-    t341ExpertsHdTrim = numeric(0),
-    t341ExpertsNeymanAgg = numeric(0),
-    t331ExpertsN = numeric(0),
-    t342Mean = numeric(0),
-    t342Sd = numeric(0),
-    t342GeoMean = numeric(0),
-    t342Median = numeric(0),
-    t342HdTrim = numeric(0),
-    t342NeymanAgg = numeric(0),
-    t342N = numeric(0),
-    t343Mean = numeric(0),
-    t343Sd = numeric(0),
-    t343GeoMean = numeric(0),
-    t343Median = numeric(0),
-    t343HdTrim = numeric(0),
-    t343NeymanAgg = numeric(0),
-    t343N = numeric(0),
-    t344Mean = numeric(0),
-    t344Sd = numeric(0),
-    t344GeoMean = numeric(0),
-    t344Median = numeric(0),
-    t344HdTrim = numeric(0),
-    t344NeymanAgg = numeric(0),
-    t344N = numeric(0),
-    t345Mean = numeric(0),
-    t345Sd = numeric(0),
-    t345GeoMean = numeric(0),
-    t345Median = numeric(0),
-    t345HdTrim = numeric(0),
-    t345NeymanAgg = numeric(0),
-    t345N = numeric(0)
-  ))
+    median_confint.confint_lower = numeric(0),
+    median_confint.confint_upper = numeric(0),
+    geom_mean = numeric(0),
+    geom_mean_confint.confint_lower = numeric(0),
+    geom_mean_confint.confint_upper = numeric(0),
+    hd_trim = numeric(0),
+    hd_trim_confint.confint_lower = numeric(0),
+    hd_trim_confint.confint_upper = numeric(0),
+    simple_trim = numeric(0),
+    simple_trim_confint.confint_lower = numeric(0),
+    simple_trim_confint.confint_upper = numeric(0),
+    neyman = numeric(0),
+    neyman_confint.confint_lower = numeric(0),
+    neyman_confint.confint_upper = numeric(0),
+    geom_mean_of_odds = numeric(0),
+    geom_mean_of_odds_confint.confint_lower = numeric(0),
+    geom_mean_of_odds_confint.confint_upper = numeric(0)))
+}
+
+bindWithGrp <- function(dfNames) {
+  do.call(rbind, lapply(dfNames, function(x) {
+    cbind(get(x), group = x)
+  }))
+}
+
+figureDataBasics <- function(dateDataProcessed, subsetUserName = NULL, subsetTeamId = NULL) {
+  if (!is.null(subsetUserName)) {
+    dateDataProcessed <- dateDataProcessed %>% filter(userName %in% subsetUserName)
+  }
+  if (!is.null(subsetTeamId)) {
+    dateDataProcessed <- dateDataProcessed %>% filter(teamId %in% subsetTeamId)
+  }
+  # Create the summary stats
+  dateData <- dateDataProcessed %>%
+    summarize(n_ids = n(),
+              mean = mean(forecast),
+              mean_confint = boot_results(forecast, statistic = "mean"),
+              sd = sd(forecast),
+              median = median(forecast),
+              median_confint = boot_results(forecast, statistic = "median"),
+              geom_mean = geoMeanCalc(forecast),
+              geom_mean_confint = boot_results(forecast, statistic = "geoMeanCalc"),
+              hd_trim = hd_trim(forecast),
+              hd_trim_confint = boot_results(forecast, statistic = "hd_trim"),
+              simple_trim = trim(forecast),
+              simple_trim_confint = boot_results(forecast, statistic = "trim"),
+              neyman = neymanAggCalc(forecast),
+              neyman_confint = boot_results(forecast, statistic = "neymanAggCalc"),
+              geom_mean_of_odds = geoMeanOfOddsCalc(forecast),
+              geom_mean_of_odds_confint = boot_results(forecast, statistic = "geoMeanOfOddsCalc"))
 }
 
 figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecialty) {
   #' @export
-
-  dateData <- dateDataProcessed
-  mean <- mean(dateData$forecast)
-  sd <- sd(dateData$forecast)
-  geoMean <- geoMeanCalc(dateData$forecast)
-  median <- median(dateData$forecast)
-  # Get bootstrapped CI's (for median only)
-  boot_ci <- boot_results(dateData)
-  median_confint_lower <- boot_ci$confint_lower
-  median_confint_upper <- boot_ci$confint_upper
-  if (length(dateData$forecast) > 0) {
-    hdTrim <- hd_trim(dateData$forecast)
-  } else {
-    hdTrim <- NA
-  }
-  neymanAgg <- neymanAggCalc(dateData$forecast)
-  n <- nrow(dateData)
-
-  g1DateData <- filter(dateDataProcessed, userName %in% c(supers, expertsG1$userName))
-  g1Mean <- mean(g1DateData$forecast)
-  g1Sd <- sd(g1DateData$forecast)
-  g1GeoMean <- geoMeanCalc(g1DateData$forecast)
-  g1Median <- median(g1DateData$forecast)
-  # Get bootstrapped CI's (for median only)
-  boot_ci <- boot_results(g1DateData)
-  g1Median_confint_lower <- boot_ci$confint_lower
-  g1Median_confint_upper <- boot_ci$confint_upper
-  if (length(g1DateData$forecast) > 0) {
-    g1HdTrim <- hd_trim(g1DateData$forecast)
-  } else {
-    g1HdTrim <- NA
-  }
-  g1NeymanAgg <- neymanAggCalc(g1DateData$forecast)
-  g1N <- nrow(g1DateData)
-
-  supersDateData <- filter(dateDataProcessed, userName %in% supers)
-  supersMean <- mean(supersDateData$forecast)
-  supersSd <- sd(supersDateData$forecast)
-  supersGeoMean <- geoMeanCalc(supersDateData$forecast)
-  supersMedian <- median(supersDateData$forecast)
-  # Get bootstrapped CI's (for median only)
-  boot_ci <- boot_results(supersDateData)
-  supersMedian_confint_lower <- boot_ci$confint_lower
-  supersMedian_confint_upper <- boot_ci$confint_upper
-  if (length(supersDateData$forecast) > 0) {
-    supersHdTrim <- hd_trim(supersDateData$forecast)
-  } else {
-    supersHdTrim <- NA
-  }
-  supersNeymanAgg <- neymanAggCalc(supersDateData$forecast)
-  supersN <- nrow(supersDateData)
-
-  expertsDateData <- filter(dateDataProcessed, userName %in% expertsG1$userName)
-  expertsMean <- mean(expertsDateData$forecast)
-  expertsSd <- sd(expertsDateData$forecast)
-  expertsGeoMean <- geoMeanCalc(expertsDateData$forecast)
-  expertsMedian <- median(expertsDateData$forecast)
-  # Get bootstrapped CI's (for median only)
-  boot_ci <- boot_results(expertsDateData)
-  expertsMedian_confint_lower <- boot_ci$confint_lower
-  expertsMedian_confint_upper <- boot_ci$confint_upper
-  if (length(expertsDateData$forecast) > 0) {
-    expertsHdTrim <- hd_trim(expertsDateData$forecast)
-  } else {
-    expertsHdTrim <- NA
-  }
-  expertsNeymanAgg <- neymanAggCalc(expertsDateData$forecast)
-  expertsN <- nrow(expertsDateData)
+  
+  all <- figureDataBasics(dateDataProcessed)
+  
+  g1 <- figureDataBasics(dateDataProcessed, c(supers, expertsG1$userName))
+  
+  supers <- figureDataBasics(dateDataProcessed, supers)
+  
+  experts <- figureDataBasics(dateDataProcessed, expertsG1$userName)
 
   if (qSpecialty != "") {
-    domainExperts <- expertsG1 %>% filter(specialty1 == qSpecialty | specialty2 == qSpecialty | specialty3 == qSpecialty)
-    domainExpertsDateData <- filter(dateDataProcessed, userName %in% domainExperts$userName)
-    domainExpertsMean <- mean(domainExpertsDateData$forecast)
-    domainExpertsSd <- sd(domainExpertsDateData$forecast)
-    domainExpertsGeoMean <- geoMeanCalc(domainExpertsDateData$forecast)
-    domainExpertsMedian <- median(domainExpertsDateData$forecast)
-    # Get bootstrapped CI's (for median only)
-    boot_ci <- boot_results(domainExpertsDateData)
-    domainExpertsMedian_confint_lower <- boot_ci$confint_lower
-    domainExpertsMedian_confint_upper <- boot_ci$confint_upper
-    domainExpertsMedian <- median(domainExpertsDateData$forecast)
-    if (length(domainExpertsDateData$forecast) > 0) {
-      domainExpertsHdTrim <- hd_trim(domainExpertsDateData$forecast)
-    } else {
-      domainExpertsHdTrim <- NA
-    }
-    domainExpertsNeymanAgg <- neymanAggCalc(domainExpertsDateData$forecast)
-    domainExpertsN <- nrow(domainExpertsDateData)
+    domainExpertsUsers <- expertsG1 %>% filter(specialty1 == qSpecialty | specialty2 == qSpecialty | specialty3 == qSpecialty)
+    domainExperts <- figureDataBasics(dateDataProcessed, domainExpertsUsers$userName)
   } else {
-    domainExpertsMean <- NA
-    domainExpertsSd <- NA
-    domainExpertsGeoMean <- NA
-    domainExpertsMedian <- NA
-    domainExpertsMedian_confint_lower <- NA
-    domainExpertsMedian_confint_upper <- NA
-    domainExpertsHdTrim <- NA
-    domainExpertsNeymanAgg <- NA
-    domainExpertsN <- NA
+    # Create a dataframe with the same columns as the other dataframes
+    domainExperts <- data.frame(
+      n_ids = NA,
+      mean = NA,
+      mean_confint.confint_lower = NA,
+      mean_confint.confint_upper = NA,
+      sd = NA,
+      median = NA,
+      median_confint.confint_lower = NA,
+      median_confint.confint_upper = NA,
+      geom_mean = NA,
+      geom_mean_confint.confint_lower = NA,
+      geom_mean_confint.confint_upper = NA,
+      hd_trim = NA,
+      hd_trim_confint.confint_lower = NA,
+      hd_trim_confint.confint_upper = NA,
+      simple_trim = NA,
+      simple_trim_confint.confint_lower = NA,
+      simple_trim_confint.confint_upper = NA,
+      neyman = NA,
+      neyman_confint.confint_lower = NA,
+      neyman_confint.confint_upper = NA,
+      geom_mean_of_odds = NA,
+      geom_mean_of_odds_confint.confint_lower = NA,
+      geom_mean_of_odds_confint.confint_upper = NA
+    )
   }
 
   if (qSpecialty != "") {
-    nonDomainExperts <- expertsG1 %>% filter(specialty1 != qSpecialty & specialty2 != qSpecialty & specialty3 != qSpecialty)
-    nonDomainExpertsDateData <- filter(dateDataProcessed, userName %in% nonDomainExperts$userName)
-    nonDomainExpertsMean <- mean(nonDomainExpertsDateData$forecast)
-    nonDomainExpertsSd <- sd(nonDomainExpertsDateData$forecast)
-    nonDomainExpertsGeoMean <- geoMeanCalc(nonDomainExpertsDateData$forecast)
-    nonDomainExpertsMedian <- median(nonDomainExpertsDateData$forecast)
-    # Get bootstrapped CI's (for median only)
-    boot_ci <- boot_results(nonDomainExpertsDateData)
-    nonDomainExpertsMedian_confint_lower <- boot_ci$confint_lower
-    nonDomainExpertsMedian_confint_upper <- boot_ci$confint_upper
-    if (length(nonDomainExpertsDateData$forecast) > 0) {
-      nonDomainExpertsHdTrim <- hd_trim(nonDomainExpertsDateData$forecast)
-    } else {
-      nonDomainExpertsHdTrim <- NA
-    }
-    nonDomainExpertsNeymanAgg <- neymanAggCalc(nonDomainExpertsDateData$forecast)
-    nonDomainExpertsN <- nrow(nonDomainExpertsDateData)
+    nonDomainExpertsUsers <- expertsG1 %>% filter(specialty1 != qSpecialty & specialty2 != qSpecialty & specialty3 != qSpecialty)
+    nonDomainExperts <- figureDataBasics(dateDataProcessed, nonDomainExpertsUsers$userName)
   } else {
-    nonDomainExpertsMean <- NA
-    nonDomainExpertsSd <- NA
-    nonDomainExpertsGeoMean <- NA
-    nonDomainExpertsMedian <- NA
-    domainExpertsMedian_confint_lower <- NA
-    domainExpertsMedian_confint_upper <- NA
-    nonDomainExpertsMedian_confint_lower <- NA
-    nonDomainExpertsMedian_confint_upper <- NA
-    nonDomainExpertsHdTrim <- NA
-    nonDomainExpertsNeymanAgg <- NA
-    nonDomainExpertsN <- NA
+    # Create a dataframe with the same columns as the other dataframes
+    nonDomainExperts <- data.frame(
+      n_ids = NA,
+      mean = NA,
+      mean_confint.confint_lower = NA,
+      mean_confint.confint_upper = NA,
+      sd = NA,
+      median = NA,
+      median_confint.confint_lower = NA,
+      median_confint.confint_upper = NA,
+      geom_mean = NA,
+      geom_mean_confint.confint_lower = NA,
+      geom_mean_confint.confint_upper = NA,
+      hd_trim = NA,
+      hd_trim_confint.confint_lower = NA,
+      hd_trim_confint.confint_upper = NA,
+      simple_trim = NA,
+      simple_trim_confint.confint_lower = NA,
+      simple_trim_confint.confint_upper = NA,
+      neyman = NA,
+      neyman_confint.confint_lower = NA,
+      neyman_confint.confint_upper = NA,
+      geom_mean_of_odds = NA,
+      geom_mean_of_odds_confint.confint_lower = NA,
+      geom_mean_of_odds_confint.confint_upper = NA
+    )
   }
 
-  t336DateData <- filter(dateDataProcessed, teamId == 336)
-  t336Mean <- mean(t336DateData$forecast)
-  t336Sd <- sd(t336DateData$forecast)
-  t336GeoMean <- geoMeanCalc(t336DateData$forecast)
-  t336Median <- median(t336DateData$forecast)
-  if (length(t336DateData$forecast) > 0) {
-    t336HdTrim <- hd_trim(t336DateData$forecast)
-  } else {
-    t336HdTrim <- NA
-  }
-  t336NeymanAgg <- neymanAggCalc(t336DateData$forecast)
-  t336N <- nrow(t336DateData)
+  t336 <- figureDataBasics(dateDataProcessed, subsetTeamId = 336)
 
-  t336SupersDateData <- dateDataProcessed %>%
-    filter(teamId == 336) %>%
-    filter(userName %in% supers)
-  t336SupersMean <- mean(t336SupersDateData$forecast)
-  t336SupersSd <- sd(t336SupersDateData$forecast)
-  t336SupersGeoMean <- geoMeanCalc(t336SupersDateData$forecast)
-  t336SupersMedian <- median(t336SupersDateData$forecast)
-  if (length(t336SupersDateData$forecast) > 0) {
-    t336SupersHdTrim <- hd_trim(t336SupersDateData$forecast)
-  } else {
-    t336SupersHdTrim <- NA
-  }
-  t336SupersNeymanAgg <- neymanAggCalc(t336SupersDateData$forecast)
-  t336SupersN <- nrow(t336SupersDateData)
+  t336Supers <- figureDataBasics(dateDataProcessed, subsetUserName = supers, subsetTeamId = 336) 
+  
+  t336Experts <- figureDataBasics(dateDataProcessed, subsetUserName = expertsG1$userName, subsetTeamId = 336)
 
-  t336ExpertsDateData <- dateDataProcessed %>%
-    filter(teamId == 336) %>%
-    filter(userName %in% expertsG1$userName)
-  t336ExpertsMean <- mean(t336ExpertsDateData$forecast)
-  t336ExpertsSd <- sd(t336ExpertsDateData$forecast)
-  t336ExpertsGeoMean <- geoMeanCalc(t336ExpertsDateData$forecast)
-  t336ExpertsMedian <- median(t336ExpertsDateData$forecast)
-  if (length(t336ExpertsDateData$forecast) > 0) {
-    t336ExpertsHdTrim <- hd_trim(t336ExpertsDateData$forecast)
-  } else {
-    t336ExpertsHdTrim <- NA
-  }
-  t336ExpertsNeymanAgg <- neymanAggCalc(t336ExpertsDateData$forecast)
-  t336ExpertsN <- nrow(t336ExpertsDateData)
+  t337 <- figureDataBasics(dateDataProcessed, subsetTeamId = 337)
 
-  t337DateData <- filter(dateDataProcessed, teamId == 337)
-  t337Mean <- mean(t337DateData$forecast)
-  t337Sd <- sd(t337DateData$forecast)
-  t337GeoMean <- geoMeanCalc(t337DateData$forecast)
-  t337Median <- median(t337DateData$forecast)
-  if (length(t337DateData$forecast) > 0) {
-    t337HdTrim <- hd_trim(t337DateData$forecast)
-  } else {
-    t337HdTrim <- NA
-  }
-  t337NeymanAgg <- neymanAggCalc(t337DateData$forecast)
-  t337N <- nrow(t337DateData)
+  t337Supers <- figureDataBasics(dateDataProcessed, subsetTeamId = 337, subsetUserName = supers)
 
-  t337SupersDateData <- dateDataProcessed %>%
-    filter(teamId == 337) %>%
-    filter(userName %in% supers)
-  t337SupersMean <- mean(t337SupersDateData$forecast)
-  t337SupersSd <- sd(t337SupersDateData$forecast)
-  t337SupersGeoMean <- geoMeanCalc(t337SupersDateData$forecast)
-  t337SupersMedian <- median(t337SupersDateData$forecast)
-  if (length(t337SupersDateData$forecast) > 0) {
-    t337SupersHdTrim <- hd_trim(t337SupersDateData$forecast)
-  } else {
-    t337SupersHdTrim <- NA
-  }
-  t337SupersNeymanAgg <- neymanAggCalc(t337SupersDateData$forecast)
-  t337SupersN <- nrow(t337SupersDateData)
+  t337Experts <- figureDataBasics(dateDataProcessed, subsetTeamId = 337, subsetUserName = expertsG1$userName)
 
-  t337ExpertsDateData <- dateDataProcessed %>%
-    filter(teamId == 337) %>%
-    filter(userName %in% expertsG1$userName)
-  t337ExpertsMean <- mean(t337ExpertsDateData$forecast)
-  t337ExpertsSd <- sd(t337ExpertsDateData$forecast)
-  t337ExpertsGeoMean <- geoMeanCalc(t337ExpertsDateData$forecast)
-  t337ExpertsMedian <- median(t337ExpertsDateData$forecast)
-  if (length(t337ExpertsDateData$forecast) > 0) {
-    t337ExpertsHdTrim <- hd_trim(t337ExpertsDateData$forecast)
-  } else {
-    t337ExpertsHdTrim <- NA
-  }
-  t337ExpertsNeymanAgg <- neymanAggCalc(t337ExpertsDateData$forecast)
-  t337ExpertsN <- nrow(t337ExpertsDateData)
+  t338 <- figureDataBasics(dateDataProcessed, subsetTeamId = 338)
 
-  t338DateData <- filter(dateDataProcessed, teamId == 338)
-  t338Mean <- mean(t338DateData$forecast)
-  t338Sd <- sd(t338DateData$forecast)
-  t338GeoMean <- geoMeanCalc(t338DateData$forecast)
-  t338Median <- median(t338DateData$forecast)
-  if (length(t338DateData$forecast) > 0) {
-    t338HdTrim <- hd_trim(t338DateData$forecast)
-  } else {
-    t338HdTrim <- NA
-  }
-  t338NeymanAgg <- neymanAggCalc(t338DateData$forecast)
-  t338N <- nrow(t338DateData)
+  t338Supers <- figureDataBasics(dateDataProcessed, subsetTeamId = 338, subsetUserName = supers)
 
-  t338SupersDateData <- dateDataProcessed %>%
-    filter(teamId == 338) %>%
-    filter(userName %in% supers)
-  t338SupersMean <- mean(t338SupersDateData$forecast)
-  t338SupersSd <- sd(t338SupersDateData$forecast)
-  t338SupersGeoMean <- geoMeanCalc(t338SupersDateData$forecast)
-  t338SupersMedian <- median(t338SupersDateData$forecast)
-  if (length(t338SupersDateData$forecast) > 0) {
-    t338SupersHdTrim <- hd_trim(t338SupersDateData$forecast)
-  } else {
-    t338SupersHdTrim <- NA
-  }
-  t338SupersNeymanAgg <- neymanAggCalc(t338SupersDateData$forecast)
-  t338SupersN <- nrow(t338SupersDateData)
+  t338Experts <- figureDataBasics(dateDataProcessed, subsetTeamId = 338, subsetUserName = expertsG1$userName)
 
-  t338ExpertsDateData <- dateDataProcessed %>%
-    filter(teamId == 338) %>%
-    filter(userName %in% expertsG1$userName)
-  t338ExpertsMean <- mean(t338ExpertsDateData$forecast)
-  t338ExpertsSd <- sd(t338ExpertsDateData$forecast)
-  t338ExpertsGeoMean <- geoMeanCalc(t338ExpertsDateData$forecast)
-  t338ExpertsMedian <- median(t338ExpertsDateData$forecast)
-  if (length(t338ExpertsDateData$forecast) > 0) {
-    t338ExpertsHdTrim <- hd_trim(t338ExpertsDateData$forecast)
-  } else {
-    t338ExpertsHdTrim <- NA
-  }
-  t338ExpertsNeymanAgg <- neymanAggCalc(t338ExpertsDateData$forecast)
-  t338ExpertsN <- nrow(t338ExpertsDateData)
+  t339 <- figureDataBasics(dateDataProcessed, subsetTeamId = 339)
 
-  t339DateData <- filter(dateDataProcessed, teamId == 339)
-  t339Mean <- mean(t339DateData$forecast)
-  t339Sd <- sd(t339DateData$forecast)
-  t339GeoMean <- geoMeanCalc(t339DateData$forecast)
-  t339Median <- median(t339DateData$forecast)
-  if (length(t339DateData$forecast) > 0) {
-    t339HdTrim <- hd_trim(t339DateData$forecast)
-  } else {
-    t339HdTrim <- NA
-  }
-  t339NeymanAgg <- neymanAggCalc(t339DateData$forecast)
-  t339N <- nrow(t339DateData)
+  t339Supers <- figureDataBasics(dateDataProcessed, subsetTeamId = 339, subsetUserName = supers)
 
-  t339SupersDateData <- dateDataProcessed %>%
-    filter(teamId == 339) %>%
-    filter(userName %in% supers)
-  t339SupersMean <- mean(t339SupersDateData$forecast)
-  t339SupersSd <- sd(t339SupersDateData$forecast)
-  t339SupersGeoMean <- geoMeanCalc(t339SupersDateData$forecast)
-  t339SupersMedian <- median(t339SupersDateData$forecast)
-  if (length(t339SupersDateData$forecast) > 0) {
-    t339SupersHdTrim <- hd_trim(t339SupersDateData$forecast)
-  } else {
-    t339SupersHdTrim <- NA
-  }
-  t339SupersNeymanAgg <- neymanAggCalc(t339SupersDateData$forecast)
-  t339SupersN <- nrow(t339SupersDateData)
+  t339Experts <- figureDataBasics(dateDataProcessed, subsetTeamId = 339, subsetUserName = expertsG1$userName)
 
-  t339ExpertsDateData <- dateDataProcessed %>%
-    filter(teamId == 339) %>%
-    filter(userName %in% expertsG1$userName)
-  t339ExpertsMean <- mean(t339ExpertsDateData$forecast)
-  t339ExpertsSd <- sd(t339ExpertsDateData$forecast)
-  t339ExpertsGeoMean <- geoMeanCalc(t339ExpertsDateData$forecast)
-  t339ExpertsMedian <- median(t339ExpertsDateData$forecast)
-  if (length(t339ExpertsDateData$forecast) > 0) {
-    t339ExpertsHdTrim <- hd_trim(t339ExpertsDateData$forecast)
-  } else {
-    t339ExpertsHdTrim <- NA
-  }
-  t339ExpertsNeymanAgg <- neymanAggCalc(t339ExpertsDateData$forecast)
-  t339ExpertsN <- nrow(t339ExpertsDateData)
+  t340 <- figureDataBasics(dateDataProcessed, subsetTeamId = 340)
 
-  t340DateData <- filter(dateDataProcessed, teamId == 340)
-  t340Mean <- mean(t340DateData$forecast)
-  t340Sd <- sd(t340DateData$forecast)
-  t340GeoMean <- geoMeanCalc(t340DateData$forecast)
-  t340Median <- median(t340DateData$forecast)
-  if (length(t340DateData$forecast) > 0) {
-    t340HdTrim <- hd_trim(t340DateData$forecast)
-  } else {
-    t340HdTrim <- NA
-  }
-  t340NeymanAgg <- neymanAggCalc(t340DateData$forecast)
-  t340N <- nrow(t340DateData)
+  t340Supers <- figureDataBasics(dateDataProcessed, subsetTeamId = 340, subsetUserName = supers)
 
-  t340SupersDateData <- dateDataProcessed %>%
-    filter(teamId == 340) %>%
-    filter(userName %in% supers)
-  t340SupersMean <- mean(t340SupersDateData$forecast)
-  t340SupersSd <- sd(t340SupersDateData$forecast)
-  t340SupersGeoMean <- geoMeanCalc(t340SupersDateData$forecast)
-  t340SupersMedian <- median(t340SupersDateData$forecast)
-  if (length(t340SupersDateData$forecast) > 0) {
-    t340SupersHdTrim <- hd_trim(t340SupersDateData$forecast)
-  } else {
-    t340SupersHdTrim <- NA
-  }
-  t340SupersNeymanAgg <- neymanAggCalc(t340SupersDateData$forecast)
-  t340SupersN <- nrow(t340SupersDateData)
+  t340Experts <- figureDataBasics(dateDataProcessed, subsetTeamId = 340, subsetUserName = expertsG1$userName)
 
-  t340ExpertsDateData <- dateDataProcessed %>%
-    filter(teamId == 340) %>%
-    filter(userName %in% expertsG1$userName)
-  t340ExpertsMean <- mean(t340ExpertsDateData$forecast)
-  t340ExpertsSd <- sd(t340ExpertsDateData$forecast)
-  t340ExpertsGeoMean <- geoMeanCalc(t340ExpertsDateData$forecast)
-  t340ExpertsMedian <- median(t340ExpertsDateData$forecast)
-  if (length(t340ExpertsDateData$forecast) > 0) {
-    t340ExpertsHdTrim <- hd_trim(t340ExpertsDateData$forecast)
-  } else {
-    t340ExpertsHdTrim <- NA
-  }
-  t340ExpertsNeymanAgg <- neymanAggCalc(t340ExpertsDateData$forecast)
-  t340ExpertsN <- nrow(t340ExpertsDateData)
+  t341 <- figureDataBasics(dateDataProcessed, subsetTeamId = 341)
+  
+  t341Supers <- figureDataBasics(dateDataProcessed, subsetTeamId = 341, subsetUserName = supers)
 
-  t341DateData <- filter(dateDataProcessed, teamId == 341)
-  t341Mean <- mean(t341DateData$forecast)
-  t341Sd <- sd(t341DateData$forecast)
-  t341GeoMean <- geoMeanCalc(t341DateData$forecast)
-  t341Median <- median(t341DateData$forecast)
-  if (length(t341DateData$forecast) > 0) {
-    t341HdTrim <- hd_trim(t341DateData$forecast)
-  } else {
-    t341HdTrim <- NA
-  }
-  t341NeymanAgg <- neymanAggCalc(t341DateData$forecast)
-  t341N <- nrow(t341DateData)
+  t341Experts <- figureDataBasics(dateDataProcessed, subsetTeamId = 341, subsetUserName = expertsG1$userName)
 
-  t341SupersDateData <- dateDataProcessed %>%
-    filter(teamId == 341) %>%
-    filter(userName %in% supers)
-  t341SupersMean <- mean(t341SupersDateData$forecast)
-  t341SupersSd <- sd(t341SupersDateData$forecast)
-  t341SupersGeoMean <- geoMeanCalc(t341SupersDateData$forecast)
-  t341SupersMedian <- median(t341SupersDateData$forecast)
-  if (length(t341SupersDateData$forecast) > 0) {
-    t341SupersHdTrim <- hd_trim(t341SupersDateData$forecast)
-  } else {
-    t341SupersHdTrim <- NA
-  }
-  t341SupersNeymanAgg <- neymanAggCalc(t341SupersDateData$forecast)
-  t341SupersN <- nrow(t341SupersDateData)
+  t342 <- figureDataBasics(dateDataProcessed, subsetTeamId = 342)
 
-  t341ExpertsDateData <- dateDataProcessed %>%
-    filter(teamId == 341) %>%
-    filter(userName %in% expertsG1$userName)
-  t341ExpertsMean <- mean(t341ExpertsDateData$forecast)
-  t341ExpertsSd <- sd(t341ExpertsDateData$forecast)
-  t341ExpertsGeoMean <- geoMeanCalc(t341ExpertsDateData$forecast)
-  t341ExpertsMedian <- median(t341ExpertsDateData$forecast)
-  if (length(t341ExpertsDateData$forecast) > 0) {
-    t341ExpertsHdTrim <- hd_trim(t341ExpertsDateData$forecast)
-  } else {
-    t341ExpertsHdTrim <- NA
-  }
-  t341ExpertsNeymanAgg <- neymanAggCalc(t341ExpertsDateData$forecast)
-  t341ExpertsN <- nrow(t341ExpertsDateData)
+  t343 <- figureDataBasics(dateDataProcessed, subsetTeamId = 343)
 
-  t342DateData <- filter(dateDataProcessed, teamId == 342)
-  t342Mean <- mean(t342DateData$forecast)
-  t342Sd <- sd(t342DateData$forecast)
-  t342GeoMean <- geoMeanCalc(t342DateData$forecast)
-  t342Median <- median(t342DateData$forecast)
-  if (length(t342DateData$forecast) > 0) {
-    t342HdTrim <- hd_trim(t342DateData$forecast)
-  } else {
-    t342HdTrim <- NA
-  }
-  t342NeymanAgg <- neymanAggCalc(t342DateData$forecast)
-  t342N <- nrow(t342DateData)
+  t344 <- figureDataBasics(dateDataProcessed, subsetTeamId = 344)
 
-  t343DateData <- filter(dateDataProcessed, teamId == 343)
-  t343Mean <- mean(t343DateData$forecast)
-  t343Sd <- sd(t343DateData$forecast)
-  t343GeoMean <- geoMeanCalc(t343DateData$forecast)
-  t343Median <- median(t343DateData$forecast)
-  if (length(t343DateData$forecast) > 0) {
-    t343HdTrim <- hd_trim(t343DateData$forecast)
-  } else {
-    t343HdTrim <- NA
-  }
-  t343NeymanAgg <- neymanAggCalc(t343DateData$forecast)
-  t343N <- nrow(t343DateData)
+  t345 <- figureDataBasics(dateDataProcessed, subsetTeamId = 345)
 
-  t344DateData <- filter(dateDataProcessed, teamId == 344)
-  t344Mean <- mean(t344DateData$forecast)
-  t344Sd <- sd(t344DateData$forecast)
-  t344GeoMean <- geoMeanCalc(t344DateData$forecast)
-  t344Median <- median(t344DateData$forecast)
-  if (length(t344DateData$forecast) > 0) {
-    t344HdTrim <- hd_trim(t344DateData$forecast)
-  } else {
-    t344HdTrim <- NA
-  }
-  t344NeymanAgg <- neymanAggCalc(t344DateData$forecast)
-  t344N <- nrow(t344DateData)
+  rbound <- bindWithGrp(c(all, g1, supers, experts, domainExperts, nonDomainExperts,
+                          t336, t336Supers, t336Experts,
+                          t337, t337Supers, t337Experts,
+                          t338, t338Supers, t338Experts,
+                          t339, t339Supers, t339Experts,
+                          t340, t340Supers, t340Experts,
+                          t341, t341Supers, t341Experts,
+                          t342, t343, t344, t345))
+  
+  rbound$beliefSet <- beliefSet
+  rbound$year <- year
+  rbound$currentDate <- date
 
-  t345DateData <- filter(dateDataProcessed, teamId == 345)
-  t345Mean <- mean(t345DateData$forecast)
-  t345Sd <- sd(t345DateData$forecast)
-  t345GeoMean <- geoMeanCalc(t345DateData$forecast)
-  t345Median <- median(t345DateData$forecast)
-  if (length(t345DateData$forecast) > 0) {
-    t345HdTrim <- hd_trim(t345DateData$forecast)
-  } else {
-    t345HdTrim <- NA
-  }
-  t345NeymanAgg <- neymanAggCalc(t345DateData$forecast)
-  t345N <- nrow(t345DateData)
-
-  return(data.frame(beliefSet, year,
-    currentDate = date, mean, sd, geoMean, median, hdTrim, neymanAgg, n,
-    g1Mean, g1Sd, g1GeoMean, g1Median, g1Median_confint_lower, g1Median_confint_upper, g1HdTrim, g1NeymanAgg, g1N,
-    supersMean, supersSd, supersGeoMean, supersMedian, supersMedian_confint_lower, supersMedian_confint_upper, expertsMedian_confint_lower, expertsMedian_confint_upper, supersHdTrim, supersNeymanAgg, supersN,
-    expertsMean, expertsSd, expertsGeoMean, expertsMedian, expertsMedian_confint_lower, expertsMedian_confint_upper, expertsHdTrim, expertsNeymanAgg, expertsN,
-    domainExpertsMean, domainExpertsSd, domainExpertsGeoMean, domainExpertsMedian, domainExpertsMedian_confint_lower, domainExpertsMedian_confint_upper, domainExpertsHdTrim, domainExpertsNeymanAgg, domainExpertsN,
-    nonDomainExpertsMean, nonDomainExpertsSd, nonDomainExpertsGeoMean, nonDomainExpertsMedian, nonDomainExpertsMedian_confint_lower, nonDomainExpertsMedian_confint_upper, nonDomainExpertsHdTrim, nonDomainExpertsNeymanAgg, nonDomainExpertsN,
-    t336Mean, t336Sd, t336GeoMean, t336Median, t336HdTrim, t336NeymanAgg, t336N,
-    t336SupersMean, t336SupersSd, t336SupersGeoMean, t336SupersMedian, t336SupersHdTrim, t336SupersNeymanAgg, t336SupersN,
-    t336ExpertsMean, t336ExpertsSd, t336ExpertsGeoMean, t336ExpertsMedian, t336ExpertsHdTrim, t336ExpertsNeymanAgg, t336ExpertsN,
-    t337Mean, t337Sd, t337GeoMean, t337Median, t337HdTrim, t337NeymanAgg, t337N,
-    t337SupersMean, t337SupersSd, t337SupersGeoMean, t337SupersMedian, t337SupersHdTrim, t337SupersNeymanAgg, t337SupersN,
-    t337ExpertsMean, t337ExpertsSd, t337ExpertsGeoMean, t337ExpertsMedian, t337ExpertsHdTrim, t337ExpertsNeymanAgg, t337ExpertsN,
-    t338Mean, t338Sd, t338GeoMean, t338Median, t338HdTrim, t338NeymanAgg, t338N,
-    t338SupersMean, t338SupersSd, t338SupersGeoMean, t338SupersMedian, t338SupersHdTrim, t338SupersNeymanAgg, t338SupersN,
-    t338ExpertsMean, t338ExpertsSd, t338ExpertsGeoMean, t338ExpertsMedian, t338ExpertsHdTrim, t338ExpertsNeymanAgg, t338ExpertsN,
-    t339Mean, t339Sd, t339GeoMean, t339Median, t339HdTrim, t339NeymanAgg, t339N,
-    t339SupersMean, t339SupersSd, t339SupersGeoMean, t339SupersMedian, t339SupersHdTrim, t339SupersNeymanAgg, t339SupersN,
-    t339ExpertsMean, t339ExpertsSd, t339ExpertsGeoMean, t339ExpertsMedian, t339ExpertsHdTrim, t339ExpertsNeymanAgg, t339ExpertsN,
-    t340Mean, t340Sd, t340GeoMean, t340Median, t340HdTrim, t340NeymanAgg, t340N,
-    t340SupersMean, t340SupersSd, t340SupersGeoMean, t340SupersMedian, t340SupersHdTrim, t340SupersNeymanAgg, t340SupersN,
-    t340ExpertsMean, t340ExpertsSd, t340ExpertsGeoMean, t340ExpertsMedian, t340ExpertsHdTrim, t340ExpertsNeymanAgg, t340ExpertsN,
-    t341Mean, t341Sd, t341GeoMean, t341Median, t341HdTrim, t341NeymanAgg, t341N,
-    t341SupersMean, t341SupersSd, t341SupersGeoMean, t341SupersMedian, t341SupersHdTrim, t341SupersNeymanAgg, t341SupersN,
-    t341ExpertsMean, t341ExpertsSd, t341ExpertsGeoMean, t341ExpertsMedian, t341ExpertsHdTrim, t341ExpertsNeymanAgg, t341ExpertsN,
-    t342Mean, t342Sd, t342GeoMean, t342Median, t342HdTrim, t342NeymanAgg, t342N,
-    t343Mean, t343Sd, t343GeoMean, t343Median, t343HdTrim, t343NeymanAgg, t343N,
-    t344Mean, t344Sd, t344GeoMean, t344Median, t344HdTrim, t344NeymanAgg, t344N,
-    t345Mean, t345Sd, t345GeoMean, t345Median, t345HdTrim, t345NeymanAgg, t345N
-  ))
+  return(rbound)
 }
 
 multiYearReciprocalFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
@@ -1270,10 +789,6 @@ multiYearReciprocalFigureData <- function(metaTable, data, phaseTwoMedian, timel
           filter(setName == currentSetName) %>%
           filter(questionName == currentQuestionName) %>%
           filter(forecast != defaultForecast)
-
-        totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
-        totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
-        totalDomainExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName[expertsG1$specialty1 == qSpecialty | expertsG1$specialty2 == qSpecialty | expertsG1$specialty3 == qSpecialty]) %>% select(userName)))
 
         for (l in 1:length(timeline)) {
           currentDate <- timeline[l]
@@ -1612,7 +1127,6 @@ pointDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
       }
     }
 
-
     for (j in 1:length(distrib)) {
       print(distrib[j])
       currentAnswerText <- distrib[j]
@@ -1634,10 +1148,6 @@ pointDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
         filter(setName == currentSetName) %>%
         filter(answerText == currentAnswerText) %>%
         filter(forecast != defaultForecast)
-
-      totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
-      totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
-      totalDomainExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName[expertsG1$specialty == qSpecialty]) %>% select(userName)))
 
       for (k in 1:length(timeline)) {
         currentDate <- timeline[k]
@@ -2010,10 +1520,6 @@ multiYearDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline
           filter(questionName == years[j]) %>%
           filter(answerText == distrib[k]) %>%
           filter(forecast != defaultForecast)
-
-        totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
-        totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
-        totalDomainExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName[expertsG1$specialty1 == qSpecialty | expertsG1$specialty2 == qSpecialty | expertsG1$specialty3 == qSpecialty]) %>% select(userName)))
 
         for (l in 1:length(timeline)) {
           currentDate <- timeline[l]
