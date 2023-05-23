@@ -7,9 +7,11 @@
 trim(x, p = 0.1)
 }
 \arguments{
-\item{p}{The proportion of forecasts to trim from each end (between 0 and 1)}
+\item{p}{The proportion of forecasts to trim from each end (between 0 and
+1)}
 
-\item{questionData}{The processed question data table (needs to have a forecast column)}
+\item{questionData}{The processed question data table (needs to have a
+forecast column)}
 }
 \value{
 The trimmed mean

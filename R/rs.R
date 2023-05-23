@@ -32,7 +32,8 @@ RSInit <- function() {
 RSRankingInit <- function() {
   #' Initialize reciprocal scoring ranking dataframe.
   #'
-  #' @return An empty dataframe that will hold the reciprocal scoring ranking for each user.
+  #' @return An empty dataframe that will hold the reciprocal scoring ranking
+  #' for each user.
   #'
   #' @export
 
@@ -58,7 +59,18 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
   #' believe?). They were asked about the MEDIAN belief of two groups.
   #'
   #' Scoring rule:
-  #' `log(1 - abs(action median - what you thought the median would be))`
+  #' `log(1 - abs(actual median - what you thought the median would be))`
+  #'
+  #' +------------+-----------------------+-------------------------------------+ # nolint
+  #' |     x      |       A. Actual       | B. What _ believes Group X will say | # nolint
+  #' +------------+-----------------------+-------------------------------------+ # nolint
+  #' | 1. Yours   | Your true belief      | Your belief about Group X           | # nolint
+  #' | 2. Group X | True Group X (median) | What Group X believes about itself  | # nolint
+  #' +------------+-----------------------+-------------------------------------+ # nolint
+  #'
+  #' This produces two kinds of scores:
+  #' score_unincentivized compares A2 to B1, and
+  #' score_rs compares B2 to B1
   #'
   #' @param metaTable Metadata on the multi-year reciprocal questions
   #' @param data Data on the multi-year reciprocal questions (forecasts)
@@ -93,7 +105,8 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
     years <- as.character(years)
     years <- years[years != ""]
 
-    beliefSets <- metaTable[i, ] %>% select(yourBeliefs, expertBeliefs, superBeliefs)
+    beliefSets <- metaTable[i, ] %>% select(yourBeliefs, expertBeliefs,
+                                            superBeliefs)
     beliefSets <- as.character(beliefSets)
     beliefSets <- beliefSets[beliefSets != ""]
 
@@ -121,9 +134,15 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
 
         medianBeliefs <- summaryTable %>%
           filter(currentSetName == sn) %>%
-          filter(currentQuestionName == paste(years[k], beliefSets[grepl("Your", beliefSets)])) %>%
+          filter(currentQuestionName == paste(years[k], beliefSets[grepl(
+            "Your",
+            beliefSets
+          )])) %>%
           filter(stage == j) %>%
-          select(currentSetName, currentQuestionName, answerText, stage, specialty, supersMedian, expertsG1Median, domainExpertsMedian)
+          select(
+            currentSetName, currentQuestionName, answerText, stage,
+            specialty, supersMedian, expertsG1Median, domainExpertsMedian
+          )
 
         if (specialty == "") {
           medianBeliefs$domainExpertsMedian <- medianBeliefs$expertsG1Median
@@ -136,9 +155,11 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
           phase_csv <- read.csv(files[grepl(paste0("Phase ", j, ".csv"), files)])
 
           if (grepl("Experts", otherBeliefSets[l])) {
-            phase_csv <- phase_csv %>% mutate(score_unincentivized = log_score(medianBeliefs$domainExpertsMedian, forecast))
+            phase_csv <- phase_csv %>%
+              mutate(score_unincentivized = log_score(medianBeliefs$domainExpertsMedian, forecast))
           } else if (grepl("Superforecasters", otherBeliefSets[l])) {
-            phase_csv <- phase_csv %>% mutate(score_unincentivized = log_score(medianBeliefs$supersMedian, forecast))
+            phase_csv <- phase_csv %>%
+              mutate(score_unincentivized = log_score(medianBeliefs$supersMedian, forecast))
           } else {
             print("ERROR!!!")
           }
@@ -151,16 +172,20 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
             filter(currentSetName == sn) %>%
             filter(currentQuestionName == paste(years[k], otherBeliefSets[l])) %>%
             filter(stage == j) %>%
-            select(currentSetName, currentQuestionName, answerText, stage, specialty, supersMedian, expertsG1Median, domainExpertsMedian)
+            select(currentSetName, currentQuestionName, answerText, stage,
+                   specialty, supersMedian, expertsG1Median,
+                   domainExpertsMedian)
 
           if (specialty == "") {
             RSBeliefs$domainExpertsMedian <- RSBeliefs$expertsG1Median
           }
 
           if (grepl("Experts", otherBeliefSets[l])) {
-            phase_csv <- phase_csv %>% mutate(score_rs = log_score(RSBeliefs$domainExpertsMedian, forecast))
+            phase_csv <- phase_csv %>%
+              mutate(score_rs = log_score(RSBeliefs$domainExpertsMedian, forecast))
           } else if (grepl("Superforecasters", otherBeliefSets[l])) {
-            phase_csv <- phase_csv %>% mutate(score_rs = log_score(RSBeliefs$supersMedian, forecast))
+            phase_csv <- phase_csv %>%
+              mutate(score_rs = log_score(RSBeliefs$supersMedian, forecast))
           } else {
             print("ERROR!!!")
           }
@@ -205,21 +230,37 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
           # phase_csv = phase_csv %>% mutate(score_unincentivized_standardized = (score_unincentivized - 0)/(standard_sd_unincentivized))
           # phase_csv = phase_csv %>% mutate(score_rs_standardized = (score_rs - 0)/(standard_sd_rs))
 
-          phase_csv <- phase_csv %>% mutate(rank_unincentivized = rank(-score_unincentivized, ties.method = "min", na.last = "keep"))
-          phase_csv <- phase_csv %>% mutate(rank_rs = rank(-score_rs, ties.method = "min", na.last = "keep"))
+          phase_csv <- phase_csv %>%
+            mutate(rank_unincentivized = rank(-score_unincentivized, ties.method = "min", na.last = "keep"))
+          phase_csv <- phase_csv %>%
+            mutate(rank_rs = rank(-score_rs, ties.method = "min", na.last = "keep"))
 
-          csv <- select(phase_csv, userId, teamName, teamId, setName, setId, questionName, questionId, answerText, answerId, score_unincentivized, score_rs, rank_unincentivized, rank_rs, group)
+          # This is the first csv we write: everyone's score on each question?
+          csv <- select(phase_csv, userId, teamName, teamId, setName, setId,
+                        questionName, questionId, answerText, answerId,
+                        score_unincentivized, score_rs, rank_unincentivized,
+                        rank_rs, group)
           csv <- unique(csv)
 
-          write.csv(csv, paste0(currentSetName, " - ", csv$questionName[1], " - Reciprocal Scores.csv"), row.names = FALSE)
+          write.csv(csv, paste0(currentSetName, " - ", csv$questionName[1],
+                                " - Reciprocal Scores.csv"), row.names = FALSE)
 
           setwd(paste0(yourHome, "Summary Data"))
 
-          g1RS <- csv %>% filter(group %in% c("supers", "domain experts", "non-domain experts"))
+          # Group 1 (supers and "G1" experts)
+          g1RS <- csv %>%
+            filter(group %in% c("supers", "domain experts",
+                                "non-domain experts"))
+          # Supers by themselves
           supersRS <- csv %>% filter(group == "supers")
-          expertsG1RS <- csv %>% filter(group %in% c("domain experts", "non-domain experts"))
+          # G1 experts by themselves
+          expertsG1RS <- csv %>%
+            filter(group %in% c("domain experts", "non-domain experts"))
+          # G2 experts by themselves
           expertsG2RS <- csv %>% filter(group == "experts (g2)")
+          # Domain experts (varies by question)
           domainExpertsRS <- csv %>% filter(group == "domain experts")
+          # Non-domain experts (varies by question)
           nonDomainExpertsRS <- csv %>% filter(group == "non-domain experts")
 
           RSTable <- read.csv("RSTable.csv")
@@ -242,6 +283,8 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
             domainExpertsMean_RS = mean(domainExpertsRS$score_rs),
             nonDomainExpertsMean_RS = mean(nonDomainExpertsRS$score_rs)
           ))
+
+          # For each question, mean unincentivized and RS scores for each group
           write.csv(RSTable, "RSTable.csv", row.names = FALSE)
 
           RSRanking_unincentivized <- read.csv("RSRanking_unincentivized.csv")
@@ -274,6 +317,7 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
           #   print("HEY!")
           # }
 
+          # Write the G1 rankings unincentivized RS rankings to CSV
           write.csv(RSRanking_unincentivized, "RSRanking_unincentivized.csv", row.names = FALSE)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[k], "/", otherBeliefSets[l]))
@@ -285,7 +329,11 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
   }
   setwd(paste0(yourHome, "Summary Data"))
   RSRanking_unincentivized <- read.csv("RSRanking_unincentivized.csv")
-  RSRanking_unincentivized <- RSRanking_unincentivized %>% mutate(avgRank = rankSum / numQuestions)
+  # Average ranking means we should expect the highest (and lowest) ranked will
+  # be people who answered very few questions
+  RSRanking_unincentivized <- RSRanking_unincentivized %>%
+    mutate(avgRank = rankSum / numQuestions) %>%
+    arrange(avgRank)
   write.csv(RSRanking_unincentivized, "RSRanking_unincentivized_first10.csv", row.names = FALSE)
 }
 
@@ -385,7 +433,6 @@ pointDistrib_RS <- function(metaTable, data, summaryTable) {
       super_75th <- summary_75th$supersMedian
       super_95th <- summary_95th$supersMedian
 
-
       if (specialty != "") {
         expert_5th <- summary_5th$domainExpertsMedian
         expert_25th <- summary_25th$domainExpertsMedian
@@ -481,7 +528,8 @@ pointDistrib_RS <- function(metaTable, data, summaryTable) {
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
 
-      scoreTbl$rank_unincentivized <- rank(-scoreTbl$score_unincentivized, ties.method = "min", na.last = "keep")
+      scoreTbl$rank_unincentivized <- rank(-scoreTbl$score_unincentivized,
+                                           ties.method = "min", na.last = "keep")
 
       if (dir.exists("Reciprocal Scoring")) {
         setwd("Reciprocal Scoring")
@@ -490,18 +538,30 @@ pointDistrib_RS <- function(metaTable, data, summaryTable) {
         setwd("Reciprocal Scoring")
       }
 
-      write.csv(scoreTbl, paste0(currentSetName, " - Reciprocal Scores.csv"), row.names = FALSE)
+      write.csv(scoreTbl, paste0(currentSetName,
+                                 " - Reciprocal Scores.csv"), row.names = FALSE)
 
       setwd(paste0(yourHome, "Summary Data"))
 
       RSTable <- read.csv("RSTable.csv")
 
-      g1Mean <- mean((scoreTbl %>% filter(group %in% c("supers", "domain experts", "non-domain experts", "experts")) %>% select(score_unincentivized))$score_unincentivized)
-      supersMean <- mean((scoreTbl %>% filter(group == "supers") %>% select(score_unincentivized))$score_unincentivized)
-      expertsG1Mean <- mean((scoreTbl %>% filter(group %in% c("domain experts", "non-domain experts", "experts")) %>% select(score_unincentivized))$score_unincentivized)
-      expertsG2Mean <- mean((scoreTbl %>% filter(group == "experts (g2)") %>% select(score_unincentivized))$score_unincentivized)
-      domainExpertsMean <- mean((scoreTbl %>% filter(group == "domain experts") %>% select(score_unincentivized))$score_unincentivized)
-      nonDomainExpertsMean <- mean((scoreTbl %>% filter(group == "non-domain experts") %>% select(score_unincentivized))$score_unincentivized)
+      g1Mean <- mean((scoreTbl %>%
+        filter(group %in% c("supers", "domain experts", "non-domain experts", "experts")) %>%
+        select(score_unincentivized))$score_unincentivized)
+      supersMean <- mean((scoreTbl %>% filter(group == "supers") %>%
+        select(score_unincentivized))$score_unincentivized)
+      expertsG1Mean <- mean((scoreTbl %>%
+        filter(group %in% c("domain experts", "non-domain experts", "experts")) %>%
+        select(score_unincentivized))$score_unincentivized)
+      expertsG2Mean <- mean((scoreTbl %>%
+        filter(group == "experts (g2)") %>%
+        select(score_unincentivized))$score_unincentivized)
+      domainExpertsMean <- mean((scoreTbl %>%
+        filter(group == "domain experts") %>%
+        select(score_unincentivized))$score_unincentivized)
+      nonDomainExpertsMean <- mean((scoreTbl %>%
+        filter(group == "non-domain experts") %>%
+        select(score_unincentivized))$score_unincentivized)
 
       RSTable <- rbind(RSTable, data.frame(
         currentSetName = currentSetName,
@@ -531,7 +591,7 @@ pointDistrib_RS <- function(metaTable, data, summaryTable) {
         if (j == 1) {
           for (m in 1:nrow(scoreTbl)) {
             if (scoreTbl$userId[m] %in% RSRanking_unincentivized$userId) {
-              pop <- RSRanking_unincentivized[RSRanking_unincentivized$userId == scoreTbl$userId[m], ]$n + 1
+              pop <- RSRanking_unincentivized[RSRanking_unincentivized$userId == scoreTbl$userId[m], ]$numQuestions + 1
               RSRanking_unincentivized[RSRanking_unincentivized$userId == scoreTbl$userId[m], ]$rankSum <- RSRanking_unincentivized[RSRanking_unincentivized$userId == scoreTbl$userId[m], ]$rankSum + scoreTbl[scoreTbl$userId == scoreTbl$userId[m], ]$rank_unincentivized
               # RSRanking_unincentivized[RSRanking_unincentivized$userId==scoreTbl$userId[m],]$rankSum = RSRanking_unincentivized[RSRanking_unincentivized$userId==scoreTbl$userId[m],]$rankSum+scoreTbl[scoreTbl$userId==scoreTbl$userId[m],]$rank_rs
               RSRanking_unincentivized[RSRanking_unincentivized$userId == scoreTbl$userId[m], ]$n <- pop
@@ -541,7 +601,7 @@ pointDistrib_RS <- function(metaTable, data, summaryTable) {
                 group = scoreTbl$group[m],
                 rankSum = scoreTbl$rank_unincentivized[m],
                 # rankSum = scoreTbl$rank_rs[m],
-                n = 1
+                numQuestions = 1
               ))
             }
           }
@@ -770,6 +830,7 @@ multiYearDistrib_RS <- function(metaTable, data, summaryTable) {
             ))
           }
 
+          # Rank in reverse order (lower score better)
           scoreTbl$rank_unincentivized <- rank(-scoreTbl$score_unincentivized, ties.method = "min", na.last = "keep")
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[k]))
@@ -783,18 +844,30 @@ multiYearDistrib_RS <- function(metaTable, data, summaryTable) {
 
           scoreTbl <- unique(scoreTbl)
 
-          write.csv(scoreTbl, paste0(currentSetName, " - Reciprocal Scores.csv"), row.names = FALSE)
+          write.csv(scoreTbl, paste0(currentSetName,
+                                     " - Reciprocal Scores.csv"), row.names = FALSE)
 
           setwd(paste0(yourHome, "Summary Data"))
 
           RSTable <- read.csv("RSTable.csv")
 
-          g1Mean <- mean((scoreTbl %>% filter(group %in% c("supers", "domain experts", "non-domain experts", "experts")) %>% select(score_unincentivized))$score_unincentivized)
-          supersMean <- mean((scoreTbl %>% filter(group == "supers") %>% select(score_unincentivized))$score_unincentivized)
-          expertsG1Mean <- mean((scoreTbl %>% filter(group %in% c("domain experts", "non-domain experts", "experts")) %>% select(score_unincentivized))$score_unincentivized)
-          expertsG2Mean <- mean((scoreTbl %>% filter(group == "experts (g2)") %>% select(score_unincentivized))$score_unincentivized)
-          domainExpertsMean <- mean((scoreTbl %>% filter(group == "domain experts") %>% select(score_unincentivized))$score_unincentivized)
-          nonDomainExpertsMean <- mean((scoreTbl %>% filter(group == "non-domain experts") %>% select(score_unincentivized))$score_unincentivized)
+          g1Mean <- mean((scoreTbl %>%
+            filter(group %in% c("supers", "domain experts", "non-domain experts", "experts")) %>%
+            select(score_unincentivized))$score_unincentivized)
+          supersMean <- mean((scoreTbl %>% filter(group == "supers") %>%
+            select(score_unincentivized))$score_unincentivized)
+          expertsG1Mean <- mean((scoreTbl %>%
+            filter(group %in% c("domain experts", "non-domain experts", "experts")) %>%
+            select(score_unincentivized))$score_unincentivized)
+          expertsG2Mean <- mean((scoreTbl %>%
+            filter(group == "experts (g2)") %>%
+            select(score_unincentivized))$score_unincentivized)
+          domainExpertsMean <- mean((scoreTbl %>%
+            filter(group == "domain experts") %>%
+            select(score_unincentivized))$score_unincentivized)
+          nonDomainExpertsMean <- mean((scoreTbl %>%
+            filter(group == "non-domain experts") %>%
+            select(score_unincentivized))$score_unincentivized)
 
           RSTable <- rbind(RSTable, data.frame(
             currentSetName = currentSetName,
@@ -824,7 +897,7 @@ multiYearDistrib_RS <- function(metaTable, data, summaryTable) {
             if (j == 1) {
               for (m in 1:nrow(scoreTbl)) {
                 if (scoreTbl$userId[m] %in% RSRanking_unincentivized$userId) {
-                  pop <- RSRanking_unincentivized[RSRanking_unincentivized$userId == scoreTbl$userId[m], ]$n + 1
+                  pop <- RSRanking_unincentivized[RSRanking_unincentivized$userId == scoreTbl$userId[m], ]$numQuestions + 1
                   RSRanking_unincentivized[RSRanking_unincentivized$userId == scoreTbl$userId[m], ]$rankSum <- RSRanking_unincentivized[RSRanking_unincentivized$userId == scoreTbl$userId[m], ]$rankSum + scoreTbl[scoreTbl$userId == scoreTbl$userId[m], ]$rank_unincentivized
                   # RSRanking_unincentivized[RSRanking_unincentivized$userId==scoreTbl$userId[m],]$rankSum = RSRanking_unincentivized[RSRanking_unincentivized$userId==scoreTbl$userId[m],]$rankSum+scoreTbl[scoreTbl$userId==scoreTbl$userId[m],]$rank_rs
                   RSRanking_unincentivized[RSRanking_unincentivized$userId == scoreTbl$userId[m], ]$n <- pop
@@ -834,7 +907,7 @@ multiYearDistrib_RS <- function(metaTable, data, summaryTable) {
                     group = scoreTbl$group[m],
                     rankSum = scoreTbl$rank_unincentivized[m],
                     # rankSum = scoreTbl$rank_rs[m],
-                    n = 1
+                    numQuestions = 1
                   ))
                 }
               }
@@ -927,13 +1000,16 @@ multiYearBinary_RS <- function(metaTable, data, summaryTable) {
             filter(currentSetName == sn) %>%
             filter(currentQuestionName == qn) %>%
             filter(stage == j) %>%
-            select(currentSetName, currentQuestionName, answerText, stage, specialty, supersMedian, expertsG1Median, domainExpertsMedian)
+            select(currentSetName, currentQuestionName, answerText, stage,
+                   specialty, supersMedian, expertsG1Median,
+                   domainExpertsMedian)
 
           if (specialty == "") {
             medianBeliefs$domainExpertsMedian <- medianBeliefs$expertsG1Median
           }
 
-          phase_csv <- phase_csv %>% mutate(score_unincentivized = "", score_RS = "", group = "")
+          phase_csv <- phase_csv %>%
+            mutate(score_unincentivized = "", score_RS = "", group = "")
 
           for (l in 1:nrow(phase_csv)) {
             if (phase_csv$userName[l] %in% supers) {
@@ -962,10 +1038,14 @@ multiYearBinary_RS <- function(metaTable, data, summaryTable) {
 
           phase_csv$score_unincentivized <- as.numeric(phase_csv$score_unincentivized)
 
-          phase_csv <- phase_csv %>% mutate(rank_unincentivized = rank(-score_unincentivized, ties.method = "min", na.last = "keep"))
+          phase_csv <- phase_csv %>%
+            mutate(rank_unincentivized = rank(-score_unincentivized, ties.method = "min", na.last = "keep"))
           phase_csv <- phase_csv %>% mutate(rank_rs = NA)
 
-          csv <- select(phase_csv, userId, teamName, teamId, setName, setId, questionName, questionId, answerText, answerId, score_unincentivized, score_RS, rank_unincentivized, rank_rs, group)
+          csv <- select(phase_csv, userId, teamName, teamId, setName, setId,
+                        questionName, questionId, answerText, answerId,
+                        score_unincentivized, score_RS, rank_unincentivized,
+                        rank_rs, group)
           csv$score_unincentivized <- as.numeric(csv$score_unincentivized)
           csv <- unique(csv)
 
@@ -976,7 +1056,8 @@ multiYearBinary_RS <- function(metaTable, data, summaryTable) {
             setwd("Reciprocal Scoring")
           }
 
-          write.csv(csv, paste0(currentSetName, " - ", csv$questionName[1], " - Reciprocal Scores.csv"), row.names = FALSE)
+          write.csv(csv, paste0(currentSetName, " - ", csv$questionName[1],
+                                " - Reciprocal Scores.csv"), row.names = FALSE)
 
           setwd(paste0(yourHome, "Summary Data"))
 
@@ -1015,7 +1096,7 @@ multiYearBinary_RS <- function(metaTable, data, summaryTable) {
             if (j == 1) {
               for (m in 1:nrow(csv)) {
                 if (csv$userId[m] %in% RSRanking_unincentivized$userId) {
-                  pop <- RSRanking_unincentivized[RSRanking_unincentivized$userId == csv$userId[m], ]$n + 1
+                  pop <- RSRanking_unincentivized[RSRanking_unincentivized$userId == csv$userId[m], ]$numQuestions + 1
                   RSRanking_unincentivized[RSRanking_unincentivized$userId == csv$userId[m], ]$rankSum <- RSRanking_unincentivized[RSRanking_unincentivized$userId == csv$userId[m], ]$rankSum + csv[csv$userId == csv$userId[m], ]$rank_unincentivized
                   # RSRanking_unincentivized[RSRanking_unincentivized$userId==csv$userId[m],]$rankSum = RSRanking_unincentivized[RSRanking_unincentivized$userId==csv$userId[m],]$rankSum+csv[csv$userId==csv$userId[m],]$rank_unincentivized
                   RSRanking_unincentivized[RSRanking_unincentivized$userId == csv$userId[m], ]$n <- pop
@@ -1025,7 +1106,7 @@ multiYearBinary_RS <- function(metaTable, data, summaryTable) {
                     group = csv$group[m],
                     rankSum = csv$rank_unincentivized[m],
                     # rankSum = csv$rank_rs[m],
-                    n = 1
+                    numQuestions = 1
                   ))
                 }
               }
@@ -1084,7 +1165,12 @@ multiYearCountryDistrib_RS <- function(metaTable, data, summaryTable) {
     years <- c(metaTable$year1[i], metaTable$year2[i], metaTable$year3[i])
     years <- years[years != ""]
 
-    countries <- c(metaTable$country1[i], metaTable$country2[i], metaTable$country3[i], metaTable$country4[i], metaTable$country5[i], metaTable$country6[i], metaTable$country7[i], metaTable$country8[i], metaTable$country9[i], metaTable$country10[i], metaTable$country11[i], metaTable$country12[i])
+    countries <- c(metaTable$country1[i], metaTable$country2[i],
+                   metaTable$country3[i], metaTable$country4[i],
+                   metaTable$country5[i], metaTable$country6[i],
+                   metaTable$country7[i], metaTable$country8[i],
+                   metaTable$country9[i], metaTable$country10[i],
+                   metaTable$country11[i], metaTable$country12[i])
     countries <- countries[countries != ""]
 
     specialty <- metaTable[i, ]$specialty
@@ -1140,7 +1226,9 @@ multiYearCountryDistrib_RS <- function(metaTable, data, summaryTable) {
               filter(currentQuestionName == qn) %>%
               filter(answerText == at) %>%
               filter(stage == j) %>%
-              select(currentSetName, currentQuestionName, answerText, stage, specialty, supersMedian, expertsG1Median, domainExpertsMedian)
+              select(currentSetName, currentQuestionName, answerText, stage,
+                     specialty, supersMedian, expertsG1Median,
+                     domainExpertsMedian)
 
             if (specialty == "") {
               medianBeliefs$domainExpertsMedian <- medianBeliefs$expertsG1Median
@@ -1228,7 +1316,7 @@ multiYearCountryDistrib_RS <- function(metaTable, data, summaryTable) {
               if (j == 1) {
                 for (m in 1:nrow(csv)) {
                   if (csv$userId[m] %in% RSRanking_unincentivized$userId) {
-                    pop <- RSRanking_unincentivized[RSRanking_unincentivized$userId == csv$userId[m], ]$n + 1
+                    pop <- RSRanking_unincentivized[RSRanking_unincentivized$userId == csv$userId[m], ]$numQuestions + 1
                     RSRanking_unincentivized[RSRanking_unincentivized$userId == csv$userId[m], ]$rankSum <- RSRanking_unincentivized[RSRanking_unincentivized$userId == csv$userId[m], ]$rankSum + csv[csv$userId == csv$userId[m], ]$rank_unincentivized
                     # RSRanking_unincentivized[RSRanking_unincentivized$userId==csv$userId[m],]$rankSum = RSRanking_unincentivized[RSRanking_unincentivized$userId==csv$userId[m],]$rankSum+csv[csv$userId==csv$userId[m],]$rank_unincentivized
                     RSRanking_unincentivized[RSRanking_unincentivized$userId == csv$userId[m], ]$n <- pop
@@ -1238,7 +1326,7 @@ multiYearCountryDistrib_RS <- function(metaTable, data, summaryTable) {
                       group = csv$group[m],
                       rankSum = csv$rank_unincentivized[m],
                       # rankSum = csv$rank_rs[m],
-                      n = 1
+                      numQuestions = 1
                     ))
                   }
                 }

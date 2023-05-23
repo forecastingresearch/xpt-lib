@@ -2,9 +2,9 @@
 % Please edit documentation in R/agg.R
 \name{hd_trim}
 \alias{hd_trim}
-\title{High-Density Trimming/Winsorizing}
+\title{Highest-Density Trimmed Mean}
 \usage{
-hd_trim(x, p = 0.5)
+hd_trim(x, p = 0.1)
 }
 \arguments{
 \item{x}{A vector of forecasts}
@@ -14,8 +14,8 @@ hd_trim(x, p = 0.5)
 \description{
 This code comes from an email from Ben Powell.
 
-You find the shortest interval containing (1-p) * 100\% of the data and take the
-mean of the forecasts within that interval.
+You find the shortest interval containing (1-p) * 100\% of the data and take
+the mean of the forecasts within that interval.
 }
 \note{
 As p gets bigger this acts like a mode in a similar way to
