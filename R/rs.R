@@ -46,6 +46,8 @@ RSRankingInit <- function() {
 }
 
 log_score <- function(actual, forecast) {
+  #' @export
+  
   return(log(1 - abs(actual / 100 - forecast / 100)))
 }
 
@@ -205,7 +207,7 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
             if (phase_csv$userName[m] %in% supers) {
               phase_csv$group[m] <- "supers"
             } else if (phase_csv$userName[m] %in% expertsG1$userName) {
-              if (specialty != "" & expertsG1[expertsG1$userName == phase_csv$userName[m]]$specialty == specialty) {
+              if (specialty != "" & specialty %in% unlist(expertsG1 %>% filter(userId == phase_csv$userId[m]) %>% select(specialty1, specialty2, specialty3))) {
                 phase_csv$group[m] <- "domain experts"
               } else {
                 phase_csv$group[m] <- "non-domain experts"
@@ -298,7 +300,7 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
                 increment <- RSRanking_unincentivized[RSRanking_unincentivized$userId == g1RS$userId[m], ]$numQuestions + 1
                 RSRanking_unincentivized[RSRanking_unincentivized$userId == g1RS$userId[m], ]$rankSum <- RSRanking_unincentivized[RSRanking_unincentivized$userId == g1RS$userId[m], ]$rankSum + g1RS[g1RS$userId == g1RS$userId[m], ]$g1Rank_unincentivized
                 # RSRanking_unincentivized[RSRanking_unincentivized$userId==g1RS$userId[m],]$rankSum = RSRanking_unincentivized[RSRanking_unincentivized$userId==g1RS$userId[m],]$rankSum+g1RS[g1RS$userId==g1RS$userId[m],]$g1Rank_RS
-                RSRanking_unincentivized[RSRanking_unincentivized$userId == g1RS$userId[m], ]$n <- increment
+                RSRanking_unincentivized[RSRanking_unincentivized$userId == g1RS$userId[m], ]$numQuestions <- increment
               } else { # initializing (this is the first time we've seen this user)
                 RSRanking_unincentivized <- rbind(RSRanking_unincentivized, data.frame(
                   userId = g1RS$userId[m],
@@ -330,7 +332,7 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
   # Average ranking means we should expect the highest (and lowest) ranked will
   # be people who answered very few questions
   RSRanking_unincentivized <- RSRanking_unincentivized %>%
-    mutate(avgRank = rankSum / n) %>%
+    mutate(avgRank = rankSum / numQuestions) %>%
     arrange(avgRank)
   write.csv(RSRanking_unincentivized, "RSRanking_unincentivized_first10.csv", row.names = FALSE)
 }

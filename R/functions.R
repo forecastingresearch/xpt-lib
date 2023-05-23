@@ -13,6 +13,8 @@ newAddInit <- function() {
   #' domainExperts - ONLY the g1 experts from the domain of the question
   #' nonDomainExperts - experts from not the domain of the question, and supers
   #' *_exc - filter out extreme outliers (based on standard deviation; different from trimmed mean)
+  #'
+  #' @export
 
   return(data.frame(
     setName = character(0),
@@ -194,6 +196,8 @@ newAddInit <- function() {
 newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
                        currentQuestionName, answerText, stage, specialty) {
   #' TODO Molly :)
+  #'
+  #' @export
   mean <- mean(questionDataProcessed$forecast)
   median <- median(questionDataProcessed$forecast)
   sd <- sd(questionDataProcessed$forecast)
@@ -930,7 +934,7 @@ multiYearReciprocal <- function(metaTable, data) {
           filter(setName == currentSetName) %>%
           filter(questionName == currentQuestionName) %>%
           filter(forecast != defaultForecast)
-        
+
         totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
         totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
         totalDomainExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName[expertsG1$specialty1 == qSpecialty | expertsG1$specialty2 == qSpecialty | expertsG1$specialty3 == qSpecialty]) %>% select(userName)))
@@ -1075,7 +1079,7 @@ pointDistrib <- function(metaTable, data) {
             filter(timestamp == exclude[l, ]$timestamp)
           for (m in 1:nrow(removeRow)) {
             currRow <- removeRow[m, ]
-            questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$timestamp == currRow$timestamp)]
+            questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$timestamp == currRow$timestamp), ]
           }
         }
 
@@ -1277,7 +1281,7 @@ pointDistrib <- function(metaTable, data) {
         filter(timestamp == exclude[j, ]$timestamp)
       for (k in 1:nrow(removeRow)) {
         currRow <- removeRow[k, ]
-        preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$timestamp == currRow$timestamp & preQRaw$answerText == currRow$answerText)]
+        preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$timestamp == currRow$timestamp & preQRaw$answerText == currRow$answerText), ]
       }
     }
 
@@ -1484,7 +1488,7 @@ multiYearDistrib <- function(metaTable, data) {
                 filter(timestamp == exclude[m, ]$timestamp)
               for (n in 1:nrow(removeRow)) {
                 currRow <- removeRow[n, ]
-                questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$timestamp == currRow$timestamp)]
+                questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$timestamp == currRow$timestamp), ]
               }
             }
           }
@@ -1715,7 +1719,7 @@ multiYearDistrib <- function(metaTable, data) {
             filter(timestamp == exclude[k, ]$timestamp)
           for (l in 1:nrow(removeRow)) {
             currRow <- removeRow[l, ]
-            preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$timestamp == currRow$timestamp & preQRaw$answerText == currRow$answerText)]
+            preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$timestamp == currRow$timestamp & preQRaw$answerText == currRow$answerText), ]
           }
         }
       }
