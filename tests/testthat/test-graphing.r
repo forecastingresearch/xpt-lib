@@ -48,5 +48,27 @@ test_boot <- function() {
   return(aa)
 }
 
+test_bind_with_grp <- function() {
+  # Make a dataframe with three columns A, B, C, random numbers
+  d1 <- data.frame(A = rnorm(3), B = rnorm(3), C = rnorm(3))
+  d1 <- d1 %>%
+    summarize(n_ids = n(),
+              mean = mean(A),
+              median = median(A))
+  # Make a dataframe that's same columns as d1 but different values
+  d2 <- data.frame(A = rnorm(2), B = rnorm(2), C = rnorm(2))
+  d2 <- d2 %>%
+    summarize(n_ids = n(),
+              mean = mean(A),
+              median = median(A))
+  dempty <- data.frame(
+    n_ids = numeric(0),
+    mean = numeric(0),
+    median = numeric(0)
+  )
+  # Bind the two dataframes together
+  d3 <- gdata::combine(dempty, d1, d2)
+}
+
 #test_boot()
 test_rs_quintile()

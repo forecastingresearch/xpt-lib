@@ -5,6 +5,7 @@ library(lubridate)
 library(boot)
 library(ggplot2)
 library(scales)
+library(gdata)
 
 # Generate a colorblind-friendly palette with six colors
 cb_pal <- colorblind_pal()(8)
@@ -562,42 +563,36 @@ boxPlot_country <- function(tbl, specialty, title,
 figureDataInit <- function() {
   #' @export
 
-  return(data.frame(
+  statsEmpty <- data.frame(
     beliefSet = character(0),
     year = numeric(0),
     date = Date(0),
     group = character(0),
     n_ids = numeric(0),
     mean = numeric(0),
-    mean_confint.confint_lower = numeric(0),
-    mean_confint.confint_upper = numeric(0),
+    mean_confint_lower = numeric(0),
+    mean_confint_upper = numeric(0),
     sd = numeric(0),
     median = numeric(0),
-    median_confint.confint_lower = numeric(0),
-    median_confint.confint_upper = numeric(0),
+    median_confint_lower = numeric(0),
+    median_confint_upper = numeric(0),
     geom_mean = numeric(0),
-    geom_mean_confint.confint_lower = numeric(0),
-    geom_mean_confint.confint_upper = numeric(0),
+    geom_mean_confint_lower = numeric(0),
+    geom_mean_confint_upper = numeric(0),
     hd_trim = numeric(0),
-    hd_trim_confint.confint_lower = numeric(0),
-    hd_trim_confint.confint_upper = numeric(0),
+    hd_trim_confint_lower = numeric(0),
+    hd_trim_confint_upper = numeric(0),
     simple_trim = numeric(0),
-    simple_trim_confint.confint_lower = numeric(0),
-    simple_trim_confint.confint_upper = numeric(0),
+    simple_trim_confint_lower = numeric(0),
+    simple_trim_confint_upper = numeric(0),
     neyman = numeric(0),
-    neyman_confint.confint_lower = numeric(0),
-    neyman_confint.confint_upper = numeric(0),
+    neyman_confint_lower = numeric(0),
+    neyman_confint_upper = numeric(0),
     geom_mean_of_odds = numeric(0),
-    geom_mean_of_odds_confint.confint_lower = numeric(0),
-    geom_mean_of_odds_confint.confint_upper = numeric(0)))
-}
+    geom_mean_of_odds_confint_lower = numeric(0),
+    geom_mean_of_odds_confint_upper = numeric(0))
 
-bindWithGrp <- function(dfNames, envir = parent.frame()) {
-  do.call(rbind, lapply(dfNames, function(x) {
-    df <- get(x, envir = envir)
-    rownames(df) <- NULL
-    cbind(df, group = x)
-  }))
+  return(statsEmpty)
 }
 
 figureDataBasics <- function(dateDataProcessed, subsetUserName = NULL, subsetTeamId = NULL) {
@@ -611,25 +606,33 @@ figureDataBasics <- function(dateDataProcessed, subsetUserName = NULL, subsetTea
   dateData <- dateDataProcessed %>%
     summarize(n_ids = n(),
               mean = mean(forecast),
-              mean_confint = boot_results(forecast, statistic = "mean"),
+              mean_confint_lower = boot_results(forecast, statistic = "mean")$confint_lower,
+              mean_confint_upper = boot_results(forecast, statistic = "mean")$confint_upper,
               sd = sd(forecast),
               median = median(forecast),
-              median_confint = boot_results(forecast, statistic = "median"),
+              median_confint_lower = boot_results(forecast, statistic = "median")$confint_lower,
+              median_confint_upper = boot_results(forecast, statistic = "median")$confint_upper,
               geom_mean = geoMeanCalc(forecast),
-              geom_mean_confint = boot_results(forecast, statistic = "geoMeanCalc"),
+              geom_mean_confint_lower = boot_results(forecast, statistic = "geoMeanCalc")$confint_lower,
+              geom_mean_confint_upper = boot_results(forecast, statistic = "geoMeanCalc")$confint_upper,
               hd_trim = hd_trim(forecast),
-              hd_trim_confint = boot_results(forecast, statistic = "hd_trim"),
+              hd_trim_confint_lower = boot_results(forecast, statistic = "hd_trim")$confint_lower,
+              hd_trim_confint_upper = boot_results(forecast, statistic = "hd_trim")$confint_upper,
               simple_trim = trim(forecast),
-              simple_trim_confint = boot_results(forecast, statistic = "trim"),
+              simple_trim_confint_lower = boot_results(forecast, statistic = "trim")$confint_lower,
+              simple_trim_confint_upper = boot_results(forecast, statistic = "trim")$confint_upper,
               neyman = neymanAggCalc(forecast),
-              neyman_confint = boot_results(forecast, statistic = "neymanAggCalc"),
+              neyman_confint_lower = boot_results(forecast, statistic = "neymanAggCalc")$confint_lower,
+              neyman_confint_upper = boot_results(forecast, statistic = "neymanAggCalc")$confint_upper,
               geom_mean_of_odds = geoMeanOfOddsCalc(forecast),
-              geom_mean_of_odds_confint = boot_results(forecast, statistic = "geoMeanOfOddsCalc"))
+              geom_mean_of_odds_confint_lower = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_lower,
+              geom_mean_of_odds_confint_upper = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_upper)
   
   return(dateData)
 }
 
 figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecialty) {
+  #' @importFrom gdata combine
   #' @export
   
   everyone <- figureDataBasics(dateDataProcessed)
@@ -648,27 +651,27 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     domainExperts <- data.frame(
       n_ids = NA,
       mean = NA,
-      mean_confint.confint_lower = NA,
-      mean_confint.confint_upper = NA,
+      mean_confint_lower = NA,
+      mean_confint_upper = NA,
       sd = NA,
       median = NA,
-      median_confint.confint_lower = NA,
-      median_confint.confint_upper = NA,
+      median_confint_lower = NA,
+      median_confint_upper = NA,
       geom_mean = NA,
-      geom_mean_confint.confint_lower = NA,
-      geom_mean_confint.confint_upper = NA,
+      geom_mean_confint_lower = NA,
+      geom_mean_confint_upper = NA,
       hd_trim = NA,
-      hd_trim_confint.confint_lower = NA,
-      hd_trim_confint.confint_upper = NA,
+      hd_trim_confint_lower = NA,
+      hd_trim_confint_upper = NA,
       simple_trim = NA,
-      simple_trim_confint.confint_lower = NA,
-      simple_trim_confint.confint_upper = NA,
+      simple_trim_confint_lower = NA,
+      simple_trim_confint_upper = NA,
       neyman = NA,
-      neyman_confint.confint_lower = NA,
-      neyman_confint.confint_upper = NA,
+      neyman_confint_lower = NA,
+      neyman_confint_upper = NA,
       geom_mean_of_odds = NA,
-      geom_mean_of_odds_confint.confint_lower = NA,
-      geom_mean_of_odds_confint.confint_upper = NA
+      geom_mean_of_odds_confint_lower = NA,
+      geom_mean_of_odds_confint_upper = NA
     )
   }
 
@@ -680,27 +683,27 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     nonDomainExperts <- data.frame(
       n_ids = NA,
       mean = NA,
-      mean_confint.confint_lower = NA,
-      mean_confint.confint_upper = NA,
+      mean_confint_lower = NA,
+      mean_confint_upper = NA,
       sd = NA,
       median = NA,
-      median_confint.confint_lower = NA,
-      median_confint.confint_upper = NA,
+      median_confint_lower = NA,
+      median_confint_upper = NA,
       geom_mean = NA,
-      geom_mean_confint.confint_lower = NA,
-      geom_mean_confint.confint_upper = NA,
+      geom_mean_confint_lower = NA,
+      geom_mean_confint_upper = NA,
       hd_trim = NA,
-      hd_trim_confint.confint_lower = NA,
-      hd_trim_confint.confint_upper = NA,
+      hd_trim_confint_lower = NA,
+      hd_trim_confint_upper = NA,
       simple_trim = NA,
-      simple_trim_confint.confint_lower = NA,
-      simple_trim_confint.confint_upper = NA,
+      simple_trim_confint_lower = NA,
+      simple_trim_confint_upper = NA,
       neyman = NA,
-      neyman_confint.confint_lower = NA,
-      neyman_confint.confint_upper = NA,
+      neyman_confint_lower = NA,
+      neyman_confint_upper = NA,
       geom_mean_of_odds = NA,
-      geom_mean_of_odds_confint.confint_lower = NA,
-      geom_mean_of_odds_confint.confint_upper = NA
+      geom_mean_of_odds_confint_lower = NA,
+      geom_mean_of_odds_confint_upper = NA
     )
   }
 
@@ -748,18 +751,20 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
 
   t345 <- figureDataBasics(dateDataProcessed, subsetTeamId = 345)
 
-  rbound <- bindWithGrp(c("everyone", "g1", "supers", "experts", "domainExperts", "nonDomainExperts",
-                          "t336", "t336Supers", "t336Experts",
-                          "t337", "t337Supers", "t337Experts",
-                          "t338", "t338Supers", "t338Experts",
-                          "t339", "t339Supers", "t339Experts",
-                          "t340", "t340Supers", "t340Experts",
-                          "t341", "t341Supers", "t341Experts",
-                          "t342", "t343", "t344", "t345"))
+  rbound <- gdata::combine(everyone, g1, supers, experts, domainExperts, nonDomainExperts,
+                           t336, t336Supers, t336Experts,
+                           t337, t337Supers, t337Experts,
+                           t338, t338Supers, t338Experts,
+                           t339, t339Supers, t339Experts,
+                           t340, t340Supers, t340Experts,
+                           t341, t341Supers, t341Experts,
+                           t342, t343, t344, t345)
   
   rbound$beliefSet <- beliefSet
   rbound$year <- year
   rbound$currentDate <- date
+
+  rownames(rbound) <- NULL
 
   return(rbound)
 }
@@ -832,7 +837,7 @@ multiYearReciprocalFigureData <- function(metaTable, data, phaseTwoMedian, timel
 
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
-
+          rownames(currentSetTimeSeries) <- NULL
           currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = beliefSets[j], year = years[k], date = currentDate, qSpecialty))
         }
 

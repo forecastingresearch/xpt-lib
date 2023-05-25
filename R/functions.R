@@ -964,6 +964,7 @@ multiYearReciprocal <- function(metaTable, data) {
 
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
+          rownames(currentSetTimeSeries) <- NULL
           currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = beliefSets[j], year = years[k], date = currentDate, qSpecialty))
         }
 
