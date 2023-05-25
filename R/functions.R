@@ -968,6 +968,9 @@ multiYearReciprocal <- function(metaTable, data) {
           currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = beliefSets[j], year = years[k], date = currentDate, qSpecialty))
         }
 
+        browser()
+        currentTimeSeries <- currentTimeSeries %>%
+          rename(group = source)
         write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", currentQuestionName, ".csv"), row.names = FALSE)
 
         multiYearReciprocalGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName)
