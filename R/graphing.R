@@ -60,7 +60,7 @@ boot_results <- function(plotTable, statistic = "median", width = 0.95) {
     do({
       x <- .$forecast
       res <- boot(x, statistic = function(x, i) stat_fun(x[i]), R = 3)
-      if (all(res$t == res$t[1])) {
+      if (all(res$t == res$t[1], na.rm = TRUE)) {
         data.frame(confint_lower = NA, confint_upper = NA)
       } else {
         a <- boot.ci(res, conf = width, type = "perc")
@@ -109,6 +109,100 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
   ggsave(paste0(fname, "_with_CI.png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
   return(plot)
+}
+
+mutate_figure_data_median <- function(csv) {
+  #' Mutate figure data for plotting
+  #' 
+  #' @export
+
+  # REMOVE the levels to begin with
+  plotTable <- csv %>%
+    mutate(group = as.character(group))
+
+  # Rename the columns  
+  plotTable <- plotTable %>%
+    select(group, year, currentDate, median, n) %>%
+    mutate(currentDate = ymd(currentDate),
+            group = case_when(
+            group == "supers" ~ "Superforecasters",
+            group == "experts" ~ "Experts",
+            group == "domainExperts" ~ "Domain Experts",
+            group == "nonDomainExperts" ~ "Non-domain Experts"
+            ))
+  
+  # Filter and re-instate the levels now that the group names are correct
+  plotTable <- plotTable %>%
+    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts")) %>%
+    mutate(group = factor(group, levels = unique(group), ordered = TRUE),
+           median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
+           median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
+           median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
+    filter(currentDate > ymd("2022 07 14"))
+  
+  return(plotTable)
+}
+
+mutate_figure_data_sd <- function(csv) {
+  #' Mutate figure data for plotting
+  #' 
+  #' @export
+
+  # REMOVE the levels to begin with
+  plotTable <- csv %>%
+    mutate(group = as.character(group))
+  
+  # Rename the columns
+  plotTable <- plotTable %>%
+    select(group, year, currentDate, sd, n) %>%
+    mutate(currentDate = ymd(currentDate),
+            group = case_when(
+            group == "supers" ~ "Superforecasters",
+            group == "experts" ~ "Experts",
+            group == "domainExperts" ~ "Domain Experts",
+            group == "nonDomainExperts" ~ "Non-domain Experts"
+            ))
+  
+  # Filter and re-instate the levels now that the group names are correct
+  plotTable <- plotTable %>%
+    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts")) %>%
+    mutate(group = factor(group, levels = unique(group), ordered = TRUE),
+           sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
+    filter(currentDate > ymd("2022 07 14"))
+
+  return(plotTable)
+}
+
+mutate_figure_data_hd_trim <- function(csv) {
+  #' Mutate figure data for plotting
+  #' 
+  #' @export
+
+  # REMOVE the levels to begin with
+  plotTable <- csv %>%
+    mutate(group = as.character(group))
+  
+  # Rename the columns
+  plotTable <- plotTable %>%
+    select(group, year, currentDate, hd_trim, n) %>%
+    mutate(currentDate = ymd(currentDate),
+            group = case_when(
+            group == "supers" ~ "Superforecasters",
+            group == "experts" ~ "Experts",
+            group == "domainExperts" ~ "Domain Experts",
+            group == "nonDomainExperts" ~ "Non-domain Experts"
+            ))
+  
+  # Filter and re-instate the levels now that the group names are correct
+  plotTable <- plotTable %>%
+    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts")) %>%
+    mutate(group = factor(group, levels = unique(group), ordered = TRUE),
+           hd_trim = replace(hd_trim, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
+           hd_trim_confint_lower = replace(hd_trim_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
+           hd_trim_confint_upper = replace(hd_trim_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
+    filter(currentDate > ymd("2022 07 14"))
+  
+  return(plotTable)
 }
 
 histogram <- function(questionDataProcessed, filenameStart, title, stage,
@@ -571,7 +665,7 @@ figureDataInit <- function() {
     year = numeric(0),
     date = Date(0),
     group = character(0),
-    n_ids = numeric(0),
+    n = numeric(0),
     mean = numeric(0),
     mean_confint_lower = numeric(0),
     mean_confint_upper = numeric(0),
@@ -652,7 +746,7 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   } else {
     # Create a dataframe with the same columns as the other dataframes
     domainExperts <- data.frame(
-      n_ids = NA,
+      n = NA,
       mean = NA,
       mean_confint_lower = NA,
       mean_confint_upper = NA,
@@ -684,7 +778,7 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   } else {
     # Create a dataframe with the same columns as the other dataframes
     nonDomainExperts <- data.frame(
-      n_ids = NA,
+      n = NA,
       mean = NA,
       mean_confint_lower = NA,
       mean_confint_upper = NA,
@@ -767,7 +861,7 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   rbound$year <- year
   rbound$currentDate <- date
 
-  rownames(rbound) <- NULL
+  rbound <- rbound %>% rename(group = source)
 
   return(rbound)
 }
@@ -845,8 +939,10 @@ multiYearReciprocalFigureData <- function(metaTable, data, phaseTwoMedian, timel
         }
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data"))
-        currentTimeSeries <- currentTimeSeries %>%
-          rename(group = source)
+        if ("source" %in% colnames(currentSetTimeSeries)) {
+          currentSetTimeSeries <- currentSetTimeSeries %>%
+            rename(group = source)
+        }
         write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", currentQuestionName, ".csv"), row.names = FALSE)
 
         multiYearReciprocalGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName)
@@ -867,8 +963,8 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
             group == "experts" ~ "Experts",
             group == "domainExperts" ~ "Domain Experts",
             group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
+           )) %>%
+    mutate(group = factor(group, levels = unique(group), ordered = TRUE),
            median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
            median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
            median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
@@ -893,8 +989,8 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
             group == "experts" ~ "Experts",
             group == "domainExperts" ~ "Domain Experts",
             group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
+           )) %>%
+    mutate(group = factor(group, levels = unique(group), ordered = TRUE),
            sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
     filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
 
@@ -930,8 +1026,8 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
             group == "experts" ~ "Experts",
             group == "domainExperts" ~ "Domain Experts",
             group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
+           )) %>%
+    mutate(group = factor(group, levels = unique(group), ordered = TRUE),
            sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
     filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
   
@@ -943,7 +1039,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
 
   subtitle <- "Variance over Time"
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = percent_variance, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -1060,6 +1156,10 @@ pointDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
       }
 
       setwd(paste0(yourHome, "automated analysis/Summary Data/", currentSetName, "/Figure Data"))
+      if ("source" %in% colnames(currentSetTimeSeries)) {
+        currentSetTimeSeries <- currentSetTimeSeries %>%
+          rename(group = source)
+      }
       write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", currentAnswerText, ".csv"), row.names = FALSE)
 
       pointDistribGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName, distrib[j])
@@ -1080,8 +1180,8 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
             group == "experts" ~ "Experts",
             group == "domainExperts" ~ "Domain Experts",
             group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
+           )) %>%
+    mutate(group = factor(group, levels = unique(group), ordered = TRUE),
            median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
            median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
            median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
@@ -1100,21 +1200,9 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
   #' Point Distribution Variance Graphics
   #'
   #' @export
-  
+
   # 1. VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
+  plotTable <- mutate_figure_data_sd(csv)
 
   subtitle <- "Variance over Time"
   
@@ -1140,20 +1228,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
   #####
 
   # 2. PERCENT VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-  
+
   # Create percent variance column
   plotTable <- plotTable %>%
     group_by(group) %>%
@@ -1162,7 +1237,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
 
   subtitle <- "Variance over Time"
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = percent_variance, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -1297,6 +1372,10 @@ multiYearDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline
         } else {
           setwd(paste0(yourHome, "automated analysis/Summary Data/40. Massive Multitask Language Understanding Benchmark/Figure Data/"))
         }
+        if ("source" %in% colnames(currentSetTimeSeries)) {
+          currentSetTimeSeries <- currentSetTimeSeries %>%
+            rename(group = source)
+        }
         write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", years[j], " - ", currentAnswerText, ".csv"), row.names = FALSE)
 
         multiYearDistribGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName, year = years[j], distrib = distrib[k])
@@ -1310,21 +1389,7 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
   #'
   #' @export
 
-  plotTable <- csv %>%
-    select(group, year, currentDate, median, median_confint_lower, median_confint_upper, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-
+  plotTable <- mutate_figure_data_median(csv)
   fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, " - ", currentDistrib, ")"))
   plot <- plot_with_ribbons(plotTable, paste(title, "-", year, "-", currentDistrib), subtitle, phaseTwoMedian, fname)
 }
@@ -1335,20 +1400,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   #' @export
   
   # 1. VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-
+  plotTable <- mutate_figure_data_sd(csv)
   subtitle <- "Variance over Time"
   
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1372,19 +1424,6 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   #####
   # 2. PERCENT VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
   
   # Create percent variance column
   plotTable <- plotTable %>%
@@ -1394,7 +1433,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   
   subtitle <- "Variance over Time"
   
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = percent_variance, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -1474,6 +1513,10 @@ multiYearBinaryFigureData <- function(metaTable, data, phaseTwoMedian, timeline)
       }
 
       setwd(paste0(yourHome, "automated analysis/Summary Data/", currentSetName, "/Figure Data"))
+      if ("source" %in% colnames(currentSetTimeSeries)) {
+        currentSetTimeSeries <- currentSetTimeSeries %>%
+          rename(group = source)
+      }
       write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", years[j], ".csv"), row.names = FALSE)
 
       multiYearBinaryGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName, year = years[j])
@@ -1486,21 +1529,7 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
   #'
   #' @export
 
-  plotTable <- csv %>%
-    select(group, year, currentDate, median, median_confint_lower, median_confint_upper, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-
+  plotTable <- mutate_figure_data_median(csv)
   fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ")"))
   plot <- plot_with_ribbons(plotTable, paste(title, "-", year), subtitle, phaseTwoMedian, fname)
 }
@@ -1511,20 +1540,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
   #' @export
 
   # 1. VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-
+  plotTable <- mutate_figure_data_sd(csv)
   subtitle <- "Variance over Time"
   
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1549,19 +1565,6 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
   #####
 
   # 2. PERCENT VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
   
   # Create percent variance column
   plotTable <- plotTable %>%
@@ -1571,7 +1574,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
            
   subtitle <- "Variance over Time"
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = percent_variance, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -1595,21 +1598,7 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
   #'
   #' @export
 
-  plotTable <- csv %>%
-    select(group, year, currentDate, median, median_confint_lower, median_confint_upper, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%    
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-
+  plotTable <- mutate_figure_data_median(csv)
   fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ")"))
   plot <- plot_with_ribbons(plotTable, paste(title, "-", country, "-", year), subtitle, phaseTwoMedian, fname)
 }
@@ -1620,20 +1609,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   #' @export
 
   # 1. VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-
+  plotTable <- mutate_figure_data_sd(csv)
   subtitle <- "Variance over Time"
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1658,19 +1634,6 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   #####
 
   # 2. PERCENT VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
   
   # Create percent variance column
   plotTable <- plotTable %>%
@@ -1680,7 +1643,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
            
   subtitle <- "Variance over Time"
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = percent_variance, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -1704,21 +1667,7 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
   #'
   #' @export
   
-  plotTable <- csv %>%
-    select(group, year, currentDate, median, median_confint_lower, median_confint_upper, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%    
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-
+  plotTable <- mutate_figure_data_median(csv)
   fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", country, ")"))
   plot <- plot_with_ribbons(plotTable, paste(title, "-", country), subtitle, phaseTwoMedian, fname)
 }
@@ -1774,6 +1723,10 @@ pointBinaryFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
     }
 
     setwd(paste0(yourHome, "automated analysis/Summary Data/", currentSetName, "/Figure Data"))
+    if ("source" %in% colnames(currentSetTimeSeries)) {
+      currentSetTimeSeries <- currentSetTimeSeries %>%
+        rename(group = source)
+    }
     write.csv(currentSetTimeSeries, paste0(currentSetName, ".csv"), row.names = FALSE)
 
     pointBinaryGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName)
@@ -1785,21 +1738,7 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
   #'
   #' @export
 
-  plotTable <- csv %>%
-    select(group, year, currentDate, median, median_confint_lower, median_confint_upper, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%    
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-
+  plotTable <- mutate_figure_data_median(csv)
   fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One"))
   plot <- plot_with_ribbons(plotTable, title, subtitle, phaseTwoMedian, fname)
 }
@@ -1810,20 +1749,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
   #' @export
   
   # 1. VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-
+  plotTable <- mutate_figure_data_sd(csv)
   subtitle <- "Variance over Time"
   
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1848,19 +1774,6 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
   #####
 
   # 2. PERCENT VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
   
   # Create percent variance column
   plotTable <- plotTable %>%
@@ -1870,7 +1783,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
            
   subtitle <- "Variance over Time"
 
-  plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
+  plot <- ggplot(plotTable, aes(x = currentDate, y = percent_variance, group = group, color = group)) +
     geom_line() +
     ylab("% of Initial SD") +
     xlab("Date") +
@@ -1890,21 +1803,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
 }
 
 pointBinaryGraphics_custom <- function(title, csv, currentSetName) {
-  plotTable <- csv %>%
-    select(group, year, currentDate, hd_trim, hd_trim_confint_lower, hd_trim_confint_upper, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           hd_trim = replace(hd_trim, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           hd_trim_confint_lower = replace(hd_trim_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           hd_trim_confint_upper = replace(hd_trim_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-  
+  plotTable <- mutate_figure_data_hd_trim(csv) 
   plot <- ggplot(plotTable, aes(x = currentDate, y = hd_trim, group = group, color = group)) +
     geom_line() +
     ylab("HD Trim") +
@@ -1931,21 +1830,7 @@ pointBinaryGraphics_custom <- function(title, csv, currentSetName) {
 }
 
 pointDistribGraphics_custom <- function(title, subtitle, csv, currentSetName, distrib) {
-  plotTable <- csv %>%
-    select(group, year, currentDate, hd_trim, hd_trim_confint_lower, hd_trim_confint_upper, n) %>%
-    mutate(currentDate = ymd(currentDate),
-           group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-           ),
-           group = factor(group, levels = unique(group), ordered = TRUE),
-           hd_trim = replace(hd_trim, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           hd_trim_confint_lower = replace(hd_trim_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-           hd_trim_confint_upper = replace(hd_trim_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
-  
+  plotTable <- mutate_figure_data_hd_trim(csv) 
   plot <- ggplot(plotTable, aes(x = currentDate, y = hd_trim, group = group, color = group)) +
     geom_line() +
     ylab("HD Trim") +
