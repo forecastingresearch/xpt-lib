@@ -23,7 +23,8 @@ group_colors <- list(
   "Biorisk Experts" = cb_pal[2],
   "AI Experts" = cb_pal[2],
   "Climate Experts" = cb_pal[2],
-  "Nuclear Experts" = cb_pal[2]
+  "Nuclear Experts" = cb_pal[2],
+  "Experts" = cb_pal[2]
 )
 
 boot_results <- function(plotTable, statistic = "median", width = 0.95) {
@@ -169,6 +170,13 @@ mutate_figure_data_sd <- function(csv) {
     mutate(group = factor(group, levels = unique(group), ordered = TRUE),
            sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
     filter(currentDate > ymd("2022 07 14"))
+  
+  #Remove groups with no data
+  plotTable <- plotTable %>%
+    group_by(group) %>%
+    mutate(no_data = all(is.na(sd))) %>%
+    filter(no_data == FALSE) %>%
+    ungroup()
 
   return(plotTable)
 }
@@ -1253,7 +1261,9 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  
+  ggsave(gsub("%", "%%", paste0(file_path, "/PERCENT VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
 
 multiYearDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
