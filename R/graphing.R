@@ -386,7 +386,8 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
     setwd("BoxPlots")
   }
 
-  ggsave(gsub("%", "%%", paste0(filenameStart, ".png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/", filenameStart, ".png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
 }
 
 boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
@@ -620,7 +621,8 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
     boxPlot$labels$subtitle <- paste0("Stage ", stage, " | ", year, " | All Forecasters (n=", length(unique(boxData$userName)), ")")
   }
 
-  ggsave(gsub("%", "%%", paste0(boxPlot$data$setName[1], " (All Forecasters) - Stage ", stage, " - ", year, " - Box Plot.png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/", boxPlot$data$setName[1], " (All Forecasters) - Stage ", stage, " - ", year, " - Box Plot.png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
 }
 
 boxPlot_country <- function(tbl, specialty, title,
@@ -660,7 +662,8 @@ boxPlot_country <- function(tbl, specialty, title,
   # }
   boxPlot$labels$color <- ""
 
-  ggsave(gsub("%", "%%", paste0(boxPlot$data$setName[1], " (All Forecasters) - Stage ", stage, " - Box Plot.png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/", boxPlot$data$setName[1], " (All Forecasters) - Stage ", stage, " - Box Plot.png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
 }
 
 # FUNCTIONS THAT GENERATE THE FIGURES
@@ -1230,7 +1233,8 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
 
   #####
@@ -1262,7 +1266,6 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
   plot$labels$color <- ""
 
   file_path <- getwd()
-  
   ggsave(gsub("%", "%%", paste0(file_path, "/PERCENT VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
 
@@ -1400,7 +1403,8 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
   #' @export
 
   plotTable <- mutate_figure_data_median(csv)
-  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, " - ", currentDistrib, ")"))
+  file_path <- getwd()
+  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Figure One (", year, " - ", currentDistrib, ")"))
   plot <- plot_with_ribbons(plotTable, paste(title, "-", year, "-", currentDistrib), subtitle, phaseTwoMedian, fname)
 }
 
@@ -1429,7 +1433,8 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
 
   #####
@@ -1459,7 +1464,8 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/PERCENT VARIANCE - ", currentSetName, " - Figure One (", currentDistrib, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
 
 multiYearBinaryFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
@@ -1540,7 +1546,8 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
   #' @export
 
   plotTable <- mutate_figure_data_median(csv)
-  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ")"))
+  file_path <- get_wd()
+  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Figure One (", year, ")"))
   plot <- plot_with_ribbons(plotTable, paste(title, "-", year), subtitle, phaseTwoMedian, fname)
 }
 
@@ -1569,7 +1576,8 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/VARIANCE - ", currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
 
   #####
@@ -1600,7 +1608,8 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/PERCENT VARIANCE - ", currentSetName, " - Figure One (", year, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
 
 multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName, year, country) {
@@ -1609,7 +1618,8 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
   #' @export
 
   plotTable <- mutate_figure_data_median(csv)
-  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", year, ")"))
+  file_path <- getwd()
+  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Figure One (", year, ")"))
   plot <- plot_with_ribbons(plotTable, paste(title, "-", country, "-", year), subtitle, phaseTwoMedian, fname)
 }
 
@@ -1638,7 +1648,8 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", year, " ", country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/VARIANCE - ", currentSetName, " - Figure One (", year, " ", country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
 
   #####
@@ -1669,7 +1680,8 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One (", year, country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/PERCENT VARIANCE - ", currentSetName, " - Figure One (", year, country, ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
 
 multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, country) {
@@ -1678,7 +1690,8 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
   #' @export
   
   plotTable <- mutate_figure_data_median(csv)
-  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One (", country, ")"))
+  file_path <- getwd()
+  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Figure One (", country, ")"))
   plot <- plot_with_ribbons(plotTable, paste(title, "-", country), subtitle, phaseTwoMedian, fname)
 }
 
@@ -1749,7 +1762,8 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
   #' @export
 
   plotTable <- mutate_figure_data_median(csv)
-  fname <- gsub("%", "%%", paste0(currentSetName, " - Figure One"))
+  file_path <- getwd()
+  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Figure One"))
   plot <- plot_with_ribbons(plotTable, title, subtitle, phaseTwoMedian, fname)
 }
 
@@ -1778,7 +1792,8 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/VARIANCE - ", currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
 
   #####
@@ -1809,7 +1824,8 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE - ", currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/PERCENT VARIANCE - ", currentSetName, " - Figure One.png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
 
 pointBinaryGraphics_custom <- function(title, csv, currentSetName) {
@@ -2095,7 +2111,8 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  fname <- gsub("%", "%%", paste0(currentSetName, " - Teams [All] (", distrib, "%)"))
+  file_path <- getwd()
+  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Teams [All] (", distrib, "%)"))
   plot <- plot_with_ribbons(plotTable, paste(title, "(All)"), distrib, phaseTwoMedian, fname)
 
   # Supers
@@ -2117,7 +2134,8 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  fname <- gsub("%", "%%", paste0(currentSetName, " - Teams [Supers] (", distrib, "%)"))
+  file_path <- getwd()
+  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Teams [Supers] (", distrib, "%)"))
   plot <- plot_with_ribbons(plotTable, paste(title, "(Supers)"), distrib, phaseTwoMedian, fname)
 
   # Experts
@@ -2139,7 +2157,8 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  fname <- gsub("%", "%%", paste0(currentSetName, " - Teams [Experts] (", distrib, "%)"))
+  file_path <- getwd()
+  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Teams [Experts] (", distrib, "%)"))
   plot <- plot_with_ribbons(plotTable, paste(title, "(Experts)"), distrib, phaseTwoMedian, fname)
 }
 
@@ -2424,7 +2443,9 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
     geom_hline(yintercept = 0)
   plot$labels$color <- ""
-  ggsave(gsub("%", "%%", paste0(title, " OVERALL SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
+
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/", title, " OVERALL SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
   if (specialty != "") {
     # Supers vs Specialty
@@ -2471,7 +2492,9 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
       geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
       geom_hline(yintercept = 0)
     plot$labels$color <- ""
-    ggsave(gsub("%", "%%", paste0(title, " SUPERS VS DOMAIN EXP VS GENERALISTS SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
+    
+    file_path <- getwd()
+    ggsave(gsub("%", "%%", paste0(file_path, "/", title, " SUPERS VS DOMAIN EXP VS GENERALISTS SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
   }
 
   # Teams
@@ -2566,7 +2589,9 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
     geom_hline(yintercept = 0)
   plot$labels$color <- ""
-  ggsave(gsub("%", "%%", paste0(title, " TEAMS SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/", title, " TEAMS SALIENCE.png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
 
 rs_quintile_plot <- function(tbl, title, subtitle) {
