@@ -919,17 +919,17 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     t342, t343, t344, t345
   )
 
-  # If all mean entries for any given group are NA, DROP that group (drops domain and non-domain experts when there's no specialty)
-  rbound <- rbound %>%
-    group_by(group) %>%
-    filter(!all(is.na(mean))) %>%
-    ungroup()
-
   rbound$beliefSet <- beliefSet
   rbound$year <- year
   rbound$currentDate <- date
 
   rbound <- rbound %>% rename(group = source)
+
+  # If all mean entries for any given group are NA, DROP that group (drops domain and non-domain experts when there's no specialty)
+  rbound <- rbound %>%
+    group_by(group) %>%
+    filter(!all(is.na(mean))) %>%
+    ungroup()
 
   return(rbound)
 }
