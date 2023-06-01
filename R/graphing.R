@@ -130,13 +130,19 @@ mutate_figure_data_median <- function(csv) {
         group == "supers" ~ "Superforecasters",
         group == "experts" ~ "Experts",
         group == "domainExperts" ~ "Domain Experts",
-        group == "nonDomainExperts" ~ "Non-domain Experts"
+        group == "nonDomainExperts" ~ "Non-domain Experts",
+        group == "general" ~ "General X-risk Experts"
       )
     )
 
+  # Who's getting dropped? Print out the groups where n < 10
+  print(plotTable %>% group_by(group) %>% summarize(n = first(n)))
+  browser()
+  
   # Filter and re-instate the levels now that the group names are correct
   plotTable <- plotTable %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts")) %>%
+    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
+                        "Non-domain Experts", "General X-risk Experts")) %>%
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
       median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
@@ -166,13 +172,15 @@ mutate_figure_data_sd <- function(csv) {
         group == "supers" ~ "Superforecasters",
         group == "experts" ~ "Experts",
         group == "domainExperts" ~ "Domain Experts",
-        group == "nonDomainExperts" ~ "Non-domain Experts"
+        group == "nonDomainExperts" ~ "Non-domain Experts",
+        group == "general" ~ "General X-risk Experts"
       )
     )
 
   # Filter and re-instate the levels now that the group names are correct
   plotTable <- plotTable %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts")) %>%
+    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
+                        "Non-domain Experts", "General X-risk Experts")) %>%
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
       sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
@@ -207,13 +215,15 @@ mutate_figure_data_hd_trim <- function(csv) {
         group == "supers" ~ "Superforecasters",
         group == "experts" ~ "Experts",
         group == "domainExperts" ~ "Domain Experts",
-        group == "nonDomainExperts" ~ "Non-domain Experts"
+        group == "nonDomainExperts" ~ "Non-domain Experts",
+        group == "general" ~ "General X-risk Experts"
       )
     )
 
   # Filter and re-instate the levels now that the group names are correct
   plotTable <- plotTable %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts")) %>%
+    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
+                        "Non-domain Experts", "General X-risk Experts")) %>%
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
       hd_trim = replace(hd_trim, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
@@ -770,6 +780,9 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
 
   experts <- figureDataBasics(dateDataProcessed, expertsG1$userName)
 
+  generalUsers <- dateDataProcessed %>% filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName)
+  general <- figureDataBasics(dateDataProcessed, generalUsers$userName)
+
   if (qSpecialty != "") {
     domainExpertsUsers <- expertsG1 %>% filter(specialty1 == qSpecialty | specialty2 == qSpecialty | specialty3 == qSpecialty)
     domainExperts <- figureDataBasics(dateDataProcessed, domainExpertsUsers$userName)
@@ -879,7 +892,8 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   t345 <- figureDataBasics(dateDataProcessed, subsetTeamId = 345)
 
   rbound <- gdata::combine(
-    everyone, g1, supers, experts, domainExperts, nonDomainExperts,
+    everyone, g1, supers, experts, general,
+    domainExperts, nonDomainExperts,
     t336, t336Supers, t336Experts,
     t337, t337Supers, t337Experts,
     t338, t338Supers, t338Experts,
@@ -998,7 +1012,8 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
         group == "supers" ~ "Superforecasters",
         group == "experts" ~ "Experts",
         group == "domainExperts" ~ "Domain Experts",
-        group == "nonDomainExperts" ~ "Non-domain Experts"
+        group == "nonDomainExperts" ~ "Non-domain Experts",
+        group == "general" ~ "General X-risk Experts"
       )
     ) %>%
     mutate(
@@ -1007,7 +1022,8 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
       median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
       median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
+    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
+                        "Non-domain Experts", "General X-risk Experts"))
 
   fname <- paste0(currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ")")
   plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian, fname)
@@ -1028,14 +1044,16 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
         group == "supers" ~ "Superforecasters",
         group == "experts" ~ "Experts",
         group == "domainExperts" ~ "Domain Experts",
-        group == "nonDomainExperts" ~ "Non-domain Experts"
+        group == "nonDomainExperts" ~ "Non-domain Experts",
+        group == "general" ~ "Non-domain Experts"
       )
     ) %>%
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
       sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
+    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
+                        "Non-domain Experts", "General X-risk Experts"))
 
   subtitle <- "Variance over Time"
 
@@ -1069,14 +1087,16 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
         group == "supers" ~ "Superforecasters",
         group == "experts" ~ "Experts",
         group == "domainExperts" ~ "Domain Experts",
-        group == "nonDomainExperts" ~ "Non-domain Experts"
+        group == "nonDomainExperts" ~ "Non-domain Experts",
+        group == "general" ~ "General X-risk Experts"
       )
     ) %>%
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
       sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
+    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
+                        "Non-domain Experts", "General X-risk Experts"))
 
   # Create percent variance column
   plotTable <- plotTable %>%
@@ -1229,7 +1249,8 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
         group == "supers" ~ "Superforecasters",
         group == "experts" ~ "Experts",
         group == "domainExperts" ~ "Domain Experts",
-        group == "nonDomainExperts" ~ "Non-domain Experts"
+        group == "nonDomainExperts" ~ "Non-domain Experts",
+        group == "general" ~ "General X-risk Experts"
       )
     ) %>%
     mutate(
@@ -1238,7 +1259,8 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
       median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
       median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts"))
+    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
+                        "Non-domain Experts", "General X-risk Experts"))
 
   if (grepl("%", currentSetName)) {
     fname <- paste0(currentSetName, "% - Figure One (", distrib, "%)")
