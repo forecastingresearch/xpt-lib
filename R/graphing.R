@@ -60,7 +60,7 @@ boot_results <- function(plotTable, statistic = "median", width = 0.95) {
   interval <- plotTable %>%
     do({
       x <- .$forecast
-      res <- boot(x, statistic = function(x, i) stat_fun(x[i]), R = 3)
+      res <- boot(x, statistic = function(x, i) stat_fun(x[i]), R = 1000)
       if (all(res$t == res$t[1], na.rm = TRUE)) {
         data.frame(confint_lower = NA, confint_upper = NA)
       } else {
