@@ -72,20 +72,27 @@ test_bind_with_grp <- function() {
 
 test_mutate_csv <- function() {
   csv <- read.csv("/home/molly/fri/xpt-basic-analysis/Summary Data/11. Year of Extinction/Figure Data/5th %/11. Year of Extinction - 5th %.csv")
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(currentDate = ymd(currentDate),
-            group = case_when(
-            group == "supers" ~ "Superforecasters",
-            group == "experts" ~ "Experts",
-            group == "domainExperts" ~ "Domain Experts",
-            group == "nonDomainExperts" ~ "Non-domain Experts"
-            ))
+  plotTable <- mutate_figure_data_median(csv)
   plotTable <- plotTable %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts", "Non-domain Experts")) %>%
-    mutate(group = factor(group, levels = unique(group), ordered = TRUE),
-            sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)) %>%
-    filter(currentDate > ymd("2022 07 14"))
+    rename(confint_lower = contains("confint_lower"), confint_upper = contains("confint_upper"))
+
+  plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group, fill = group)) +
+    geom_line() +
+    ylab("Median") +
+    xlab("Date") +
+    labs(title = "holla", subtitle = "atcha girl") +
+    theme_bw() +
+    theme(
+      plot.title = element_text(hjust = 0.5),
+      plot.subtitle = element_text(hjust = 0.5),
+      legend.title = element_blank()
+    ) +
+    scale_color_manual(values = unlist(group_colors)) +
+    scale_fill_manual(values = unlist(group_colors)) +
+    geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
+    geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") #+
+    #xlim(phaseTwoMedian, NA)
+  plot$labels$color <- ""
 }
 
 #test_boot()
