@@ -137,7 +137,6 @@ mutate_figure_data_median <- function(csv) {
 
   # Who's getting dropped? Print out the groups where n < 10
   print(plotTable %>% group_by(group) %>% summarize(n = first(n)))
-  browser()
   
   # Filter and re-instate the levels now that the group names are correct
   plotTable <- plotTable %>%
