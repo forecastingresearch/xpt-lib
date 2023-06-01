@@ -1034,25 +1034,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
   #' @export
 
   # 1. VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(
-      currentDate = ymd(currentDate),
-      group = case_when(
-        group == "supers" ~ "Superforecasters",
-        group == "experts" ~ "Experts",
-        group == "domainExperts" ~ "Domain Experts",
-        group == "nonDomainExperts" ~ "Non-domain Experts",
-        group == "general" ~ "Non-domain Experts"
-      )
-    ) %>%
-    mutate(
-      group = factor(group, levels = unique(group), ordered = TRUE),
-      sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
-    ) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
-                        "Non-domain Experts", "General X-risk Experts"))
+  plotTable <- mutate_figure_data_sd(csv)
 
   subtitle <- "Variance over Time"
 
@@ -1077,25 +1059,6 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
   #####
 
   # 2. PERCENT VARIANCE
-  csv <- csv %>% filter(currentDate > ymd("2022 07 14"))
-  plotTable <- csv %>%
-    select(group, year, currentDate, sd, n) %>%
-    mutate(
-      currentDate = ymd(currentDate),
-      group = case_when(
-        group == "supers" ~ "Superforecasters",
-        group == "experts" ~ "Experts",
-        group == "domainExperts" ~ "Domain Experts",
-        group == "nonDomainExperts" ~ "Non-domain Experts",
-        group == "general" ~ "General X-risk Experts"
-      )
-    ) %>%
-    mutate(
-      group = factor(group, levels = unique(group), ordered = TRUE),
-      sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
-    ) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
-                        "Non-domain Experts", "General X-risk Experts"))
 
   # Create percent variance column
   plotTable <- plotTable %>%
@@ -1480,6 +1443,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   # 1. VARIANCE
   plotTable <- mutate_figure_data_sd(csv)
+
   subtitle <- "Variance over Time"
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1503,6 +1467,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
 
   #####
+
   # 2. PERCENT VARIANCE
 
   # Create percent variance column
@@ -1625,6 +1590,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
 
   # 1. VARIANCE
   plotTable <- mutate_figure_data_sd(csv)
+
   subtitle <- "Variance over Time"
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1699,6 +1665,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   # 1. VARIANCE
   plotTable <- mutate_figure_data_sd(csv)
+
   subtitle <- "Variance over Time"
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1845,6 +1812,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
 
   # 1. VARIANCE
   plotTable <- mutate_figure_data_sd(csv)
+
   subtitle <- "Variance over Time"
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
