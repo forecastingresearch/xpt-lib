@@ -137,11 +137,13 @@ mutate_figure_data_median <- function(csv) {
 
   # Who's getting dropped? Print out the groups where n < 10
   print(plotTable %>% group_by(group) %>% summarize(n = first(n)))
-  
+
   # Filter and re-instate the levels now that the group names are correct
   plotTable <- plotTable %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
-                        "Non-domain Experts", "General X-risk Experts")) %>%
+    filter(group %in% c(
+      "Superforecasters", "Experts", "Domain Experts",
+      "Non-domain Experts", "General X-risk Experts"
+    )) %>%
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
       median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
@@ -149,6 +151,12 @@ mutate_figure_data_median <- function(csv) {
       median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
     filter(currentDate > ymd("2022 07 14"))
+
+  # Remove groups with no data
+  plotTable <- plotTable %>%
+    group_by(group) %>%
+    filter(!all(is.na(median))) %>%
+    ungroup()
 
   return(plotTable)
 }
@@ -178,8 +186,10 @@ mutate_figure_data_sd <- function(csv) {
 
   # Filter and re-instate the levels now that the group names are correct
   plotTable <- plotTable %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
-                        "Non-domain Experts", "General X-risk Experts")) %>%
+    filter(group %in% c(
+      "Superforecasters", "Experts", "Domain Experts",
+      "Non-domain Experts", "General X-risk Experts"
+    )) %>%
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
       sd = replace(sd, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
@@ -189,8 +199,7 @@ mutate_figure_data_sd <- function(csv) {
   # Remove groups with no data
   plotTable <- plotTable %>%
     group_by(group) %>%
-    mutate(no_data = all(is.na(sd))) %>%
-    filter(no_data == FALSE) %>%
+    filter(!all(is.na(sd))) %>%
     ungroup()
 
   return(plotTable)
@@ -221,8 +230,10 @@ mutate_figure_data_hd_trim <- function(csv) {
 
   # Filter and re-instate the levels now that the group names are correct
   plotTable <- plotTable %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
-                        "Non-domain Experts", "General X-risk Experts")) %>%
+    filter(group %in% c(
+      "Superforecasters", "Experts", "Domain Experts",
+      "Non-domain Experts", "General X-risk Experts"
+    )) %>%
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
       hd_trim = replace(hd_trim, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
@@ -230,6 +241,12 @@ mutate_figure_data_hd_trim <- function(csv) {
       hd_trim_confint_upper = replace(hd_trim_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
     filter(currentDate > ymd("2022 07 14"))
+
+  # Remove groups with no data
+  plotTable <- plotTable %>%
+    group_by(group) %>%
+    filter(!all(is.na(hd_trim))) %>%
+    ungroup()
 
   return(plotTable)
 }
@@ -902,8 +919,11 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     t342, t343, t344, t345
   )
 
-  # If mean is NA, DROP that row (i.e. get rid of domain experts and non-domain experts if there was no specialty)
-  rbound <- rbound %>% filter(!is.na(mean))
+  # If all mean entries for any given group are NA, DROP that group (drops domain and non-domain experts when there's no specialty)
+  rbound <- rbound %>%
+    group_by(group) %>%
+    filter(!all(is.na(mean))) %>%
+    ungroup()
 
   rbound$beliefSet <- beliefSet
   rbound$year <- year
@@ -1021,8 +1041,10 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
       median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
       median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
-                        "Non-domain Experts", "General X-risk Experts"))
+    filter(group %in% c(
+      "Superforecasters", "Experts", "Domain Experts",
+      "Non-domain Experts", "General X-risk Experts"
+    ))
 
   fname <- paste0(currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ")")
   plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian, fname)
@@ -1221,8 +1243,10 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
       median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
       median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
-    filter(group %in% c("Superforecasters", "Experts", "Domain Experts",
-                        "Non-domain Experts", "General X-risk Experts"))
+    filter(group %in% c(
+      "Superforecasters", "Experts", "Domain Experts",
+      "Non-domain Experts", "General X-risk Experts"
+    ))
 
   if (grepl("%", currentSetName)) {
     fname <- paste0(currentSetName, "% - Figure One (", distrib, "%)")
