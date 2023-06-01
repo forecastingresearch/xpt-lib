@@ -1054,7 +1054,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(paste0("VARIANCE - ", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
   #####
 
@@ -1086,7 +1086,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
     scale_color_manual(values = unlist(group_colors))
   plot$labels$color <- ""
 
-  ggsave(paste0("PERCENT VARIANCE -", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE -", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
 
 pointDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
