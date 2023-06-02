@@ -82,8 +82,10 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
   #'
   #' @export
 
-  plotTable <- plotTable %>%
-    rename(confint_lower = contains("confint_lower"), confint_upper = contains("confint_upper"))
+  if(False) {
+    plotTable <- plotTable %>%
+      rename(confint_lower = contains("confint_lower"), confint_upper = contains("confint_upper"))
+  }
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group, fill = group)) +
     geom_line() +
@@ -105,9 +107,11 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
 
   ggsave(paste0(fname, ".png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
-  plot <- plot +
-    geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group, color = group), alpha = 0.1, linetype = "dotted")
-  ggsave(paste0(fname, "_with_CI.png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  if(False) {
+    plot <- plot +
+      geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group, color = group), alpha = 0.1, linetype = "dotted")
+    ggsave(paste0(fname, "_with_CI.png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  }
 
   return(plot)
 }
@@ -123,7 +127,7 @@ mutate_figure_data_median <- function(csv) {
 
   # Rename the columns
   plotTable <- plotTable %>%
-    select(group, year, currentDate, median, median_confint_lower, median_confint_upper, n) %>%
+    select(group, year, currentDate, median, n) %>%
     mutate(
       currentDate = ymd(currentDate),
       group = case_when(
@@ -146,9 +150,7 @@ mutate_figure_data_median <- function(csv) {
     )) %>%
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
-      median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-      median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-      median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
+      median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
     filter(currentDate > ymd("2022 07 14"))
 
@@ -753,33 +755,62 @@ figureDataBasics <- function(dateDataProcessed, subsetUserName = NULL, subsetTea
   if (!is.null(subsetTeamId)) {
     dateDataProcessed <- dateDataProcessed %>% filter(teamId %in% subsetTeamId)
   }
-  # Create the summary stats
-  dateData <- dateDataProcessed %>%
-    summarize(
-      n = n(),
-      mean = mean(forecast),
-      mean_confint_lower = boot_results(forecast, statistic = "mean")$confint_lower,
-      mean_confint_upper = boot_results(forecast, statistic = "mean")$confint_upper,
-      sd = sd(forecast),
-      median = median(forecast),
-      median_confint_lower = boot_results(forecast, statistic = "median")$confint_lower,
-      median_confint_upper = boot_results(forecast, statistic = "median")$confint_upper,
-      geom_mean = geoMeanCalc(forecast),
-      geom_mean_confint_lower = boot_results(forecast, statistic = "geoMeanCalc")$confint_lower,
-      geom_mean_confint_upper = boot_results(forecast, statistic = "geoMeanCalc")$confint_upper,
-      hd_trim = hd_trim(forecast),
-      hd_trim_confint_lower = boot_results(forecast, statistic = "hd_trim")$confint_lower,
-      hd_trim_confint_upper = boot_results(forecast, statistic = "hd_trim")$confint_upper,
-      simple_trim = trim(forecast),
-      simple_trim_confint_lower = boot_results(forecast, statistic = "trim")$confint_lower,
-      simple_trim_confint_upper = boot_results(forecast, statistic = "trim")$confint_upper,
-      neyman = neymanAggCalc(forecast),
-      neyman_confint_lower = boot_results(forecast, statistic = "neymanAggCalc")$confint_lower,
-      neyman_confint_upper = boot_results(forecast, statistic = "neymanAggCalc")$confint_upper,
-      geom_mean_of_odds = geoMeanOfOddsCalc(forecast),
-      geom_mean_of_odds_confint_lower = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_lower,
-      geom_mean_of_odds_confint_upper = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_upper
-    )
+  # Create the summary stats (only compute confidence intervals for 2100 first 12 questions)
+  if (year == 2100 && (beliefSet.contains("Extinction") || setName.contains("Catastrophic") || setName.contains("Human Births") || setName.contains("Pathogen Risk"))) {
+    dateData <- dateDataProcessed %>%
+      summarize(
+        n = n(),
+        mean = mean(forecast),
+        mean_confint_lower = boot_results(forecast, statistic = "mean")$confint_lower,
+        mean_confint_upper = boot_results(forecast, statistic = "mean")$confint_upper,
+        sd = sd(forecast),
+        median = median(forecast),
+        median_confint_lower = boot_results(forecast, statistic = "median")$confint_lower,
+        median_confint_upper = boot_results(forecast, statistic = "median")$confint_upper,
+        geom_mean = geoMeanCalc(forecast),
+        geom_mean_confint_lower = boot_results(forecast, statistic = "geoMeanCalc")$confint_lower,
+        geom_mean_confint_upper = boot_results(forecast, statistic = "geoMeanCalc")$confint_upper,
+        hd_trim = hd_trim(forecast),
+        hd_trim_confint_lower = boot_results(forecast, statistic = "hd_trim")$confint_lower,
+        hd_trim_confint_upper = boot_results(forecast, statistic = "hd_trim")$confint_upper,
+        simple_trim = trim(forecast),
+        simple_trim_confint_lower = boot_results(forecast, statistic = "trim")$confint_lower,
+        simple_trim_confint_upper = boot_results(forecast, statistic = "trim")$confint_upper,
+        neyman = neymanAggCalc(forecast),
+        neyman_confint_lower = boot_results(forecast, statistic = "neymanAggCalc")$confint_lower,
+        neyman_confint_upper = boot_results(forecast, statistic = "neymanAggCalc")$confint_upper,
+        geom_mean_of_odds = geoMeanOfOddsCalc(forecast),
+        geom_mean_of_odds_confint_lower = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_lower,
+        geom_mean_of_odds_confint_upper = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_upper
+      )
+  } else {
+    dateData <- dateDataProcessed %>%
+      summarize(
+        n = n(),
+        mean = mean(forecast),
+        mean_confint_lower = NA,
+        mean_confint_upper = NA,
+        sd = sd(forecast),
+        median = median(forecast),
+        median_confint_lower = NA,
+        median_confint_upper = NA,
+        geom_mean = geoMeanCalc(forecast),
+        geom_mean_confint_lower = NA,
+        geom_mean_confint_upper = NA,
+        hd_trim = hd_trim(forecast),
+        hd_trim_confint_lower = NA,
+        hd_trim_confint_upper = NA,
+        simple_trim = trim(forecast),
+        simple_trim_confint_lower = NA,
+        simple_trim_confint_upper = NA,
+        neyman = neymanAggCalc(forecast),
+        neyman_confint_lower = NA,
+        neyman_confint_upper = NA,
+        geom_mean_of_odds = geoMeanOfOddsCalc(forecast),
+        geom_mean_of_odds_confint_lower = NA,
+        geom_mean_of_odds_confint_upper = NA
+      )
+  }
 
   return(dateData)
 }
@@ -1024,7 +1055,7 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
   #' @export
 
   plotTable <- csv %>%
-    select(group, year, currentDate, median, median_confint_lower, median_confint_upper, n) %>%
+    select(group, year, currentDate, median, n) %>%
     mutate(
       currentDate = ymd(currentDate),
       group = case_when(
@@ -1037,9 +1068,7 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
     ) %>%
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
-      median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-      median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-      median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
+      median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
     filter(group %in% c(
       "Superforecasters", "Experts", "Domain Experts",
@@ -1226,7 +1255,7 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
   #' @export
 
   plotTable <- csv %>%
-    select(group, year, currentDate, median, median_confint_lower, median_confint_upper, n) %>%
+    select(group, year, currentDate, median, n) %>%
     mutate(
       currentDate = ymd(currentDate),
       group = case_when(
@@ -1239,9 +1268,7 @@ pointDistribGraphics <- function(title, subtitle, csv, currentSetName, distrib) 
     ) %>%
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
-      median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-      median_confint_lower = replace(median_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-      median_confint_upper = replace(median_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
+      median = replace(median, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
     filter(group %in% c(
       "Superforecasters", "Experts", "Domain Experts",
