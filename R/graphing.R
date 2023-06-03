@@ -82,9 +82,13 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
   #'
   #' @export
 
-  if(False) {
+  if(FALSE) {
     plotTable <- plotTable %>%
       rename(confint_lower = contains("confint_lower"), confint_upper = contains("confint_upper"))
+  }
+  
+  if("Domain Experts" %in% plotTable$group){
+    plotTable <- plotTable %>% filter(group != "Experts")
   }
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group, fill = group)) +
@@ -107,7 +111,7 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
 
   ggsave(paste0(fname, ".png"), plot, width = 9.18, height = 5.78, units = c("in"))
 
-  if(False) {
+  if(FALSE) {
     plot <- plot +
       geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group, color = group), alpha = 0.1, linetype = "dotted")
     ggsave(paste0(fname, "_with_CI.png"), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -748,7 +752,8 @@ figureDataInit <- function() {
   return(statsEmpty)
 }
 
-figureDataBasics <- function(dateDataProcessed, subsetUserName = NULL, subsetTeamId = NULL) {
+figureDataBasics <- function(dateDataProcessed, year, beliefSet, setName, subsetUserName = NULL, subsetTeamId = NULL) {
+  #' @export
   if (!is.null(subsetUserName)) {
     dateDataProcessed <- dateDataProcessed %>% filter(userName %in% subsetUserName)
   }
@@ -756,7 +761,7 @@ figureDataBasics <- function(dateDataProcessed, subsetUserName = NULL, subsetTea
     dateDataProcessed <- dateDataProcessed %>% filter(teamId %in% subsetTeamId)
   }
   # Create the summary stats (only compute confidence intervals for 2100 first 12 questions)
-  if (year == 2100 && (beliefSet.contains("Extinction") || setName.contains("Catastrophic") || setName.contains("Human Births") || setName.contains("Pathogen Risk"))) {
+  if (year == 2100 && (grepl("Extinction", setName) || grepl("Catastrophic", setName) || grepl("Human Births", setName) || grepl("Pathogen Risk", setName))) {
     dateData <- dateDataProcessed %>%
       summarize(
         n = n(),
@@ -815,24 +820,24 @@ figureDataBasics <- function(dateDataProcessed, subsetUserName = NULL, subsetTea
   return(dateData)
 }
 
-figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecialty) {
+figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecialty, setName) {
   #' @importFrom gdata combine
   #' @export
 
-  everyone <- figureDataBasics(dateDataProcessed)
+  everyone <- figureDataBasics(dateDataProcessed, year, beliefSet, setName)
 
-  g1 <- figureDataBasics(dateDataProcessed, c(supers, expertsG1$userName))
+  g1 <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, c(supers, expertsG1$userName))
 
-  supers <- figureDataBasics(dateDataProcessed, supers)
+  supers <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, supers)
 
-  experts <- figureDataBasics(dateDataProcessed, expertsG1$userName)
+  experts <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, expertsG1$userName)
 
   generalUsers <- dateDataProcessed %>% filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName)
-  general <- figureDataBasics(dateDataProcessed, generalUsers$userName)
+  general <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, generalUsers$userName)
 
   if (qSpecialty != "") {
     domainExpertsUsers <- expertsG1 %>% filter(specialty1 == qSpecialty | specialty2 == qSpecialty | specialty3 == qSpecialty)
-    domainExperts <- figureDataBasics(dateDataProcessed, domainExpertsUsers$userName)
+    domainExperts <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, domainExpertsUsers$userName)
   } else {
     # Create a dataframe with the same columns as the other dataframes
     domainExperts <- data.frame(
@@ -864,7 +869,7 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
 
   if (qSpecialty != "") {
     nonDomainExpertsUsers <- expertsG1 %>% filter(specialty1 != qSpecialty & specialty2 != qSpecialty & specialty3 != qSpecialty)
-    nonDomainExperts <- figureDataBasics(dateDataProcessed, nonDomainExpertsUsers$userName)
+    nonDomainExperts <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, nonDomainExpertsUsers$userName)
   } else {
     # Create a dataframe with the same columns as the other dataframes
     nonDomainExperts <- data.frame(
@@ -894,49 +899,49 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     )
   }
 
-  t336 <- figureDataBasics(dateDataProcessed, subsetTeamId = 336)
+  t336 <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 336)
 
-  t336Supers <- figureDataBasics(dateDataProcessed, subsetUserName = supers, subsetTeamId = 336)
+  t336Supers <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetUserName = supers, subsetTeamId = 336)
 
-  t336Experts <- figureDataBasics(dateDataProcessed, subsetUserName = expertsG1$userName, subsetTeamId = 336)
+  t336Experts <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetUserName = expertsG1$userName, subsetTeamId = 336)
 
-  t337 <- figureDataBasics(dateDataProcessed, subsetTeamId = 337)
+  t337 <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 337)
 
-  t337Supers <- figureDataBasics(dateDataProcessed, subsetTeamId = 337, subsetUserName = supers)
+  t337Supers <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 337, subsetUserName = supers)
 
-  t337Experts <- figureDataBasics(dateDataProcessed, subsetTeamId = 337, subsetUserName = expertsG1$userName)
+  t337Experts <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 337, subsetUserName = expertsG1$userName)
 
-  t338 <- figureDataBasics(dateDataProcessed, subsetTeamId = 338)
+  t338 <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 338)
 
-  t338Supers <- figureDataBasics(dateDataProcessed, subsetTeamId = 338, subsetUserName = supers)
+  t338Supers <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 338, subsetUserName = supers)
 
-  t338Experts <- figureDataBasics(dateDataProcessed, subsetTeamId = 338, subsetUserName = expertsG1$userName)
+  t338Experts <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 338, subsetUserName = expertsG1$userName)
 
-  t339 <- figureDataBasics(dateDataProcessed, subsetTeamId = 339)
+  t339 <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 339)
 
-  t339Supers <- figureDataBasics(dateDataProcessed, subsetTeamId = 339, subsetUserName = supers)
+  t339Supers <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 339, subsetUserName = supers)
 
-  t339Experts <- figureDataBasics(dateDataProcessed, subsetTeamId = 339, subsetUserName = expertsG1$userName)
+  t339Experts <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 339, subsetUserName = expertsG1$userName)
 
-  t340 <- figureDataBasics(dateDataProcessed, subsetTeamId = 340)
+  t340 <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 340)
 
-  t340Supers <- figureDataBasics(dateDataProcessed, subsetTeamId = 340, subsetUserName = supers)
+  t340Supers <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 340, subsetUserName = supers)
 
-  t340Experts <- figureDataBasics(dateDataProcessed, subsetTeamId = 340, subsetUserName = expertsG1$userName)
+  t340Experts <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 340, subsetUserName = expertsG1$userName)
 
-  t341 <- figureDataBasics(dateDataProcessed, subsetTeamId = 341)
+  t341 <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 341)
 
-  t341Supers <- figureDataBasics(dateDataProcessed, subsetTeamId = 341, subsetUserName = supers)
+  t341Supers <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 341, subsetUserName = supers)
 
-  t341Experts <- figureDataBasics(dateDataProcessed, subsetTeamId = 341, subsetUserName = expertsG1$userName)
+  t341Experts <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 341, subsetUserName = expertsG1$userName)
 
-  t342 <- figureDataBasics(dateDataProcessed, subsetTeamId = 342)
+  t342 <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 342)
 
-  t343 <- figureDataBasics(dateDataProcessed, subsetTeamId = 343)
+  t343 <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 343)
 
-  t344 <- figureDataBasics(dateDataProcessed, subsetTeamId = 344)
+  t344 <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 344)
 
-  t345 <- figureDataBasics(dateDataProcessed, subsetTeamId = 345)
+  t345 <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, subsetTeamId = 345)
 
   rbound <- gdata::combine(
     everyone, g1, supers, experts, general,
@@ -1077,6 +1082,7 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
 
   fname <- paste0(currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ")")
   plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian, fname)
+  
 }
 
 multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSetName) {

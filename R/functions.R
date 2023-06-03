@@ -965,7 +965,7 @@ multiYearReciprocal <- function(metaTable, data) {
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
           rownames(currentSetTimeSeries) <- NULL
-          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = beliefSets[j], year = years[k], date = currentDate, qSpecialty))
+          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = beliefSets[j], year = years[k], date = currentDate, qSpecialty, setName = currentSetName))
         }
 
         write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", currentQuestionName, ".csv"), row.names = FALSE)
@@ -1346,7 +1346,7 @@ pointDistrib <- function(metaTable, data) {
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
 
-        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
       }
 
       write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", currentAnswerText, ".csv"), row.names = FALSE)
@@ -1785,7 +1785,7 @@ multiYearDistrib <- function(metaTable, data) {
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
 
-          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
         }
 
         write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", years[j], " - ", currentAnswerText, ".csv"), row.names = FALSE)
@@ -2089,7 +2089,7 @@ multiYearBinary <- function(metaTable, data) {
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
 
-        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
       }
 
       write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", years[j], ".csv"), row.names = FALSE)
@@ -2442,7 +2442,7 @@ multiYearCountryDistrib <- function(metaTable, data) {
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
 
-          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
         }
 
         write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", years[j], ".csv"), row.names = FALSE)
@@ -2748,7 +2748,7 @@ multiCountryBinary <- function(metaTable, data) {
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
 
-        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
       }
 
       write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", countries[j], ".csv"), row.names = FALSE)
@@ -2994,7 +2994,7 @@ pointBinary <- function(metaTable, data) {
         dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
       }
 
-      currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+      currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
     }
 
     write.csv(currentSetTimeSeries, paste0(currentSetName, ".csv"), row.names = FALSE)
