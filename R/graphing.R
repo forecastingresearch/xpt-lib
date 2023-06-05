@@ -108,8 +108,9 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
     xlim(phaseTwoMedian, NA)
   plot$labels$color <- ""
-
-  ggsave(paste0(fname, ".png"), plot, width = 9.18, height = 5.78, units = c("in"))
+  
+  file_path <- getwd()
+  ggsave(gsub("%", "%%", paste0(file_path, "/", fname, ".png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
   if(FALSE) {
     plot <- plot +
