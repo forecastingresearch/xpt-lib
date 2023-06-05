@@ -243,8 +243,8 @@ mutate_figure_data_hd_trim <- function(csv) {
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
       hd_trim = replace(hd_trim, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-      hd_trim_confint_lower = replace(hd_trim_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-      hd_trim_confint_upper = replace(hd_trim_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
+      #hd_trim_confint_lower = replace(hd_trim_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
+      #hd_trim_confint_upper = replace(hd_trim_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
     filter(currentDate > ymd("2022 07 14"))
 
@@ -726,27 +726,27 @@ figureDataInit <- function() {
     group = character(0),
     n = numeric(0),
     mean = numeric(0),
-    mean_confint_lower = numeric(0),
-    mean_confint_upper = numeric(0),
+    #mean_confint_lower = numeric(0),
+    #mean_confint_upper = numeric(0),
     sd = numeric(0),
     median = numeric(0),
     median_confint_lower = numeric(0),
     median_confint_upper = numeric(0),
     geom_mean = numeric(0),
-    geom_mean_confint_lower = numeric(0),
-    geom_mean_confint_upper = numeric(0),
+    #geom_mean_confint_lower = numeric(0),
+    #geom_mean_confint_upper = numeric(0),
     hd_trim = numeric(0),
-    hd_trim_confint_lower = numeric(0),
-    hd_trim_confint_upper = numeric(0),
+    #hd_trim_confint_lower = numeric(0),
+    #hd_trim_confint_upper = numeric(0),
     simple_trim = numeric(0),
-    simple_trim_confint_lower = numeric(0),
-    simple_trim_confint_upper = numeric(0),
+    #simple_trim_confint_lower = numeric(0),
+    #simple_trim_confint_upper = numeric(0),
     neyman = numeric(0),
-    neyman_confint_lower = numeric(0),
-    neyman_confint_upper = numeric(0),
-    geom_mean_of_odds = numeric(0),
-    geom_mean_of_odds_confint_lower = numeric(0),
-    geom_mean_of_odds_confint_upper = numeric(0)
+    #neyman_confint_lower = numeric(0),
+    #neyman_confint_upper = numeric(0),
+    geom_mean_of_odds = numeric(0)
+    #geom_mean_of_odds_confint_lower = numeric(0),
+    #geom_mean_of_odds_confint_upper = numeric(0)
   )
 
   return(statsEmpty)
@@ -761,59 +761,59 @@ figureDataBasics <- function(dateDataProcessed, year, beliefSet, setName, subset
     dateDataProcessed <- dateDataProcessed %>% filter(teamId %in% subsetTeamId)
   }
   # Create the summary stats (only compute confidence intervals for 2100 first 12 questions)
-  if (year == 2100 && (grepl("Extinction", setName) || grepl("Catastrophic", setName) || grepl("Human Births", setName) || grepl("Pathogen Risk", setName))) {
+  if (year == 2100 && is.null(subsetTeamId) && (grepl("Extinction", setName) || grepl("Catastrophic", setName) || grepl("Human Births", setName) || grepl("Pathogen Risk", setName))) {
     dateData <- dateDataProcessed %>%
       summarize(
         n = n(),
         mean = mean(forecast),
-        mean_confint_lower = boot_results(forecast, statistic = "mean")$confint_lower,
-        mean_confint_upper = boot_results(forecast, statistic = "mean")$confint_upper,
+        #mean_confint_lower = boot_results(forecast, statistic = "mean")$confint_lower,
+        #mean_confint_upper = boot_results(forecast, statistic = "mean")$confint_upper,
         sd = sd(forecast),
         median = median(forecast),
         median_confint_lower = boot_results(forecast, statistic = "median")$confint_lower,
         median_confint_upper = boot_results(forecast, statistic = "median")$confint_upper,
         geom_mean = geoMeanCalc(forecast),
-        geom_mean_confint_lower = boot_results(forecast, statistic = "geoMeanCalc")$confint_lower,
-        geom_mean_confint_upper = boot_results(forecast, statistic = "geoMeanCalc")$confint_upper,
+        #geom_mean_confint_lower = boot_results(forecast, statistic = "geoMeanCalc")$confint_lower,
+        #geom_mean_confint_upper = boot_results(forecast, statistic = "geoMeanCalc")$confint_upper,
         hd_trim = hd_trim(forecast),
-        hd_trim_confint_lower = boot_results(forecast, statistic = "hd_trim")$confint_lower,
-        hd_trim_confint_upper = boot_results(forecast, statistic = "hd_trim")$confint_upper,
+        #hd_trim_confint_lower = boot_results(forecast, statistic = "hd_trim")$confint_lower,
+        #hd_trim_confint_upper = boot_results(forecast, statistic = "hd_trim")$confint_upper,
         simple_trim = trim(forecast),
-        simple_trim_confint_lower = boot_results(forecast, statistic = "trim")$confint_lower,
-        simple_trim_confint_upper = boot_results(forecast, statistic = "trim")$confint_upper,
+        #simple_trim_confint_lower = boot_results(forecast, statistic = "trim")$confint_lower,
+        #simple_trim_confint_upper = boot_results(forecast, statistic = "trim")$confint_upper,
         neyman = neymanAggCalc(forecast),
-        neyman_confint_lower = boot_results(forecast, statistic = "neymanAggCalc")$confint_lower,
-        neyman_confint_upper = boot_results(forecast, statistic = "neymanAggCalc")$confint_upper,
-        geom_mean_of_odds = geoMeanOfOddsCalc(forecast),
-        geom_mean_of_odds_confint_lower = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_lower,
-        geom_mean_of_odds_confint_upper = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_upper
+        #neyman_confint_lower = boot_results(forecast, statistic = "neymanAggCalc")$confint_lower,
+        #neyman_confint_upper = boot_results(forecast, statistic = "neymanAggCalc")$confint_upper,
+        geom_mean_of_odds = geoMeanOfOddsCalc(forecast)
+        #geom_mean_of_odds_confint_lower = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_lower,
+        #geom_mean_of_odds_confint_upper = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_upper
       )
   } else {
     dateData <- dateDataProcessed %>%
       summarize(
         n = n(),
         mean = mean(forecast),
-        mean_confint_lower = NA,
-        mean_confint_upper = NA,
+        #mean_confint_lower = NA,
+        #mean_confint_upper = NA,
         sd = sd(forecast),
         median = median(forecast),
         median_confint_lower = NA,
         median_confint_upper = NA,
         geom_mean = geoMeanCalc(forecast),
-        geom_mean_confint_lower = NA,
-        geom_mean_confint_upper = NA,
+        #geom_mean_confint_lower = NA,
+        #geom_mean_confint_upper = NA,
         hd_trim = hd_trim(forecast),
-        hd_trim_confint_lower = NA,
-        hd_trim_confint_upper = NA,
+        #hd_trim_confint_lower = NA,
+        #hd_trim_confint_upper = NA,
         simple_trim = trim(forecast),
-        simple_trim_confint_lower = NA,
-        simple_trim_confint_upper = NA,
+        #simple_trim_confint_lower = NA,
+        #simple_trim_confint_upper = NA,
         neyman = neymanAggCalc(forecast),
-        neyman_confint_lower = NA,
-        neyman_confint_upper = NA,
-        geom_mean_of_odds = geoMeanOfOddsCalc(forecast),
-        geom_mean_of_odds_confint_lower = NA,
-        geom_mean_of_odds_confint_upper = NA
+        #neyman_confint_lower = NA,
+        #neyman_confint_upper = NA,
+        geom_mean_of_odds = geoMeanOfOddsCalc(forecast)
+        #geom_mean_of_odds_confint_lower = NA,
+        #geom_mean_of_odds_confint_upper = NA
       )
   }
 
@@ -843,27 +843,27 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     domainExperts <- data.frame(
       n = NA,
       mean = NA,
-      mean_confint_lower = NA,
-      mean_confint_upper = NA,
+      #mean_confint_lower = NA,
+      #mean_confint_upper = NA,
       sd = NA,
       median = NA,
       median_confint_lower = NA,
       median_confint_upper = NA,
       geom_mean = NA,
-      geom_mean_confint_lower = NA,
-      geom_mean_confint_upper = NA,
+      #geom_mean_confint_lower = NA,
+      #geom_mean_confint_upper = NA,
       hd_trim = NA,
-      hd_trim_confint_lower = NA,
-      hd_trim_confint_upper = NA,
+      #hd_trim_confint_lower = NA,
+      #hd_trim_confint_upper = NA,
       simple_trim = NA,
-      simple_trim_confint_lower = NA,
-      simple_trim_confint_upper = NA,
+      #simple_trim_confint_lower = NA,
+      #simple_trim_confint_upper = NA,
       neyman = NA,
-      neyman_confint_lower = NA,
-      neyman_confint_upper = NA,
-      geom_mean_of_odds = NA,
-      geom_mean_of_odds_confint_lower = NA,
-      geom_mean_of_odds_confint_upper = NA
+      #neyman_confint_lower = NA,
+      #neyman_confint_upper = NA,
+      geom_mean_of_odds = NA
+      #geom_mean_of_odds_confint_lower = NA,
+      #geom_mean_of_odds_confint_upper = NA
     )
   }
 
@@ -875,27 +875,27 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     nonDomainExperts <- data.frame(
       n = NA,
       mean = NA,
-      mean_confint_lower = NA,
-      mean_confint_upper = NA,
+      #mean_confint_lower = NA,
+      #mean_confint_upper = NA,
       sd = NA,
       median = NA,
       median_confint_lower = NA,
       median_confint_upper = NA,
       geom_mean = NA,
-      geom_mean_confint_lower = NA,
-      geom_mean_confint_upper = NA,
+      #geom_mean_confint_lower = NA,
+      #geom_mean_confint_upper = NA,
       hd_trim = NA,
-      hd_trim_confint_lower = NA,
-      hd_trim_confint_upper = NA,
+      #hd_trim_confint_lower = NA,
+      #hd_trim_confint_upper = NA,
       simple_trim = NA,
-      simple_trim_confint_lower = NA,
-      simple_trim_confint_upper = NA,
+      #simple_trim_confint_lower = NA,
+      #simple_trim_confint_upper = NA,
       neyman = NA,
-      neyman_confint_lower = NA,
-      neyman_confint_upper = NA,
-      geom_mean_of_odds = NA,
-      geom_mean_of_odds_confint_lower = NA,
-      geom_mean_of_odds_confint_upper = NA
+      #neyman_confint_lower = NA,
+      #neyman_confint_upper = NA,
+      geom_mean_of_odds = NA
+      #geom_mean_of_odds_confint_lower = NA,
+      #geom_mean_of_odds_confint_upper = NA
     )
   }
 
