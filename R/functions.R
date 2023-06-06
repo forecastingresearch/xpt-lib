@@ -1785,7 +1785,7 @@ multiYearDistrib <- function(metaTable, data) {
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
 
-          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
+          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = years[j], date = currentDate, qSpecialty, setName = currentSetName))
         }
 
         write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", years[j], " - ", currentAnswerText, ".csv"), row.names = FALSE)
