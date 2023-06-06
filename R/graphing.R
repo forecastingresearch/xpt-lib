@@ -145,7 +145,7 @@ mutate_figure_data_median <- function(csv) {
     )
 
   # Who's getting dropped? Print out the groups where n < 10
-  print(plotTable %>% group_by(group) %>% summarize(n = first(n)))
+  #print(plotTable %>% group_by(group) %>% summarize(n = first(n)))
 
   # Filter and re-instate the levels now that the group names are correct
   plotTable <- plotTable %>%
@@ -1490,8 +1490,14 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
 
   plotTable <- mutate_figure_data_median(csv)
   file_path <- getwd()
-  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Figure One (", year, " - ", currentDistrib, ")"))
+  if (grepl("%", currentSetName)) {
+    fname <- paste0(currentSetName, "% - Figure One (", year, " - ", currentDistrib, "%)")
+  } else {
+    fname <- paste0(currentSetName, " - Figure One (", year, "-", currentDistrib, "%)")
+  }
+  
   plot <- plot_with_ribbons(plotTable, paste(title, "-", year, "-", currentDistrib), subtitle, phaseTwoMedian, fname)
+  
 }
 
 multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, year, currentDistrib) {
