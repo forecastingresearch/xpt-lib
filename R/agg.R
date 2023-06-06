@@ -15,7 +15,7 @@ preprocess <- function(x, q = 0) {
 
   x <- sort(x)
 
-  if (q != 0 & length(x) > 1) {
+  if (q != 0 & length(x) > 1 & !all(x == 0) & !all(x == 100)) {
     x[x == 100] <- as.numeric(quantile(x[x != 100], 1 - q))
     x[x == 0] <- as.numeric(quantile(x[x != 0], q))
   }
