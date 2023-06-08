@@ -20,7 +20,7 @@ preprocess <- function(x, q = 0) {
       # Replace them with 10^-12
       return(rep(10^-12, length(x)))
     } else if (all(x == 100)) {
-      return(rep(1 - 10^-12, length(x)))
+      return(rep(100 - 10^-12, length(x)))
     }
     x[x == 100] <- as.numeric(quantile(x[x != 100], 1 - q))
     x[x == 0] <- as.numeric(quantile(x[x != 0], q))
