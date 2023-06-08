@@ -13,7 +13,7 @@ preprocess <- function(x, q = 0) {
   #' @note ASSUMES FORECASTS ARE IN THE RANGE [0, 100]!
 
   x <- sort(x)
-  x <- x[!is.na(x)]
+  x <- x[!is.na(x) & !is.nan(x)]
 
   if (q != 0 && length(x) > 1) {
     if (all(x == 0)) {
@@ -22,8 +22,8 @@ preprocess <- function(x, q = 0) {
     } else if (all(x == 100)) {
       return(rep(100 - 10^-12, length(x)))
     }
-    x[x == 100] <- as.numeric(quantile(x[x != 100], 1 - q))
-    x[x == 0] <- as.numeric(quantile(x[x != 0], q))
+    x[x == 100] <- as.numeric(quantile(x[x != 100], 1 - q, na.rm = TRUE))
+    x[x == 0] <- as.numeric(quantile(x[x != 0], q, na.rm = TRUE))
   }
 
   return(x)
