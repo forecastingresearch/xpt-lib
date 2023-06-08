@@ -5,7 +5,7 @@ library(lubridate)
 library(boot)
 library(ggplot2)
 library(scales)
-library(gdata)
+library(gdata, include.only = 'combine')
 
 # Generate a colorblind-friendly palette with six colors
 cb_pal <- colorblind_pal()(8)

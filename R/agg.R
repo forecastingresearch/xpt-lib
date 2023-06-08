@@ -7,15 +7,21 @@ preprocess <- function(x, q = 0) {
   #' @description This does the preprocessing steps that all the agg methods
   #' have in common.
   #'
-  #' @param specific_function The specific aggregation function to be generated
   #' @param x A vector of forecasts
   #' @param q The quantile to use for replacing 0s and 1s (between 0 and 1)
   #'
   #' @note ASSUMES FORECASTS ARE IN THE RANGE [0, 100]!
 
   x <- sort(x)
+  x <- x[!is.na(x)]
 
-  if (q != 0 & length(x) > 1 & !all(x == 0) & !all(x == 100)) {
+  if (q != 0 && length(x) > 1) {
+    if (all(x == 0)) {
+      # Replace them with 10^-12
+      return(rep(10^-12, length(x)))
+    } else if (all(x == 100)) {
+      return(rep(1 - 10^-12, length(x)))
+    }
     x[x == 100] <- as.numeric(quantile(x[x != 100], 1 - q))
     x[x == 0] <- as.numeric(quantile(x[x != 0], q))
   }
