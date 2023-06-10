@@ -1642,7 +1642,7 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
   #' @export
 
   plotTable <- mutate_figure_data_median(csv)
-  file_path <- get_wd()
+  file_path <- getwd()
   fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Figure One (", year, ")"))
   plot <- plot_with_ribbons(plotTable, paste(title, "-", year), subtitle, phaseTwoMedian, fname)
 }
