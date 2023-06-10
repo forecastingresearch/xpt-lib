@@ -70,6 +70,18 @@ newAddInit <- function() {
     expertsG1GeoMean = numeric(0),
     expertsG1HdTrim = numeric(0),
     expertsG1NeymanAgg = numeric(0),
+    XriskExpertsMean = numeric(0),
+    XriskExpertsMedian = numeric(0),
+    XriskExpertsSd = numeric(0),
+    XriskExpertsN = numeric(0),
+    XriskExpertsTrimmedMean = numeric(0),
+    XriskExpertsPct5th = numeric(0),
+    XriskExpertsPct25th = numeric(0),
+    XriskExpertsPct75th = numeric(0),
+    XriskExpertsPct95th = numeric(0),
+    XriskExpertsGeoMean = numeric(0),
+    XriskExpertsHdTrim = numeric(0),
+    XriskExpertsNeymanAgg = numeric(0),
     expertsG2Mean = numeric(0),
     expertsG2Median = numeric(0),
     expertsG2Sd = numeric(0),
@@ -253,6 +265,20 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG1HdTrim <- hd_trim(expertsG1Processed$forecast)
   expertsG1NeymanAgg <- neymanAggCalc(expertsG1Processed$forecast)
 
+  XriskExpertsProcessed <- questionDataProcessed %>% filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName)
+  XriskExpertsMean <- mean(XriskExpertsProcessed$forecast)
+  XriskExpertsMedian <- median(XriskExpertsProcessed$forecast)
+  XriskExpertsSd <- sd(XriskExpertsProcessed$forecast)
+  XriskExpertsN <- nrow(XriskExpertsProcessed)
+  XriskExpertsTrimmedMean <- xpt::trim(XriskExpertsProcessed$forecast)
+  XriskExpertsPct5th <- as.numeric(quantile(XriskExpertsProcessed$forecast, 0.05))
+  XriskExpertsPct25th <- as.numeric(quantile(XriskExpertsProcessed$forecast, 0.25))
+  XriskExpertsPct75th <- as.numeric(quantile(XriskExpertsProcessed$forecast, 0.75))
+  XriskExpertsPct95th <- as.numeric(quantile(XriskExpertsProcessed$forecast, 0.95))
+  XriskExpertsGeoMean <- geoMeanCalc(XriskExpertsProcessed$forecast)
+  XriskExpertsHdTrim <- hd_trim(XriskExpertsProcessed$forecast)
+  XriskExpertsNeymanAgg <- neymanAggCalc(XriskExpertsProcessed$forecast)
+
   expertsG2Processed <- questionDataProcessed %>% filter(userName %in% expertsG2)
   expertsG2Mean <- mean(expertsG2Processed$forecast)
   expertsG2Median <- median(expertsG2Processed$forecast)
@@ -404,6 +430,27 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     expertsG1HdTrim_exc <- NA
   }
   expertsG1NeymanAgg_exc <- neymanAggCalc(expertsG1Processed_exc$forecast)
+  
+  XriskExpertsProcessed_exc <- questionDataProcessed %>%
+    filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName) %>%
+    filter(forecast > XriskExpertsMedian - (10 * XriskExpertsSd)) %>%
+    filter(forecast < XriskExpertsMedian + (10 * XriskExpertsSd))
+  XriskExpertsMean_exc <- mean(XriskExpertsProcessed_exc$forecast)
+  XriskExpertsMedian_exc <- median(XriskExpertsProcessed_exc$forecast)
+  XriskExpertsSd_exc <- sd(XriskExpertsProcessed_exc$forecast)
+  XriskExpertsN_exc <- nrow(XriskExpertsProcessed_exc)
+  XriskExpertsTrimmedMean_exc <- xpt::trim(XriskExpertsProcessed_exc$forecast)
+  XriskExpertsPct5th_exc <- as.numeric(quantile(XriskExpertsProcessed_exc$forecast, 0.05))
+  XriskExpertsPct25th_exc <- as.numeric(quantile(XriskExpertsProcessed_exc$forecast, 0.25))
+  XriskExpertsPct75th_exc <- as.numeric(quantile(XriskExpertsProcessed_exc$forecast, 0.75))
+  XriskExpertsPct95th_exc <- as.numeric(quantile(XriskExpertsProcessed_exc$forecast, 0.95))
+  XriskExpertsGeoMean_exc <- geoMeanCalc(XriskExpertsProcessed_exc$forecast)
+  if (length(XriskExpertsProcessed_exc$forecast) > 0) {
+    XriskExpertsHdTrim_exc <- hd_trim(XriskExpertsProcessed_exc$forecast)
+  } else {
+    XriskExpertsHdTrim_exc <- NA
+  }
+  XriskExpertsNeymanAgg_exc <- neymanAggCalc(XriskExpertsProcessed_exc$forecast)
 
   expertsG2Processed_exc <- questionDataProcessed %>%
     filter(userName %in% expertsG2) %>%
@@ -551,6 +598,18 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     expertsG1GeoMean,
     expertsG1HdTrim,
     expertsG1NeymanAgg,
+    XriskExpertsMean,
+    XriskExpertsMedian,
+    XriskExpertsSd,
+    XriskExpertsN,
+    XriskExpertsTrimmedMean,
+    XriskExpertsPct5th,
+    XriskExpertsPct25th,
+    XriskExpertsPct75th,
+    XriskExpertsPct95th,
+    XriskExpertsGeoMean,
+    XriskExpertsHdTrim,
+    XriskExpertsNeymanAgg,
     expertsG2Mean,
     expertsG2Median,
     expertsG2Sd,
@@ -635,6 +694,18 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     expertsG1GeoMean_exc,
     expertsG1HdTrim_exc,
     expertsG1NeymanAgg_exc,
+    XriskExpertsMean_exc,
+    XriskExpertsMedian_exc,
+    XriskExpertsSd_exc,
+    XriskExpertsN_exc,
+    XriskExpertsTrimmedMean_exc,
+    XriskExpertsPct5th_exc,
+    XriskExpertsPct25th_exc,
+    XriskExpertsPct75th_exc,
+    XriskExpertsPct95th_exc,
+    XriskExpertsGeoMean_exc,
+    XriskExpertsHdTrim_exc,
+    XriskExpertsNeymanAgg_exc,
     expertsG2Mean_exc,
     expertsG2Median_exc,
     expertsG2Sd_exc,
