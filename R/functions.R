@@ -905,7 +905,7 @@ multiYearReciprocal <- function(metaTable, data) {
 
           files <- c(paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"))
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - ", currentStage, " Box Plot")
-          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax)
+          #boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[l], "/", beliefSets[k]))
 
@@ -1264,7 +1264,7 @@ pointDistrib <- function(metaTable, data) {
         setwd("BoxPlots")
       }
 
-      boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "")
+      #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "")
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
@@ -1682,7 +1682,7 @@ multiYearDistrib <- function(metaTable, data) {
           setwd("BoxPlots")
         }
 
-        boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j])
+        #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j])
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
@@ -2049,7 +2049,7 @@ multiYearBinary <- function(metaTable, data) {
 
         filenameStart <- paste(currentSetName, "-", "Stage", k)
 
-        boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax)
+        #boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax)
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
@@ -2381,7 +2381,7 @@ multiYearCountryDistrib <- function(metaTable, data) {
           setwd("BoxPlots")
         }
 
-        boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable[i, ]$title, forecastMin, forecastMax, stage = k, year = years[j])
+        #boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable[i, ]$title, forecastMin, forecastMax, stage = k, year = years[j])
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
@@ -2713,7 +2713,7 @@ multiCountryBinary <- function(metaTable, data) {
         setwd("BoxPlots")
       }
 
-      boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
+      #boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
@@ -2980,7 +2980,7 @@ pointBinary <- function(metaTable, data) {
       currFile <- currFiles[grep(phases[j], currFiles)]
       currFile <- currFile[!grepl("ANON", currFile)]
 
-      boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax)
+      #boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax)
     }
 
     # # CONVERGENCE DATA
