@@ -905,7 +905,7 @@ multiYearReciprocal <- function(metaTable, data) {
 
           files <- c(paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"))
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - ", currentStage, " Box Plot")
-          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax)
+          #boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[l], "/", beliefSets[k]))
 
@@ -915,53 +915,53 @@ multiYearReciprocal <- function(metaTable, data) {
       }
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
-    for (j in 1:length(years)) {
-      setwd(years[j])
-      print(years[j])
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
+    # for (j in 1:length(years)) {
+    #   setwd(years[j])
+    #   print(years[j])
 
-      for (k in 1:length(beliefSets)) {
-        setwd(beliefSets[k])
-        print(beliefSets[k])
+    #   for (k in 1:length(beliefSets)) {
+    #     setwd(beliefSets[k])
+    #     print(beliefSets[k])
 
-        phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-        phase1median <- median(phase1$forecast)
-        phase1sd <- sd(phase1$forecast)
-        phase1 <- phase1 %>%
-          filter(forecast > phase1median - (10 * phase1sd)) %>%
-          filter(forecast < phase1median + (10 * phase1sd))
-        phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-        phase2median <- median(phase2$forecast)
-        phase2sd <- sd(phase2$forecast)
-        phase2 <- phase2 %>%
-          filter(forecast > phase2median - (10 * phase2sd)) %>%
-          filter(forecast < phase2median + (10 * phase2sd))
-        phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-        phase3median <- median(phase3$forecast)
-        phase3sd <- sd(phase3$forecast)
-        phase3 <- phase3 %>%
-          filter(forecast > phase3median - (10 * phase3sd)) %>%
-          filter(forecast < phase3median + (10 * phase3sd))
-        phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-        phase4median <- median(phase4$forecast)
-        phase4sd <- sd(phase4$forecast)
-        phase4 <- phase4 %>%
-          filter(forecast > phase4median - (10 * phase4sd)) %>%
-          filter(forecast < phase4median + (10 * phase4sd))
+    #     phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #     phase1median <- median(phase1$forecast)
+    #     phase1sd <- sd(phase1$forecast)
+    #     phase1 <- phase1 %>%
+    #       filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #       filter(forecast < phase1median + (10 * phase1sd))
+    #     phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #     phase2median <- median(phase2$forecast)
+    #     phase2sd <- sd(phase2$forecast)
+    #     phase2 <- phase2 %>%
+    #       filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #       filter(forecast < phase2median + (10 * phase2sd))
+    #     phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #     phase3median <- median(phase3$forecast)
+    #     phase3sd <- sd(phase3$forecast)
+    #     phase3 <- phase3 %>%
+    #       filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #       filter(forecast < phase3median + (10 * phase3sd))
+    #     phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #     phase4median <- median(phase4$forecast)
+    #     phase4sd <- sd(phase4$forecast)
+    #     phase4 <- phase4 %>%
+    #       filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #       filter(forecast < phase4median + (10 * phase4sd))
 
-        setwd(paste0(yourHome, "Summary Data"))
-        convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-        convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #     setwd(paste0(yourHome, "Summary Data"))
+    #     convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #     convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-        write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #     write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-      }
+    #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    #   }
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -1264,52 +1264,52 @@ pointDistrib <- function(metaTable, data) {
         setwd("BoxPlots")
       }
 
-      boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "")
+      #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "")
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
 
-    for (j in 1:length(distrib)) {
-      setwd(distrib[j])
-      print(distrib[j])
+    # for (j in 1:length(distrib)) {
+    #   setwd(distrib[j])
+    #   print(distrib[j])
 
-      phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-      phase1median <- median(phase1$forecast)
-      phase1sd <- sd(phase1$forecast)
-      phase1 <- phase1 %>%
-        filter(forecast > phase1median - (10 * phase1sd)) %>%
-        filter(forecast < phase1median + (10 * phase1sd))
-      phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-      phase2median <- median(phase2$forecast)
-      phase2sd <- sd(phase2$forecast)
-      phase2 <- phase2 %>%
-        filter(forecast > phase2median - (10 * phase2sd)) %>%
-        filter(forecast < phase2median + (10 * phase2sd))
-      phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-      phase3median <- median(phase3$forecast)
-      phase3sd <- sd(phase3$forecast)
-      phase3 <- phase3 %>%
-        filter(forecast > phase3median - (10 * phase3sd)) %>%
-        filter(forecast < phase3median + (10 * phase3sd))
-      phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-      phase4median <- median(phase4$forecast)
-      phase4sd <- sd(phase4$forecast)
-      phase4 <- phase4 %>%
-        filter(forecast > phase4median - (10 * phase4sd)) %>%
-        filter(forecast < phase4median + (10 * phase4sd))
+    #   phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #   phase1median <- median(phase1$forecast)
+    #   phase1sd <- sd(phase1$forecast)
+    #   phase1 <- phase1 %>%
+    #     filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #     filter(forecast < phase1median + (10 * phase1sd))
+    #   phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #   phase2median <- median(phase2$forecast)
+    #   phase2sd <- sd(phase2$forecast)
+    #   phase2 <- phase2 %>%
+    #     filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #     filter(forecast < phase2median + (10 * phase2sd))
+    #   phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #   phase3median <- median(phase3$forecast)
+    #   phase3sd <- sd(phase3$forecast)
+    #   phase3 <- phase3 %>%
+    #     filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #     filter(forecast < phase3median + (10 * phase3sd))
+    #   phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #   phase4median <- median(phase4$forecast)
+    #   phase4sd <- sd(phase4$forecast)
+    #   phase4 <- phase4 %>%
+    #     filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #     filter(forecast < phase4median + (10 * phase4sd))
 
-      setwd(paste0(yourHome, "Summary Data"))
-      convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-      convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #   setwd(paste0(yourHome, "Summary Data"))
+    #   convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #   convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-      write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #   write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
 
@@ -1682,60 +1682,60 @@ multiYearDistrib <- function(metaTable, data) {
           setwd("BoxPlots")
         }
 
-        boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j])
+        #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j])
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
 
-    for (j in 1:length(years)) {
-      setwd(years[j])
-      print(years[j])
+    # for (j in 1:length(years)) {
+    #   setwd(years[j])
+    #   print(years[j])
 
-      for (k in 1:length(distrib)) {
-        setwd(distrib[k])
-        print(distrib[k])
+    #   for (k in 1:length(distrib)) {
+    #     setwd(distrib[k])
+    #     print(distrib[k])
 
-        phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-        phase1median <- median(phase1$forecast)
-        phase1sd <- sd(phase1$forecast)
-        phase1 <- phase1 %>%
-          filter(forecast > phase1median - (10 * phase1sd)) %>%
-          filter(forecast < phase1median + (10 * phase1sd))
-        phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-        phase2median <- median(phase2$forecast)
-        phase2sd <- sd(phase2$forecast)
-        phase2 <- phase2 %>%
-          filter(forecast > phase2median - (10 * phase2sd)) %>%
-          filter(forecast < phase2median + (10 * phase2sd))
-        phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-        phase3median <- median(phase3$forecast)
-        phase3sd <- sd(phase3$forecast)
-        phase3 <- phase3 %>%
-          filter(forecast > phase3median - (10 * phase3sd)) %>%
-          filter(forecast < phase3median + (10 * phase3sd))
-        phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-        phase4median <- median(phase4$forecast)
-        phase4sd <- sd(phase4$forecast)
-        phase4 <- phase4 %>%
-          filter(forecast > phase4median - (10 * phase4sd)) %>%
-          filter(forecast < phase4median + (10 * phase4sd))
+    #     phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #     phase1median <- median(phase1$forecast)
+    #     phase1sd <- sd(phase1$forecast)
+    #     phase1 <- phase1 %>%
+    #       filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #       filter(forecast < phase1median + (10 * phase1sd))
+    #     phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #     phase2median <- median(phase2$forecast)
+    #     phase2sd <- sd(phase2$forecast)
+    #     phase2 <- phase2 %>%
+    #       filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #       filter(forecast < phase2median + (10 * phase2sd))
+    #     phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #     phase3median <- median(phase3$forecast)
+    #     phase3sd <- sd(phase3$forecast)
+    #     phase3 <- phase3 %>%
+    #       filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #       filter(forecast < phase3median + (10 * phase3sd))
+    #     phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #     phase4median <- median(phase4$forecast)
+    #     phase4sd <- sd(phase4$forecast)
+    #     phase4 <- phase4 %>%
+    #       filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #       filter(forecast < phase4median + (10 * phase4sd))
 
-        setwd(paste0(yourHome, "Summary Data"))
-        convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-        convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #     setwd(paste0(yourHome, "Summary Data"))
+    #     convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #     convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-        write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #     write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-      }
+    #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    #   }
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -2049,53 +2049,53 @@ multiYearBinary <- function(metaTable, data) {
 
         filenameStart <- paste(currentSetName, "-", "Stage", k)
 
-        boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax)
+        #boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax)
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
 
-    for (j in 1:length(years)) {
-      setwd(years[j])
-      print(years[j])
+    # for (j in 1:length(years)) {
+    #   setwd(years[j])
+    #   print(years[j])
 
-      phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-      phase1median <- median(phase1$forecast)
-      phase1sd <- sd(phase1$forecast)
-      phase1 <- phase1 %>%
-        filter(forecast > phase1median - (10 * phase1sd)) %>%
-        filter(forecast < phase1median + (10 * phase1sd))
-      phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-      phase2median <- median(phase2$forecast)
-      phase2sd <- sd(phase2$forecast)
-      phase2 <- phase2 %>%
-        filter(forecast > phase2median - (10 * phase2sd)) %>%
-        filter(forecast < phase2median + (10 * phase2sd))
-      phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-      phase3median <- median(phase3$forecast)
-      phase3sd <- sd(phase3$forecast)
-      phase3 <- phase3 %>%
-        filter(forecast > phase3median - (10 * phase3sd)) %>%
-        filter(forecast < phase3median + (10 * phase3sd))
-      phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-      phase4median <- median(phase4$forecast)
-      phase4sd <- sd(phase4$forecast)
-      phase4 <- phase4 %>%
-        filter(forecast > phase4median - (10 * phase4sd)) %>%
-        filter(forecast < phase4median + (10 * phase4sd))
+    #   phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #   phase1median <- median(phase1$forecast)
+    #   phase1sd <- sd(phase1$forecast)
+    #   phase1 <- phase1 %>%
+    #     filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #     filter(forecast < phase1median + (10 * phase1sd))
+    #   phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #   phase2median <- median(phase2$forecast)
+    #   phase2sd <- sd(phase2$forecast)
+    #   phase2 <- phase2 %>%
+    #     filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #     filter(forecast < phase2median + (10 * phase2sd))
+    #   phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #   phase3median <- median(phase3$forecast)
+    #   phase3sd <- sd(phase3$forecast)
+    #   phase3 <- phase3 %>%
+    #     filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #     filter(forecast < phase3median + (10 * phase3sd))
+    #   phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #   phase4median <- median(phase4$forecast)
+    #   phase4sd <- sd(phase4$forecast)
+    #   phase4 <- phase4 %>%
+    #     filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #     filter(forecast < phase4median + (10 * phase4sd))
 
-      setwd(paste0(yourHome, "Summary Data"))
-      convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-      convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #   setwd(paste0(yourHome, "Summary Data"))
+    #   convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #   convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-      write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #   write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -2381,60 +2381,60 @@ multiYearCountryDistrib <- function(metaTable, data) {
           setwd("BoxPlots")
         }
 
-        boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable[i, ]$title, forecastMin, forecastMax, stage = k, year = years[j])
+        #boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable[i, ]$title, forecastMin, forecastMax, stage = k, year = years[j])
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
 
-    for (j in 1:length(years)) {
-      setwd(years[j])
-      print(years[j])
+    # for (j in 1:length(years)) {
+    #   setwd(years[j])
+    #   print(years[j])
 
-      for (k in 1:length(countries)) {
-        setwd(countries[k])
-        print(countries[k])
+    #   for (k in 1:length(countries)) {
+    #     setwd(countries[k])
+    #     print(countries[k])
 
-        phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-        phase1median <- median(phase1$forecast)
-        phase1sd <- sd(phase1$forecast)
-        phase1 <- phase1 %>%
-          filter(forecast > phase1median - (10 * phase1sd)) %>%
-          filter(forecast < phase1median + (10 * phase1sd))
-        phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-        phase2median <- median(phase2$forecast)
-        phase2sd <- sd(phase2$forecast)
-        phase2 <- phase2 %>%
-          filter(forecast > phase2median - (10 * phase2sd)) %>%
-          filter(forecast < phase2median + (10 * phase2sd))
-        phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-        phase3median <- median(phase3$forecast)
-        phase3sd <- sd(phase3$forecast)
-        phase3 <- phase3 %>%
-          filter(forecast > phase3median - (10 * phase3sd)) %>%
-          filter(forecast < phase3median + (10 * phase3sd))
-        phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-        phase4median <- median(phase4$forecast)
-        phase4sd <- sd(phase4$forecast)
-        phase4 <- phase4 %>%
-          filter(forecast > phase4median - (10 * phase4sd)) %>%
-          filter(forecast < phase4median + (10 * phase4sd))
+    #     phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #     phase1median <- median(phase1$forecast)
+    #     phase1sd <- sd(phase1$forecast)
+    #     phase1 <- phase1 %>%
+    #       filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #       filter(forecast < phase1median + (10 * phase1sd))
+    #     phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #     phase2median <- median(phase2$forecast)
+    #     phase2sd <- sd(phase2$forecast)
+    #     phase2 <- phase2 %>%
+    #       filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #       filter(forecast < phase2median + (10 * phase2sd))
+    #     phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #     phase3median <- median(phase3$forecast)
+    #     phase3sd <- sd(phase3$forecast)
+    #     phase3 <- phase3 %>%
+    #       filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #       filter(forecast < phase3median + (10 * phase3sd))
+    #     phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #     phase4median <- median(phase4$forecast)
+    #     phase4sd <- sd(phase4$forecast)
+    #     phase4 <- phase4 %>%
+    #       filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #       filter(forecast < phase4median + (10 * phase4sd))
 
-        setwd(paste0(yourHome, "Summary Data"))
-        convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-        convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #     setwd(paste0(yourHome, "Summary Data"))
+    #     convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #     convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-        write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #     write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-      }
+    #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    #   }
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -2713,51 +2713,51 @@ multiCountryBinary <- function(metaTable, data) {
         setwd("BoxPlots")
       }
 
-      boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
+      #boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
 
-    for (j in 1:length(countries)) {
-      setwd(countries[j])
-      print(countries[j])
+    # for (j in 1:length(countries)) {
+    #   setwd(countries[j])
+    #   print(countries[j])
 
-      phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-      phase1median <- median(phase1$forecast)
-      phase1sd <- sd(phase1$forecast)
-      phase1 <- phase1 %>%
-        filter(forecast > phase1median - (10 * phase1sd)) %>%
-        filter(forecast < phase1median + (10 * phase1sd))
-      phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-      phase2median <- median(phase2$forecast)
-      phase2sd <- sd(phase2$forecast)
-      phase2 <- phase2 %>%
-        filter(forecast > phase2median - (10 * phase2sd)) %>%
-        filter(forecast < phase2median + (10 * phase2sd))
-      phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-      phase3median <- median(phase3$forecast)
-      phase3sd <- sd(phase3$forecast)
-      phase3 <- phase3 %>%
-        filter(forecast > phase3median - (10 * phase3sd)) %>%
-        filter(forecast < phase3median + (10 * phase3sd))
-      phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-      phase4median <- median(phase4$forecast)
-      phase4sd <- sd(phase4$forecast)
-      phase4 <- phase4 %>%
-        filter(forecast > phase4median - (10 * phase4sd)) %>%
-        filter(forecast < phase4median + (10 * phase4sd))
+    #   phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #   phase1median <- median(phase1$forecast)
+    #   phase1sd <- sd(phase1$forecast)
+    #   phase1 <- phase1 %>%
+    #     filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #     filter(forecast < phase1median + (10 * phase1sd))
+    #   phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #   phase2median <- median(phase2$forecast)
+    #   phase2sd <- sd(phase2$forecast)
+    #   phase2 <- phase2 %>%
+    #     filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #     filter(forecast < phase2median + (10 * phase2sd))
+    #   phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #   phase3median <- median(phase3$forecast)
+    #   phase3sd <- sd(phase3$forecast)
+    #   phase3 <- phase3 %>%
+    #     filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #     filter(forecast < phase3median + (10 * phase3sd))
+    #   phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #   phase4median <- median(phase4$forecast)
+    #   phase4sd <- sd(phase4$forecast)
+    #   phase4 <- phase4 %>%
+    #     filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #     filter(forecast < phase4median + (10 * phase4sd))
 
-      setwd(paste0(yourHome, "Summary Data"))
-      convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-      convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #   setwd(paste0(yourHome, "Summary Data"))
+    #   convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #   convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-      write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #   write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -2980,43 +2980,43 @@ pointBinary <- function(metaTable, data) {
       currFile <- currFiles[grep(phases[j], currFiles)]
       currFile <- currFile[!grepl("ANON", currFile)]
 
-      boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax)
+      #boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax)
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
 
-    phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-    phase1median <- median(phase1$forecast)
-    phase1sd <- sd(phase1$forecast)
-    phase1 <- phase1 %>%
-      filter(forecast > phase1median - (10 * phase1sd)) %>%
-      filter(forecast < phase1median + (10 * phase1sd))
-    phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-    phase2median <- median(phase2$forecast)
-    phase2sd <- sd(phase2$forecast)
-    phase2 <- phase2 %>%
-      filter(forecast > phase2median - (10 * phase2sd)) %>%
-      filter(forecast < phase2median + (10 * phase2sd))
-    phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-    phase3median <- median(phase3$forecast)
-    phase3sd <- sd(phase3$forecast)
-    phase3 <- phase3 %>%
-      filter(forecast > phase3median - (10 * phase3sd)) %>%
-      filter(forecast < phase3median + (10 * phase3sd))
-    phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-    phase4median <- median(phase4$forecast)
-    phase4sd <- sd(phase4$forecast)
-    phase4 <- phase4 %>%
-      filter(forecast > phase4median - (10 * phase4sd)) %>%
-      filter(forecast < phase4median + (10 * phase4sd))
+    # phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    # phase1median <- median(phase1$forecast)
+    # phase1sd <- sd(phase1$forecast)
+    # phase1 <- phase1 %>%
+    #   filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #   filter(forecast < phase1median + (10 * phase1sd))
+    # phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    # phase2median <- median(phase2$forecast)
+    # phase2sd <- sd(phase2$forecast)
+    # phase2 <- phase2 %>%
+    #   filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #   filter(forecast < phase2median + (10 * phase2sd))
+    # phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    # phase3median <- median(phase3$forecast)
+    # phase3sd <- sd(phase3$forecast)
+    # phase3 <- phase3 %>%
+    #   filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #   filter(forecast < phase3median + (10 * phase3sd))
+    # phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    # phase4median <- median(phase4$forecast)
+    # phase4sd <- sd(phase4$forecast)
+    # phase4 <- phase4 %>%
+    #   filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #   filter(forecast < phase4median + (10 * phase4sd))
 
-    setwd(paste0(yourHome, "Summary Data"))
-    convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-    convergenceTable <- rbind(convergenceTable, convergenceRow)
+    # setwd(paste0(yourHome, "Summary Data"))
+    # convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    # convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-    write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    # write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
