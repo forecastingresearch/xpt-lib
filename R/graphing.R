@@ -91,7 +91,6 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
     plotTable <- plotTable %>% filter(group != "Experts")
   }
 
-  browser()
   # Table for legend labels
   group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
