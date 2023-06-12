@@ -91,8 +91,9 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
     plotTable <- plotTable %>% filter(group != "Experts")
   }
 
+  browser()
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group, fill = group)) +
@@ -1100,9 +1101,9 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
 
   subtitle <- "Variance over Time"
 
-  # Get number of elements in each group and modify legend labels
-  group_counts <- table(plotTable$group)
-  legend_labels <- paste0(names(group_counts), " (n = ", group_counts, ")")
+  # Table for legend labels
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
+  legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
@@ -1310,7 +1311,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
   subtitle <- "Variance over Time"
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1523,7 +1524,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   subtitle <- "Variance over Time"
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1673,7 +1674,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
   subtitle <- "Variance over Time"
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1751,7 +1752,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   subtitle <- "Variance over Time"
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1900,7 +1901,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
   subtitle <- "Variance over Time"
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
