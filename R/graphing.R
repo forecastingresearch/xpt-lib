@@ -91,6 +91,10 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
     plotTable <- plotTable %>% filter(group != "Experts")
   }
 
+  # Table for legend labels
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
+
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group, fill = group)) +
     geom_line() +
     ylab("Median") +
@@ -102,13 +106,13 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
       plot.subtitle = element_text(hjust = 0.5),
       legend.title = element_blank()
     ) +
-    scale_color_manual(values = unlist(group_colors)) +
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels) +
     scale_fill_manual(values = unlist(group_colors)) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
     xlim(phaseTwoMedian, NA)
   plot$labels$color <- ""
-  
+
   file_path <- getwd()
   ggsave(gsub("%", "%%", paste0(file_path, "/", fname, ".png")), plot, width = 9.18, height = 5.78, units = c("in"))
 
@@ -1096,6 +1100,10 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
 
   subtitle <- "Variance over Time"
 
+  # Get number of elements in each group and modify legend labels
+  group_counts <- table(plotTable$group)
+  legend_labels <- paste0(names(group_counts), " (n = ", group_counts, ")")
+
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("SD") +
@@ -1109,7 +1117,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = unlist(group_colors))
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels)
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -1141,7 +1149,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = unlist(group_colors))
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels)
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE -", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -1301,6 +1309,10 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
 
   subtitle <- "Variance over Time"
 
+  # Table for legend labels
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
+
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("SD") +
@@ -1314,7 +1326,7 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = unlist(group_colors))
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels)
   plot$labels$color <- ""
 
   file_path <- getwd()
@@ -1510,6 +1522,10 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
 
   subtitle <- "Variance over Time"
 
+  # Table for legend labels
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
+
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
     ylab("SD") +
@@ -1523,7 +1539,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = unlist(group_colors))
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels)
   plot$labels$color <- ""
 
   file_path <- getwd()
@@ -1557,7 +1573,7 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = unlist(group_colors))
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels)
   plot$labels$color <- ""
 
   file_path <- getwd()
@@ -1642,8 +1658,7 @@ multiYearBinaryGraphics <- function(title, subtitle, csv, currentSetName, year) 
   #' @export
 
   plotTable <- mutate_figure_data_median(csv)
-  file_path <- getwd()
-  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Figure One (", year, ")"))
+  fname <- paste0(currentSetName, " - Figure One (", year, ")")
   plot <- plot_with_ribbons(plotTable, paste(title, "-", year), subtitle, phaseTwoMedian, fname)
 }
 
@@ -1656,6 +1671,10 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
   plotTable <- mutate_figure_data_sd(csv)
 
   subtitle <- "Variance over Time"
+
+  # Table for legend labels
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
@@ -1670,7 +1689,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = unlist(group_colors))
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels)
   plot$labels$color <- ""
 
   file_path <- getwd()
@@ -1704,7 +1723,7 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = unlist(group_colors))
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels)
   plot$labels$color <- ""
 
   file_path <- getwd()
@@ -1717,8 +1736,7 @@ multiYearCountryDistribGraphics <- function(title, subtitle, csv, currentSetName
   #' @export
 
   plotTable <- mutate_figure_data_median(csv)
-  file_path <- getwd()
-  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Figure One (", year, ")"))
+  fname <- paste0(currentSetName, " - Figure One (", year, ")")
   plot <- plot_with_ribbons(plotTable, paste(title, "-", country, "-", year), subtitle, phaseTwoMedian, fname)
 }
 
@@ -1731,6 +1749,10 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   plotTable <- mutate_figure_data_sd(csv)
 
   subtitle <- "Variance over Time"
+
+  # Table for legend labels
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
@@ -1745,7 +1767,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = unlist(group_colors))
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels)
   plot$labels$color <- ""
 
   file_path <- getwd()
@@ -1779,7 +1801,7 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = unlist(group_colors))
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels)
   plot$labels$color <- ""
 
   file_path <- getwd()
@@ -1792,8 +1814,7 @@ multiCountryBinaryGraphics <- function(title, subtitle, csv, currentSetName, cou
   #' @export
 
   plotTable <- mutate_figure_data_median(csv)
-  file_path <- getwd()
-  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Figure One (", country, ")"))
+  fname <- paste0(currentSetName, " - Figure One (", country, ")")
   plot <- plot_with_ribbons(plotTable, paste(title, "-", country), subtitle, phaseTwoMedian, fname)
 }
 
@@ -1864,8 +1885,7 @@ pointBinaryGraphics <- function(title, subtitle, csv, currentSetName) {
   #' @export
 
   plotTable <- mutate_figure_data_median(csv)
-  file_path <- getwd()
-  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Figure One"))
+  fname <- paste0(currentSetName, " - Figure One")
   plot <- plot_with_ribbons(plotTable, title, subtitle, phaseTwoMedian, fname)
 }
 
@@ -1878,6 +1898,10 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
   plotTable <- mutate_figure_data_sd(csv)
 
   subtitle <- "Variance over Time"
+
+  # Table for legend labels
+  group_counts <- plotTable %>% group_by(group) %>% summarise(n = first(n))
+  legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
     geom_line() +
@@ -1892,7 +1916,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = unlist(group_colors))
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels)
   plot$labels$color <- ""
 
   file_path <- getwd()
@@ -1926,7 +1950,7 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
     ) +
     geom_vline(xintercept = ymd("2022 8 25"), linetype = "dashed") +
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") +
-    scale_color_manual(values = unlist(group_colors))
+    scale_color_manual(values = unlist(group_colors), labels = legend_labels)
   plot$labels$color <- ""
 
   file_path <- getwd()
@@ -2216,8 +2240,7 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  file_path <- getwd()
-  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Teams [All] (", distrib, "%)"))
+  fname <- paste0(currentSetName, " - Teams [All] (", distrib, "%)")
   plot <- plot_with_ribbons(plotTable, paste(title, "(All)"), distrib, phaseTwoMedian, fname)
 
   # Supers
@@ -2239,8 +2262,7 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  file_path <- getwd()
-  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Teams [Supers] (", distrib, "%)"))
+  fname <- paste0(currentSetName, " - Teams [Supers] (", distrib, "%)")
   plot <- plot_with_ribbons(plotTable, paste(title, "(Supers)"), distrib, phaseTwoMedian, fname)
 
   # Experts
@@ -2262,8 +2284,7 @@ pointDistribTeamGraphics <- function(title, subtitle, csv, currentSetName, distr
 
   plotTable$group <- factor(plotTable$group, levels = unique(plotTable$group), ordered = TRUE)
 
-  file_path <- getwd()
-  fname <- gsub("%", "%%", paste0(file_path, "/", currentSetName, " - Teams [Experts] (", distrib, "%)"))
+  fname <- paste0(currentSetName, " - Teams [Experts] (", distrib, "%)")
   plot <- plot_with_ribbons(plotTable, paste(title, "(Experts)"), distrib, phaseTwoMedian, fname)
 }
 
