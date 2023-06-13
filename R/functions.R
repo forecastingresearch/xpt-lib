@@ -885,6 +885,7 @@ multiYearReciprocal <- function(metaTable, data) {
           }
 
           questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
+          questionDataProcessed <- bind_rows(questionDataProcessed, numerate)
 
           questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
 
@@ -2940,6 +2941,7 @@ pointBinary <- function(metaTable, data) {
       }
 
       questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
+      questionDataProcessed <- bind_rows(questionDataProcessed, numerate)
 
       questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
 

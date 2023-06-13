@@ -1,0 +1,144 @@
+
+```{r}
+library(data.table)
+library(dplyr)
+library(stringr)
+```
+
+```{r}
+ex <- fread("/home/molly/fri/xpt-basic-analysis/Summary Data/5. Nuclear Catastrophic Risk/Phase Data/2100/(Your Beliefs)/5. Nuclear Catastrophic Risk - 2100 (Your Beliefs) - Phase 4.csv")
+main1 <- fread("/home/molly/Downloads/main1.csv")
+main2 <- fread("/home/molly/Downloads/main2.csv")
+
+numerate <- merge(main1, main2, by = "PROLIFIC_PID", all = TRUE)
+```
+
+# I need to map the (setName, questionName) pairs to these qualtrics question names
+
+```{r}
+# Subset of colnames(numerate): Prolific PID and questions only
+questionCols <- colnames(numerate)[!grepl("Consent|ID|Date|Finished|awareness|Status|IPAddress|Response|Email|Name|UserLanguage|DistributionChannel|Location|Duration|Progress|Reference", colnames(numerate))]
+
+# Melt numerate so that each row is a question
+numerate <- numerate %>%
+  # select questionCols and PROLIFIC_PID
+  select(all_of(c("PROLIFIC_PID", questionCols))) %>%
+  melt(numerate, value.name = "forecast", id.var = "PROLIFIC_PID", measure.vars = questionCols, variable.name = "question")
+```
+
+```{r}
+# First, map the strings to the setNames - take the string before the underscore
+numerate <- numerate %>%
+  mutate(setName = str_extract(question, "^[^_]*"))
+
+# Map those set names to the actual set names
+numerate <- numerate %>%
+  mutate(setName = case_when(
+    setName == "EngPathRisk" ~ "1. Genetically Engineered Pathogen Risk",
+    setName == "NatPathRisk" ~ "2. Non-Genetically Engineered Pathogen Risk",
+    setName == "AIRisk" ~ "3. AI Catastrophic Risk",
+    setName == "NuclearRisk" ~ "5. Nuclear Catastrophic Risk",
+    setName == "NonAnthroRisk" ~ "7. Non-Anthropogenic Catastrophic Risk",
+    setName == "TotalRisk" ~ "9. Total Catastrophic Risk",
+    setName == "ExCat2100" ~ "?",  # the conditional on 2100 question?
+    setName == "Extinction" ~ "10. Total Extinction Risk",
+    setName == "FutureHumanBirths" ~ "12. Future Human Births",
+    setName == "NonStateBio" ~ "15. Non-State Actor Bioweapon 1k Deaths",
+    setName == "StateBio" ~ "16. State Actor Bioweapon 1k Deaths",
+    setName == "Fusion" ~ "27. Nuclear Fusion Energy",
+    setName == "NukeEvent" ~ "27. Nuclear Weapon Use",
+    setName == "NuclearCountries" ~ "33. Countries with Nuclear Weapons",
+    setName == "LFPR" ~ "38. Labor Force Participation Rate in OECD",
+    setName == "IMOGold" ~ "",  # what's this
+    setName == "Compute" ~ "",  # which one
+    setName == "GDP115" ~ "52. Probability of GDP Growth over 15%",  # right?
+    setName == "GDPYear" ~ "53. Year of GDP Growith over 15%",
+    setName == "VDem" ~ "",  # what's this
+    setName == "Lab Leak" ~ "19. Lab Leaks",
+    setName == "USGDPFromSoft" ~ "36. US GDP From Software",
+    setName == "ComputeCost" ~ "46. Largest AI Experiment Cost of Compute",
+    setName == "GFLOPS" ~ "47. Lowest Price of GFLOPS",
+    setName == "Pew" ~ "",  # i don't know
+    setName == "NegAI" ~ "50. Negative Public Opinion of AI",
+    setName == "Happiness" ~ "56. Happiness in America",
+    TRUE ~ setName  # case where no match preserves original value (might want to change this if we DON'T want ones with no match)
+  ))
+```
+
+# the first number is the row - so, 1 is 2030, 2 is 2050, 3 is 2100
+
+```{r}
+# Extract the single number after the first underscore
+numerate <- numerate %>%
+  mutate(questionName_year = str_extract(question, "(?<=_)[0-9]+"))
+
+numerate <- numerate %>%
+  mutate(questionName_year = case_when(
+    questionName_year == "1" ~ "2030",
+    questionName_year == "2" ~ "2050",
+    questionName_year == "3" ~ "2100"
+  ))
+```
+
+# and then the six values associated with each row are
+# (your GCR forecast / your forecast of supers’ GCR forecast / your forecast of experts’ GCR forecast /
+# your extinction forecast / your forecast of supers’ extinction forecast / 
+# your forecast of experts’ extinction forecast)
+# always in that order
+
+```{r}
+# Extract the number after the last underscore
+numerate <- numerate %>%
+  mutate(questionName_beliefs = str_extract(question, "(?<=_)[0-9]+$"))
+
+numerate <- numerate %>%
+  mutate(questionName_beliefs = case_when(
+    questionName_beliefs == "1" ~ "(Your Beliefs)",
+    questionName_beliefs == "2" ~ "(Other Superforecasters' Beliefs)",
+    questionName_beliefs == "3" ~ "(Other Experts' Beliefs)",
+    questionName_beliefs == "4" ~ "(Your Beliefs)Extinction",
+    questionName_beliefs == "5" ~ "(Other Superforecasters' Beliefs)Extinction",
+    questionName_beliefs == "6" ~ "(Other Experts' Beliefs)Extinction"
+  ))
+```
+
+```{r}
+# If questionName_beliefs includes "Extinction", then replace "Catastrophic" with "Extinction" in setName
+numerate <- numerate %>%
+  mutate(setName = case_when(
+    str_detect(questionName_beliefs, "Extinction") ~ str_replace(setName, "Catastrophic", "Extinction"),
+    TRUE ~ setName
+  ))
+
+# Now we don't need "Extinction" in questionName_beliefs anymore
+numerate <- numerate %>%
+  mutate(questionName_beliefs = str_replace(questionName_beliefs, "Extinction", ""))
+```
+
+```{r}
+# Now we can paste together the questionName_year and questionName_beliefs to get the full question name
+numerate <- numerate %>%
+  mutate(questionName = paste(questionName_year, questionName_beliefs, sep = " ")) %>%
+  # Strip NA's and trailing spaces
+  mutate(questionName = str_replace(questionName, "NA", "")) %>%
+  mutate(questionName = str_replace(questionName, " $", "")) %>%
+  # Replace " NA" with NA
+  mutate(questionName = str_replace(questionName, " NA", NA_character_)) %>%
+  # Add group name!
+  mutate(groupName = "Numerate Citizens") %>%
+  mutate(forecast = as.numeric(forecast)) %>%
+  mutate(userId = PROLIFIC_PID) %>%
+  # We can drop questionName_beliefs and questionName_year and PROLIFIC_PID now
+  select(-c(questionName_beliefs, questionName_year, PROLIFIC_PID)) %>%
+  # Convert alphanumeric ID's to unique ID's - prolific users will be ID's with 1-650
+  mutate(userId = as.numeric(factor(userId)))
+```
+
+# Example, add to phase data
+
+```{r}
+ex <- ex %>%
+  mutate(forecast = as.numeric(forecast))
+phase_data_new <- bind_rows(ex, numerate)
+```
+
