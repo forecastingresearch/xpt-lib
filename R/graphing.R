@@ -420,16 +420,20 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
         publicSurvey <- as.numeric(unlist(supplement %>%
                                             select(all_of(sheetInfo$colName))))
       }
-      publicSurvey <- publicSurvey[!is.na(publicSurvey)]
-      if(!is.na(forecastMin)){
-        publicSurvey <- publicSurvey[publicSurvey >= forecastMin]
+      if(nrow(sheetInfo) > 0){
+        publicSurvey <- publicSurvey[!is.na(publicSurvey)]
+        if(!is.na(forecastMin)){
+          publicSurvey <- publicSurvey[publicSurvey >= forecastMin]
+        }
+        if(!is.na(forecastMax)){
+          publicSurvey <- publicSurvey[publicSurvey <= forecastMax]
+        }
+        addPublic <- data.frame(group = rep("Public Survey", length(publicSurvey)),
+                                forecast = publicSurvey)
+        boxData <- rbind(boxData, addPublic)
+      } else{
+       print(paste("no sheet info found:", setName, beliefSet, year, distrib)) 
       }
-      if(!is.na(forecastMax)){
-        publicSurvey <- publicSurvey[publicSurvey <= forecastMax]
-      }
-      addPublic <- data.frame(group = rep("Public Survey", length(publicSurvey)),
-                              forecast = publicSurvey)
-      boxData <- rbind(boxData, addPublic)
     }
 
     boxData$group <- factor(boxData$group, levels = unique(boxData$group), ordered = TRUE)
