@@ -408,19 +408,19 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
         filter(grepl(beliefSet, bs)) %>%
         filter(year == y) %>%
         filter(distrib == d)
-      if(sheetInfo$sheet == "main1"){
-        publicSurvey <- as.numeric(unlist(main1 %>%
-          select(all_of(sheetInfo$colName))))
-        publicSurvey <- publicSurvey[!is.na(publicSurvey)]
-      } else if(sheetInfo$sheet == "main2"){
-        publicSurvey <- as.numeric(unlist(main2 %>%
-                                            select(all_of(sheetInfo$colName))))
-        publicSurvey <- publicSurvey[!is.na(publicSurvey)]
-      } else if(sheetInfo$sheet == "supplement"){
-        publicSurvey <- as.numeric(unlist(supplement %>%
-                                            select(all_of(sheetInfo$colName))))
-      }
       if(nrow(sheetInfo) > 0){
+        if(sheetInfo$sheet == "main1"){
+          publicSurvey <- as.numeric(unlist(main1 %>%
+            select(all_of(sheetInfo$colName))))
+          publicSurvey <- publicSurvey[!is.na(publicSurvey)]
+        } else if(sheetInfo$sheet == "main2"){
+          publicSurvey <- as.numeric(unlist(main2 %>%
+                                              select(all_of(sheetInfo$colName))))
+          publicSurvey <- publicSurvey[!is.na(publicSurvey)]
+        } else if(sheetInfo$sheet == "supplement"){
+          publicSurvey <- as.numeric(unlist(supplement %>%
+                                              select(all_of(sheetInfo$colName))))
+        }
         publicSurvey <- publicSurvey[!is.na(publicSurvey)]
         if(!is.na(forecastMin)){
           publicSurvey <- publicSurvey[publicSurvey >= forecastMin]
