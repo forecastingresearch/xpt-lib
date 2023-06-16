@@ -4,7 +4,20 @@
 \alias{boxPlot_distrib}
 \title{Box Plot for Distribution Questions}
 \usage{
-boxPlot_distrib(tbl, specialty, title, forecastMin, forecastMax, stage, year)
+boxPlot_distrib(
+  tbl,
+  specialty,
+  title,
+  forecastMin,
+  forecastMax,
+  stage,
+  year,
+  numerateCitizens,
+  yLabel,
+  setName,
+  beliefSet,
+  distrib
+)
 }
 \description{
 Box Plot for Distribution Questions

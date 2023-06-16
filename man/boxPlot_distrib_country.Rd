@@ -11,7 +11,12 @@ boxPlot_distrib_country(
   forecastMin,
   forecastMax,
   stage,
-  year
+  year,
+  numerateCitizens,
+  yLabel,
+  setName,
+  beliefSet,
+  distrib
 )
 }
 \description{

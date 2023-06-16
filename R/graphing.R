@@ -19,7 +19,7 @@ group_colors <- list(
   "Other Experts" = cb_pal[2],
   "General X-risk Experts" = cb_pal[3],
   "Non-domain Experts" = cb_pal[4],
-  "Numerate Citizens" = cb_pal[5],
+  "Public Survey" = cb_pal[5],
   "Biorisk Experts" = cb_pal[2],
   "AI Experts" = cb_pal[2],
   "Climate Experts" = cb_pal[2],
@@ -363,7 +363,7 @@ histogram <- function(questionDataProcessed, filenameStart, title, stage,
 }
 
 boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
-                    expectedRisk, forecastMin, forecastMax) {
+                    expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName, beliefSet, year, distrib) {
   #' Basic boxplot function
   #'
   #' @import ggplot2
@@ -371,6 +371,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
   #' @export
 
   tbl <- read.csv(files[1])
+  
   if (type == "distrib") {
     # FOR LOOP TO ADD TO TBL AND REST
   }
@@ -388,12 +389,51 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
     boxData <- rbind(boxData, boxData_experts %>% mutate(group = "Non-domain Experts"))
     boxData_general <- tbl %>% filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName)
     boxData <- rbind(boxData, boxData_general %>% mutate(group = "General X-risk Experts"))
+    
+    boxData <- select(boxData, group, forecast)
+    
+    sn <- setName
+    bs <- beliefSet
+    y <- year
+    d <- distrib
+    
+    if(numerateCitizens == TRUE){
+      wd <- getwd()
+      sheetInfo <- survey_column_matches %>% 
+        rowwise() %>%
+        filter(setName == sn) %>%
+        filter(grepl(beliefSet, bs)) %>%
+        filter(year == y) %>%
+        filter(distrib == d)
+      if(sheetInfo$sheet == "main1"){
+        publicSurvey <- as.numeric(unlist(main1 %>%
+          select(all_of(sheetInfo$colName))))
+        publicSurvey <- publicSurvey[!is.na(publicSurvey)]
+      } else if(sheetInfo$sheet == "main2"){
+        publicSurvey <- as.numeric(unlist(main2 %>%
+                                            select(all_of(sheetInfo$colName))))
+        publicSurvey <- publicSurvey[!is.na(publicSurvey)]
+      } else if(sheetInfo$sheet == "supplement"){
+        publicSurvey <- as.numeric(unlist(supplement %>%
+                                            select(all_of(sheetInfo$colName))))
+      }
+      publicSurvey <- publicSurvey[!is.na(publicSurvey)]
+      if(!is.na(forecastMin)){
+        publicSurvey <- publicSurvey[publicSurvey >= forecastMin]
+      }
+      if(!is.na(forecastMax)){
+        publicSurvey <- publicSurvey[publicSurvey <= forecastMax]
+      }
+      addPublic <- data.frame(group = rep("Public Survey", length(publicSurvey)),
+                              forecast = publicSurvey)
+      boxData <- rbind(boxData, addPublic)
+    }
 
     boxData$group <- factor(boxData$group, levels = unique(boxData$group), ordered = TRUE)
 
     boxPlot <- ggplot(boxData, aes(x = group, y = forecast, color = group)) +
       geom_boxplot(outlier.shape = NA) +
-      ylab("Forecast") +
+      ylab(yLabel) +
       xlab("Group") +
       labs(title = title, subtitle = subtitle) +
       theme_bw() +
@@ -427,6 +467,14 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
         scale_y_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
     }
   }
+  
+  tournamentParticipants_95thpctile <- boxData %>%
+    filter(group != "Public Survey") %>%
+    group_by(group) %>%
+    summarize(percentile_95 = quantile(forecast, 0.95))
+  
+  boxPlot <- boxPlot +
+    coord_cartesian(ylim = c(NA, max(tournamentParticipants_95thpctile$percentile_95)))
 
   if (dir.exists("BoxPlots")) {
     setwd("BoxPlots")
@@ -440,7 +488,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
 }
 
 boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
-                            stage, year) {
+                            stage, year, numerateCitizens, yLabel, setName, beliefSet, distrib) {
   #' Box Plot for Distribution Questions
   #'
   #' @import ggplot2
@@ -630,7 +678,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
 }
 
 boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
-                                    forecastMax, stage, year) {
+                                    forecastMax, stage, year, numerateCitizens, yLabel, setName, beliefSet, distrib) {
   #' Box Plot for Distribution Country Questions
   #'
   #' @import ggplot2
@@ -677,7 +725,7 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
 }
 
 boxPlot_country <- function(tbl, specialty, title,
-                            forecastMin, forecastMax, stage) {
+                            forecastMin, forecastMax, stage, numerateCitizens, yLabel, setName, beliefSet, year, distrib) {
   #' Box Plot for Country Questions
   #'
   #' @import ggplot2

@@ -4,7 +4,14 @@
 \alias{multiCountryBinary}
 \title{Stats and graphs for Multi-year Country Binary Questions}
 \usage{
-multiCountryBinary(metaTable, data)
+multiCountryBinary(
+  metaTable,
+  data,
+  main1,
+  main2,
+  supplement,
+  survey_column_matches
+)
 }
 \arguments{
 \item{metaTable}{\itemize{

@@ -746,7 +746,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   return(newRow)
 }
 
-multiYearReciprocal <- function(metaTable, data) {
+multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for the multi-year questions
   #'
   #' @description For the question sets that asked about a forecaster's own
@@ -793,6 +793,12 @@ multiYearReciprocal <- function(metaTable, data) {
     beliefSets <- metaTable[i, ] %>% select(yourBeliefs, expertBeliefs, superBeliefs)
     beliefSets <- as.character(beliefSets)
     beliefSets <- beliefSets[beliefSets != ""]
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(years)) {
       if (!dir.exists(years[j])) {
@@ -905,8 +911,10 @@ multiYearReciprocal <- function(metaTable, data) {
 
           files <- c(paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"))
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - ", currentStage, " Box Plot")
-          #boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax)
+          
+          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet=beliefSets[k], year=years[l], distrib="")
 
+          
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[l], "/", beliefSets[k]))
 
           newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName, answerText = "", stage = currentStage, specialty = metaTable[i, ]$specialty)
@@ -1049,7 +1057,7 @@ multiYearReciprocal <- function(metaTable, data) {
   return(newAdd)
 }
 
-pointDistrib <- function(metaTable, data) {
+pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and Graphs for Point Distribution Questions
   #'
   #' @description For questions where we just asked for a distribution, like:
@@ -1093,6 +1101,12 @@ pointDistrib <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -1227,7 +1241,14 @@ pointDistrib <- function(metaTable, data) {
 
         filenameStart <- paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, " Histogram")
         histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
-
+        
+        setwd("..")
+        
+        files = paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
+        filenameStart <- paste0(currentSetName, " - ", currentAnswerText, " - ", currentStage, " Box Plot")
+        
+        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=currentAnswerText, filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib=currentAnswerText)
+        
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
 
         newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = "", answerText = currentAnswerText, stage = currentStage, specialty = metaTable[i, ]$specialty)
@@ -1264,7 +1285,7 @@ pointDistrib <- function(metaTable, data) {
         setwd("BoxPlots")
       }
 
-      #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "")
+      boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "", numerateCitizens, yLabel, survey_column_matches, setName, beliefSet, distrib)
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
@@ -1429,7 +1450,7 @@ pointDistrib <- function(metaTable, data) {
   return(newAdd)
 }
 
-multiYearDistrib <- function(metaTable, data) {
+multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Distribution Questions
   #'
   #' @description For the questions where we ask for distributions over predefined years, like:
@@ -1480,6 +1501,12 @@ multiYearDistrib <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -1634,8 +1661,15 @@ multiYearDistrib <- function(metaTable, data) {
             setwd("Histograms")
           }
 
-          filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, " Histogram")
+          filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
           histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
+          
+          setwd("..")
+          
+          files = paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
+          filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, " Box Plot")
+          
+          boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear, "-", currentAnswerText), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib=currentAnswerText)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -1682,7 +1716,7 @@ multiYearDistrib <- function(metaTable, data) {
           setwd("BoxPlots")
         }
 
-        #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j])
+        boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j], numerateCitizens, yLabel, survey_column_matches, setName, beliefSet, distrib)
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
@@ -1869,7 +1903,7 @@ multiYearDistrib <- function(metaTable, data) {
   return(newAdd)
 }
 
-multiYearBinary <- function(metaTable, data) {
+multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Binary Questions
   #'
   #' @description For yes/no multi-year questions, like:
@@ -1918,6 +1952,12 @@ multiYearBinary <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2011,6 +2051,13 @@ multiYearBinary <- function(metaTable, data) {
 
         filenameStart <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, " Histogram")
         histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
+        
+        setwd("..")
+        
+        files = paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, ".csv")
+        filenameStart <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, " Box Plot")
+        
+        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -2049,7 +2096,7 @@ multiYearBinary <- function(metaTable, data) {
 
         filenameStart <- paste(currentSetName, "-", "Stage", k)
 
-        #boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax)
+        boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName, beliefSet, year, distrib)
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
@@ -2174,7 +2221,7 @@ multiYearBinary <- function(metaTable, data) {
 
 #####
 
-multiYearCountryDistrib <- function(metaTable, data) {
+multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Country Distribution Questions
   #'
   #' @description For questions where we ask for distributions over predefined
@@ -2222,6 +2269,12 @@ multiYearCountryDistrib <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2381,7 +2434,7 @@ multiYearCountryDistrib <- function(metaTable, data) {
           setwd("BoxPlots")
         }
 
-        #boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable[i, ]$title, forecastMin, forecastMax, stage = k, year = years[j])
+        boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable[i, ]$title, forecastMin, forecastMax, stage = k, year = years[j], numerateCitizens, yLabel, survey_column_matches, setName, beliefSet, distrib)
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
@@ -2526,7 +2579,7 @@ multiYearCountryDistrib <- function(metaTable, data) {
   return(newAdd)
 }
 
-multiCountryBinary <- function(metaTable, data) {
+multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Country Binary Questions
   #'
   #' @description For yes/no country questions, like country-by-country nuclear
@@ -2571,6 +2624,12 @@ multiCountryBinary <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2713,7 +2772,7 @@ multiCountryBinary <- function(metaTable, data) {
         setwd("BoxPlots")
       }
 
-      #boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
+      boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j, numerateCitizens, yLabel, survey_column_matches, setName, beliefSet, year, distrib)
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
@@ -2831,7 +2890,7 @@ multiCountryBinary <- function(metaTable, data) {
   return(newAdd)
 }
 
-pointBinary <- function(metaTable, data) {
+pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for classic binary questions
   #'
   #' @description For yes/no point questions, like
@@ -2877,6 +2936,12 @@ pointBinary <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2955,6 +3020,13 @@ pointBinary <- function(metaTable, data) {
 
       filenameStart <- paste0(currentSetName, " - Phase ", currentStage, " Histogram")
       histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
+      
+      setwd("..")
+      
+      files = paste0(currentSetName, " - Phase ", currentStage, ".csv")
+      filenameStart <- paste0(currentSetName, " - Phase ", currentStage, " Box Plot")
+      
+      boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle="", filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
 
@@ -2980,7 +3052,7 @@ pointBinary <- function(metaTable, data) {
       currFile <- currFiles[grep(phases[j], currFiles)]
       currFile <- currFile[!grepl("ANON", currFile)]
 
-      #boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax)
+      boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName, beliefSet, year, distrib)
     }
 
     # # CONVERGENCE DATA

@@ -4,7 +4,14 @@
 \alias{multiYearReciprocal}
 \title{Stats and graphs for the multi-year questions}
 \usage{
-multiYearReciprocal(metaTable, data)
+multiYearReciprocal(
+  metaTable,
+  data,
+  main1,
+  main2,
+  supplement,
+  survey_column_matches
+)
 }
 \arguments{
 \item{metaTable}{\itemize{
