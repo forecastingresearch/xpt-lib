@@ -386,7 +386,8 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
       boxData_special <- tbl %>% filter(userName %in% specialists$userName)
       boxData <- rbind(boxData, boxData_special %>% mutate(group = paste0(field, " Experts")))
     }
-    boxData <- rbind(boxData, boxData_experts %>% mutate(group = "Non-domain Experts"))
+    boxData_nonSpecial <- tbl %>% filter(userName %in% expertsG1$userName) %>% filter(!(userName %in% specialists$userName))
+    boxData <- rbind(boxData, boxData_nonSpecial %>% mutate(group = "Non-domain Experts"))
     boxData_general <- tbl %>% filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName)
     boxData <- rbind(boxData, boxData_general %>% mutate(group = "General X-risk Experts"))
     
@@ -459,7 +460,8 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
       scale_x_discrete(labels = function(x) {
         x <- as.character(x)
         paste0(x, " (n=", table(boxData$group)[x], ")")
-      })
+      },
+      guide = guide_axis(n.dodge = 2))
 
     boxPlot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 && forecastMax == 100) {
