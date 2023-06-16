@@ -385,9 +385,11 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
       specialists <- expertsG1 %>% filter(field == specialty1 | field == specialty2 | field == specialty3)
       boxData_special <- tbl %>% filter(userName %in% specialists$userName)
       boxData <- rbind(boxData, boxData_special %>% mutate(group = paste0(field, " Experts")))
+      boxData_nonSpecial <- tbl %>% filter(userName %in% expertsG1$userName) %>% filter(!(userName %in% specialists$userName))
+      boxData <- rbind(boxData, boxData_nonSpecial %>% mutate(group = "Non-domain Experts"))
+    } else {
+      boxData <- rbind(boxData, boxData_experts %>% mutate(group = "Experts"))
     }
-    boxData_nonSpecial <- tbl %>% filter(userName %in% expertsG1$userName) %>% filter(!(userName %in% specialists$userName))
-    boxData <- rbind(boxData, boxData_nonSpecial %>% mutate(group = "Non-domain Experts"))
     boxData_general <- tbl %>% filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName)
     boxData <- rbind(boxData, boxData_general %>% mutate(group = "General X-risk Experts"))
     
