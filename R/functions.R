@@ -1285,7 +1285,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
         setwd("BoxPlots")
       }
 
-      boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "", numerateCitizens, yLabel, survey_column_matches, setName, beliefSet, distrib)
+      #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "", numerateCitizens, yLabel, survey_column_matches, setName, beliefSet)
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
@@ -1716,7 +1716,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
           setwd("BoxPlots")
         }
 
-        boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j], numerateCitizens, yLabel, survey_column_matches, setName, beliefSet, distrib)
+        #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j], numerateCitizens, yLabel, survey_column_matches, setName)
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
