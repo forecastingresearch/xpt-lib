@@ -2096,7 +2096,7 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
 
         filenameStart <- paste(currentSetName, "-", "Stage", k)
 
-        boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName, beliefSet, year, distrib)
+        boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
