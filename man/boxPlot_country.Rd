@@ -4,20 +4,7 @@
 \alias{boxPlot_country}
 \title{Box Plot for Country Questions}
 \usage{
-boxPlot_country(
-  tbl,
-  specialty,
-  title,
-  forecastMin,
-  forecastMax,
-  stage,
-  numerateCitizens,
-  yLabel,
-  setName,
-  beliefSet,
-  year,
-  distrib
-)
+boxPlot_country(tbl, specialty, title, forecastMin, forecastMax, stage)
 }
 \description{
 Box Plot for Country Questions

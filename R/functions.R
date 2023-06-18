@@ -2772,7 +2772,7 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
         setwd("BoxPlots")
       }
 
-      boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j, numerateCitizens, yLabel, survey_column_matches, setName, beliefSet, year, distrib)
+      boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
