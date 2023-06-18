@@ -3052,7 +3052,7 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
       currFile <- currFiles[grep(phases[j], currFiles)]
       currFile <- currFile[!grepl("ANON", currFile)]
 
-      boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName, beliefSet, year, distrib)
+      boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
     }
 
     # # CONVERGENCE DATA
