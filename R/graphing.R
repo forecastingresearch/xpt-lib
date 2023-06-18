@@ -686,7 +686,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
 }
 
 boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
-                                    forecastMax, stage, year, numerateCitizens, yLabel, setName, beliefSet, distrib) {
+                                    forecastMax, stage, year) {
   #' Box Plot for Distribution Country Questions
   #'
   #' @import ggplot2

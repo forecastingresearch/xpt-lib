@@ -2434,7 +2434,7 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
           setwd("BoxPlots")
         }
 
-        boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable[i, ]$title, forecastMin, forecastMax, stage = k, year = years[j], numerateCitizens, yLabel, survey_column_matches, setName, beliefSet, distrib)
+        boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable[i, ]$title, forecastMin, forecastMax, stage = k, year = years[j])
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
