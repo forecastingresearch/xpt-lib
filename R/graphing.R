@@ -380,17 +380,17 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
     boxData_supers <- tbl %>% filter(userName %in% supers)
     boxData <- boxData_supers %>% mutate(group = "Superforecasters")
     boxData_experts <- tbl %>% filter(userName %in% expertsG1$userName)
+    boxData_general <- tbl %>% filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName)
     if (specialty != "") {
       field <- specialty
       specialists <- expertsG1 %>% filter(field == specialty1 | field == specialty2 | field == specialty3)
       boxData_special <- tbl %>% filter(userName %in% specialists$userName)
       boxData <- rbind(boxData, boxData_special %>% mutate(group = paste0(field, " Experts")))
-      boxData_nonSpecial <- tbl %>% filter(userName %in% expertsG1$userName) %>% filter(!(userName %in% specialists$userName))
+      boxData_nonSpecial <- tbl %>% filter(userName %in% expertsG1$userName) %>% filter(!(userName %in% specialists$userName)) %>% filter(!(userName %in% boxData_general$userName))
       boxData <- rbind(boxData, boxData_nonSpecial %>% mutate(group = "Non-domain Experts"))
     } else {
       boxData <- rbind(boxData, boxData_experts %>% mutate(group = "Experts"))
     }
-    boxData_general <- tbl %>% filter(userName %in% filter(expertsG1, specialty1 == "General" | specialty2 == "General" | specialty3 == "General")$userName)
     boxData <- rbind(boxData, boxData_general %>% mutate(group = "General X-risk Experts"))
     
     boxData <- select(boxData, group, forecast)
@@ -929,7 +929,7 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
   }
 
   if (qSpecialty != "") {
-    nonDomainExpertsUsers <- expertsG1 %>% filter(specialty1 != qSpecialty & specialty2 != qSpecialty & specialty3 != qSpecialty)
+    nonDomainExpertsUsers <- expertsG1 %>% filter(specialty1 != qSpecialty & specialty2 != qSpecialty & specialty3 != qSpecialty) %>% filter(specialty1 != "General" & specialty2 != "General" & specialty3 != "General")
     nonDomainExperts <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, nonDomainExpertsUsers$userName)
   } else {
     # Create a dataframe with the same columns as the other dataframes

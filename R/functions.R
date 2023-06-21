@@ -94,6 +94,18 @@ newAddInit <- function() {
     expertsG2GeoMean = numeric(0),
     expertsG2HdTrim = numeric(0),
     expertsG2NeymanAgg = numeric(0),
+    xRiskGeneralistsMean = numeric(0),
+    xRiskGeneralistsMedian = numeric(0),
+    xRiskGeneralistsSd = numeric(0),
+    xRiskGeneralistsN = numeric(0),
+    xRiskGeneralistsTrimmedMean = numeric(0),
+    xRiskGeneralistsPct5th = numeric(0),
+    xRiskGeneralistsPct25th = numeric(0),
+    xRiskGeneralistsPct75th = numeric(0),
+    xRiskGeneralistsPct95th = numeric(0),
+    xRiskGeneralistsGeoMean = numeric(0),
+    xRiskGeneralistsHdTrim = numeric(0),
+    xRiskGeneralistsNeymanAgg = numeric(0),
     domainExpertsMean = numeric(0),
     domainExpertsMedian = numeric(0),
     domainExpertsSd = numeric(0),
@@ -178,6 +190,18 @@ newAddInit <- function() {
     expertsG2GeoMean_exc = numeric(0),
     expertsG2HdTrim_exc = numeric(0),
     expertsG2NeymanAgg_exc = numeric(0),
+    xRiskGeneralistsMean_exc = numeric(0),
+    xRiskGeneralistsMedian_exc = numeric(0),
+    xRiskGeneralistsSd_exc = numeric(0),
+    xRiskGeneralistsN_exc = numeric(0),
+    xRiskGeneralistsTrimmedMean_exc = numeric(0),
+    xRiskGeneralistsPct5th_exc = numeric(0),
+    xRiskGeneralistsPct25th_exc = numeric(0),
+    xRiskGeneralistsPct75th_exc = numeric(0),
+    xRiskGeneralistsPct95th_exc = numeric(0),
+    xRiskGeneralistsGeoMean_exc = numeric(0),
+    xRiskGeneralistsHdTrim_exc = numeric(0),
+    xRiskGeneralistsNeymanAgg_exc = numeric(0),
     domainExpertsMean_exc = numeric(0),
     domainExpertsMedian_exc = numeric(0),
     domainExpertsSd_exc = numeric(0),
@@ -293,6 +317,26 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG2HdTrim <- hd_trim(expertsG2Processed$forecast)
   expertsG2NeymanAgg <- neymanAggCalc(expertsG2Processed$forecast)
 
+  xRiskGeneralists <- (expertsG1 %>% filter(specialty1 == "General" | specialty2 == "General" | specialty3 == "General"))$userName
+  xRiskGeneralistsProcessed <- questionDataProcessed %>% filter(userName %in% xRiskGeneralists)
+  xRiskGeneralistsMean <- mean(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsMedian <- median(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsSd <- sd(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsN <- nrow(xRiskGeneralistsProcessed)
+  xRiskGeneralistsTrimmedMean <- trim(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsPct5th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.05))
+  xRiskGeneralistsPct25th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.25))
+  xRiskGeneralistsPct75th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.75))
+  xRiskGeneralistsPct95th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.95))
+  xRiskGeneralistsGeoMean <- geoMeanCalc(xRiskGeneralistsProcessed$forecast)
+  if (nrow(xRiskGeneralistsProcessed) > 0) {
+    xRiskGeneralistsHdTrim <- hd_trim(xRiskGeneralistsProcessed$forecast)
+  } else {
+    xRiskGeneralistsHdTrim <- NA
+  }
+  xRiskGeneralistsNeymanAgg <- neymanAggCalc(xRiskGeneralistsProcessed$forecast)
+  
+  
   if (specialty != "") {
     currentSpecialty <- specialty
     specialists <- (expertsG1 %>% filter(specialty1 == specialty | specialty2 == specialty | specialty3 == specialty))$userName
@@ -331,6 +375,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   if (specialty != "") {
     nonDomainExpertsProcessed <- questionDataProcessed %>%
       filter(!(userName %in% specialists)) %>%
+      filter(!(userName %in% xRiskGeneralists)) %>%
       filter(userName %in% expertsG1$userName)
     nonDomainExpertsMean <- mean(nonDomainExpertsProcessed$forecast)
     nonDomainExpertsMedian <- median(nonDomainExpertsProcessed$forecast)
@@ -468,6 +513,28 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG2GeoMean_exc <- geoMeanCalc(expertsG2Processed_exc$forecast)
   expertsG2HdTrim_exc <- hd_trim(expertsG2Processed_exc$forecast)
   expertsG2NeymanAgg_exc <- neymanAggCalc(expertsG2Processed_exc$forecast)
+  
+  xRiskGeneralists <- (expertsG1 %>% filter(specialty1 == "General" | specialty2 == "General" | specialty3 == "General"))$userName
+  xRiskGeneralistsProcessed_exc <- questionDataProcessed %>% 
+    filter(userName %in% xRiskGeneralists) %>%
+    filter(forecast > xRiskGeneralistsMedian - (10 * xRiskGeneralistsSd)) %>%
+    filter(forecast < xRiskGeneralistsMedian + (10 * xRiskGeneralistsSd))
+  xRiskGeneralistsMean_exc <- mean(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsMedian_exc <- median(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsSd_exc <- sd(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsN_exc <- nrow(xRiskGeneralistsProcessed_exc)
+  xRiskGeneralistsTrimmedMean_exc <- trim(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsPct5th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.05))
+  xRiskGeneralistsPct25th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.25))
+  xRiskGeneralistsPct75th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.75))
+  xRiskGeneralistsPct95th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.95))
+  xRiskGeneralistsGeoMean_exc <- geoMeanCalc(xRiskGeneralistsProcessed_exc$forecast)
+  if (nrow(xRiskGeneralistsProcessed_exc) > 0) {
+    xRiskGeneralistsHdTrim_exc <- hd_trim(xRiskGeneralistsProcessed_exc$forecast)
+  } else {
+    xRiskGeneralistsHdTrim_exc <- NA
+  }
+  xRiskGeneralistsNeymanAgg_exc <- neymanAggCalc(xRiskGeneralistsProcessed_exc$forecast)
 
   if (specialty != "") {
     currentSpecialty <- specialty
@@ -509,7 +576,8 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
 
   if (specialty != "") {
     nonDomainExpertsProcessed_exc <- questionDataProcessed %>%
-      filter(!(userName %in% specialists)) %>%
+      filter(!(userName %in% specialists)) %>% 
+      filter(!(userName %in% xRiskGeneralists)) %>%
       filter(userName %in% expertsG1$userName) %>%
       filter(forecast > nonDomainExpertsMedian - (10 * nonDomainExpertsSd)) %>%
       filter(forecast < nonDomainExpertsMedian + (10 * nonDomainExpertsSd))
@@ -2434,7 +2502,7 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
           setwd("BoxPlots")
         }
 
-        boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable[i, ]$title, forecastMin, forecastMax, stage = k, year = years[j])
+        #boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable[i, ]$title, forecastMin, forecastMax, stage = k, year = years[j])
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
@@ -2772,7 +2840,7 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
         setwd("BoxPlots")
       }
 
-      boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
+      #boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
