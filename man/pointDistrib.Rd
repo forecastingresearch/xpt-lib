@@ -4,7 +4,7 @@
 \alias{pointDistrib}
 \title{Stats and Graphs for Point Distribution Questions}
 \usage{
-pointDistrib(metaTable, data)
+pointDistrib(metaTable, data, main1, main2, supplement, survey_column_matches)
 }
 \arguments{
 \item{metaTable}{\itemize{

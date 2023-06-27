@@ -4,7 +4,14 @@
 \alias{multiYearDistrib}
 \title{Stats and graphs for Multi-year Distribution Questions}
 \usage{
-multiYearDistrib(metaTable, data)
+multiYearDistrib(
+  metaTable,
+  data,
+  main1,
+  main2,
+  supplement,
+  survey_column_matches
+)
 }
 \arguments{
 \item{metaTable}{\itemize{

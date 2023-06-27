@@ -94,6 +94,18 @@ newAddInit <- function() {
     expertsG2GeoMean = numeric(0),
     expertsG2HdTrim = numeric(0),
     expertsG2NeymanAgg = numeric(0),
+    xRiskGeneralistsMean = numeric(0),
+    xRiskGeneralistsMedian = numeric(0),
+    xRiskGeneralistsSd = numeric(0),
+    xRiskGeneralistsN = numeric(0),
+    xRiskGeneralistsTrimmedMean = numeric(0),
+    xRiskGeneralistsPct5th = numeric(0),
+    xRiskGeneralistsPct25th = numeric(0),
+    xRiskGeneralistsPct75th = numeric(0),
+    xRiskGeneralistsPct95th = numeric(0),
+    xRiskGeneralistsGeoMean = numeric(0),
+    xRiskGeneralistsHdTrim = numeric(0),
+    xRiskGeneralistsNeymanAgg = numeric(0),
     domainExpertsMean = numeric(0),
     domainExpertsMedian = numeric(0),
     domainExpertsSd = numeric(0),
@@ -178,6 +190,18 @@ newAddInit <- function() {
     expertsG2GeoMean_exc = numeric(0),
     expertsG2HdTrim_exc = numeric(0),
     expertsG2NeymanAgg_exc = numeric(0),
+    xRiskGeneralistsMean_exc = numeric(0),
+    xRiskGeneralistsMedian_exc = numeric(0),
+    xRiskGeneralistsSd_exc = numeric(0),
+    xRiskGeneralistsN_exc = numeric(0),
+    xRiskGeneralistsTrimmedMean_exc = numeric(0),
+    xRiskGeneralistsPct5th_exc = numeric(0),
+    xRiskGeneralistsPct25th_exc = numeric(0),
+    xRiskGeneralistsPct75th_exc = numeric(0),
+    xRiskGeneralistsPct95th_exc = numeric(0),
+    xRiskGeneralistsGeoMean_exc = numeric(0),
+    xRiskGeneralistsHdTrim_exc = numeric(0),
+    xRiskGeneralistsNeymanAgg_exc = numeric(0),
     domainExpertsMean_exc = numeric(0),
     domainExpertsMedian_exc = numeric(0),
     domainExpertsSd_exc = numeric(0),
@@ -293,6 +317,26 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG2HdTrim <- hd_trim(expertsG2Processed$forecast)
   expertsG2NeymanAgg <- neymanAggCalc(expertsG2Processed$forecast)
 
+  xRiskGeneralists <- (expertsG1 %>% filter(specialty1 == "General" | specialty2 == "General" | specialty3 == "General"))$userName
+  xRiskGeneralistsProcessed <- questionDataProcessed %>% filter(userName %in% xRiskGeneralists)
+  xRiskGeneralistsMean <- mean(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsMedian <- median(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsSd <- sd(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsN <- nrow(xRiskGeneralistsProcessed)
+  xRiskGeneralistsTrimmedMean <- trim(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsPct5th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.05))
+  xRiskGeneralistsPct25th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.25))
+  xRiskGeneralistsPct75th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.75))
+  xRiskGeneralistsPct95th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.95))
+  xRiskGeneralistsGeoMean <- geoMeanCalc(xRiskGeneralistsProcessed$forecast)
+  if (nrow(xRiskGeneralistsProcessed) > 0) {
+    xRiskGeneralistsHdTrim <- hd_trim(xRiskGeneralistsProcessed$forecast)
+  } else {
+    xRiskGeneralistsHdTrim <- NA
+  }
+  xRiskGeneralistsNeymanAgg <- neymanAggCalc(xRiskGeneralistsProcessed$forecast)
+  
+  
   if (specialty != "") {
     currentSpecialty <- specialty
     specialists <- (expertsG1 %>% filter(specialty1 == specialty | specialty2 == specialty | specialty3 == specialty))$userName
@@ -331,6 +375,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   if (specialty != "") {
     nonDomainExpertsProcessed <- questionDataProcessed %>%
       filter(!(userName %in% specialists)) %>%
+      filter(!(userName %in% xRiskGeneralists)) %>%
       filter(userName %in% expertsG1$userName)
     nonDomainExpertsMean <- mean(nonDomainExpertsProcessed$forecast)
     nonDomainExpertsMedian <- median(nonDomainExpertsProcessed$forecast)
@@ -468,6 +513,28 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG2GeoMean_exc <- geoMeanCalc(expertsG2Processed_exc$forecast)
   expertsG2HdTrim_exc <- hd_trim(expertsG2Processed_exc$forecast)
   expertsG2NeymanAgg_exc <- neymanAggCalc(expertsG2Processed_exc$forecast)
+  
+  xRiskGeneralists <- (expertsG1 %>% filter(specialty1 == "General" | specialty2 == "General" | specialty3 == "General"))$userName
+  xRiskGeneralistsProcessed_exc <- questionDataProcessed %>% 
+    filter(userName %in% xRiskGeneralists) %>%
+    filter(forecast > xRiskGeneralistsMedian - (10 * xRiskGeneralistsSd)) %>%
+    filter(forecast < xRiskGeneralistsMedian + (10 * xRiskGeneralistsSd))
+  xRiskGeneralistsMean_exc <- mean(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsMedian_exc <- median(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsSd_exc <- sd(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsN_exc <- nrow(xRiskGeneralistsProcessed_exc)
+  xRiskGeneralistsTrimmedMean_exc <- trim(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsPct5th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.05))
+  xRiskGeneralistsPct25th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.25))
+  xRiskGeneralistsPct75th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.75))
+  xRiskGeneralistsPct95th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.95))
+  xRiskGeneralistsGeoMean_exc <- geoMeanCalc(xRiskGeneralistsProcessed_exc$forecast)
+  if (nrow(xRiskGeneralistsProcessed_exc) > 0) {
+    xRiskGeneralistsHdTrim_exc <- hd_trim(xRiskGeneralistsProcessed_exc$forecast)
+  } else {
+    xRiskGeneralistsHdTrim_exc <- NA
+  }
+  xRiskGeneralistsNeymanAgg_exc <- neymanAggCalc(xRiskGeneralistsProcessed_exc$forecast)
 
   if (specialty != "") {
     currentSpecialty <- specialty
@@ -509,7 +576,8 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
 
   if (specialty != "") {
     nonDomainExpertsProcessed_exc <- questionDataProcessed %>%
-      filter(!(userName %in% specialists)) %>%
+      filter(!(userName %in% specialists)) %>% 
+      filter(!(userName %in% xRiskGeneralists)) %>%
       filter(userName %in% expertsG1$userName) %>%
       filter(forecast > nonDomainExpertsMedian - (10 * nonDomainExpertsSd)) %>%
       filter(forecast < nonDomainExpertsMedian + (10 * nonDomainExpertsSd))
@@ -746,7 +814,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   return(newRow)
 }
 
-multiYearReciprocal <- function(metaTable, data) {
+multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for the multi-year questions
   #'
   #' @description For the question sets that asked about a forecaster's own
@@ -793,6 +861,12 @@ multiYearReciprocal <- function(metaTable, data) {
     beliefSets <- metaTable[i, ] %>% select(yourBeliefs, expertBeliefs, superBeliefs)
     beliefSets <- as.character(beliefSets)
     beliefSets <- beliefSets[beliefSets != ""]
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(years)) {
       if (!dir.exists(years[j])) {
@@ -905,8 +979,10 @@ multiYearReciprocal <- function(metaTable, data) {
 
           files <- c(paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"))
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - ", currentStage, " Box Plot")
-          #boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax)
+          
+          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet=beliefSets[k], year=years[l], distrib="")
 
+          
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[l], "/", beliefSets[k]))
 
           newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName, answerText = "", stage = currentStage, specialty = metaTable[i, ]$specialty)
@@ -1049,7 +1125,7 @@ multiYearReciprocal <- function(metaTable, data) {
   return(newAdd)
 }
 
-pointDistrib <- function(metaTable, data) {
+pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and Graphs for Point Distribution Questions
   #'
   #' @description For questions where we just asked for a distribution, like:
@@ -1093,6 +1169,12 @@ pointDistrib <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -1227,7 +1309,14 @@ pointDistrib <- function(metaTable, data) {
 
         filenameStart <- paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, " Histogram")
         histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
-
+        
+        setwd("..")
+        
+        files = paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
+        filenameStart <- paste0(currentSetName, " - ", currentAnswerText, " - ", currentStage, " Box Plot")
+        
+        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=currentAnswerText, filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib=currentAnswerText)
+        
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
 
         newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = "", answerText = currentAnswerText, stage = currentStage, specialty = metaTable[i, ]$specialty)
@@ -1264,7 +1353,7 @@ pointDistrib <- function(metaTable, data) {
         setwd("BoxPlots")
       }
 
-      #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "")
+      #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "", numerateCitizens, yLabel, survey_column_matches, setName, beliefSet)
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
@@ -1429,7 +1518,7 @@ pointDistrib <- function(metaTable, data) {
   return(newAdd)
 }
 
-multiYearDistrib <- function(metaTable, data) {
+multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Distribution Questions
   #'
   #' @description For the questions where we ask for distributions over predefined years, like:
@@ -1480,6 +1569,12 @@ multiYearDistrib <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -1634,8 +1729,15 @@ multiYearDistrib <- function(metaTable, data) {
             setwd("Histograms")
           }
 
-          filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, " Histogram")
+          filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
           histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
+          
+          setwd("..")
+          
+          files = paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
+          filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, " Box Plot")
+          
+          boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear, "-", currentAnswerText), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib=currentAnswerText)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -1682,7 +1784,7 @@ multiYearDistrib <- function(metaTable, data) {
           setwd("BoxPlots")
         }
 
-        #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j])
+        #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j], numerateCitizens, yLabel, survey_column_matches, setName)
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
@@ -1869,7 +1971,7 @@ multiYearDistrib <- function(metaTable, data) {
   return(newAdd)
 }
 
-multiYearBinary <- function(metaTable, data) {
+multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Binary Questions
   #'
   #' @description For yes/no multi-year questions, like:
@@ -1918,6 +2020,12 @@ multiYearBinary <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2011,6 +2119,13 @@ multiYearBinary <- function(metaTable, data) {
 
         filenameStart <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, " Histogram")
         histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
+        
+        setwd("..")
+        
+        files = paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, ".csv")
+        filenameStart <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, " Box Plot")
+        
+        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -2049,7 +2164,7 @@ multiYearBinary <- function(metaTable, data) {
 
         filenameStart <- paste(currentSetName, "-", "Stage", k)
 
-        #boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax)
+        boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
@@ -2174,7 +2289,7 @@ multiYearBinary <- function(metaTable, data) {
 
 #####
 
-multiYearCountryDistrib <- function(metaTable, data) {
+multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Country Distribution Questions
   #'
   #' @description For questions where we ask for distributions over predefined
@@ -2222,6 +2337,12 @@ multiYearCountryDistrib <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2526,7 +2647,7 @@ multiYearCountryDistrib <- function(metaTable, data) {
   return(newAdd)
 }
 
-multiCountryBinary <- function(metaTable, data) {
+multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Country Binary Questions
   #'
   #' @description For yes/no country questions, like country-by-country nuclear
@@ -2571,6 +2692,12 @@ multiCountryBinary <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2831,7 +2958,7 @@ multiCountryBinary <- function(metaTable, data) {
   return(newAdd)
 }
 
-pointBinary <- function(metaTable, data) {
+pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for classic binary questions
   #'
   #' @description For yes/no point questions, like
@@ -2877,6 +3004,12 @@ pointBinary <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2955,6 +3088,13 @@ pointBinary <- function(metaTable, data) {
 
       filenameStart <- paste0(currentSetName, " - Phase ", currentStage, " Histogram")
       histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
+      
+      setwd("..")
+      
+      files = paste0(currentSetName, " - Phase ", currentStage, ".csv")
+      filenameStart <- paste0(currentSetName, " - Phase ", currentStage, " Box Plot")
+      
+      boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle="", filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
 
@@ -2980,7 +3120,7 @@ pointBinary <- function(metaTable, data) {
       currFile <- currFiles[grep(phases[j], currFiles)]
       currFile <- currFile[!grepl("ANON", currFile)]
 
-      #boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax)
+      boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
     }
 
     # # CONVERGENCE DATA

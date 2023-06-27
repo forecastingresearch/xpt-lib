@@ -4,7 +4,7 @@
 \alias{pointBinary}
 \title{Stats and graphs for classic binary questions}
 \usage{
-pointBinary(metaTable, data)
+pointBinary(metaTable, data, main1, main2, supplement, survey_column_matches)
 }
 \arguments{
 \item{metaTable}{\itemize{
