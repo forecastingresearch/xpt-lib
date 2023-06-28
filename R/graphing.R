@@ -439,7 +439,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
     boxData$group <- factor(boxData$group, levels = unique(boxData$group), ordered = TRUE)
 
     boxPlot <- ggplot(boxData, aes(x = group, y = forecast, color = group)) +
-      geom_boxplot(outlier.shape = NA) +
+      geom_boxplot(outlier.shape = NA, coef = 0) +
       ylab(yLabel) +
       xlab("Group") +
       labs(title = title, subtitle = subtitle) +
@@ -517,7 +517,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
   }
 
   boxPlot <- ggplot(boxData, aes(x = answerText, y = forecast, color = answerText)) +
-    geom_boxplot(outlier.shape = NA) +
+    geom_boxplot(outlier.shape = NA, coef = 0) +
     ylab("Forecast") +
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
@@ -558,7 +558,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
   }
 
   boxPlot <- ggplot(boxData_supers, aes(x = answerText, y = forecast, color = answerText)) +
-    geom_boxplot(outlier.shape = NA) +
+    geom_boxplot(outlier.shape = NA, coef = 0) +
     ylab("Forecast") +
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "Superforecasters (n=", length(unique(boxData_supers$userName)), ")")) +
@@ -599,7 +599,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
   }
 
   boxPlot <- ggplot(boxData_experts, aes(x = answerText, y = forecast, color = answerText)) +
-    geom_boxplot(outlier.shape = NA) +
+    geom_boxplot(outlier.shape = NA, coef = 0) +
     ylab("Forecast") +
     xlab("Percentile") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "Experts (n=", length(unique(boxData_experts$userName)), ")")) +
@@ -642,7 +642,7 @@ boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
   if (specialty != "") {
     if (nrow(boxData_special) > 0) {
       boxPlot <- ggplot(boxData_special, aes(x = answerText, y = forecast, color = answerText)) +
-        geom_boxplot(outlier.shape = NA) +
+        geom_boxplot(outlier.shape = NA, coef = 0) +
         ylab("Forecast") +
         xlab("Percentile") +
         labs(title = title, subtitle = paste0("Stage ", stage, " | ", specialty, " Specialists (n=", length(unique(boxData_special$userName)), ")")) +
@@ -707,7 +707,7 @@ boxPlot_distrib_country <- function(tbl, specialty, title, forecastMin,
 
 
   boxPlot <- ggplot(boxData, aes(x = questionName, y = forecast, color = questionName)) +
-    geom_boxplot(outlier.shape = NA) +
+    geom_boxplot(outlier.shape = NA, coef = 0) +
     ylab("Forecast") +
     xlab("Country") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
@@ -753,7 +753,7 @@ boxPlot_country <- function(tbl, specialty, title,
   }
 
   boxPlot <- ggplot(boxData, aes(x = answerText, y = forecast, color = answerText)) +
-    geom_boxplot(outlier.shape = NA) +
+    geom_boxplot(outlier.shape = NA, coef = 0) +
     ylab("Forecast") +
     xlab("Country") +
     labs(title = title, subtitle = paste0("Stage ", stage, " | ", "All Forecasters (n=", length(unique(boxData$userName)), ")")) +
@@ -2783,7 +2783,7 @@ rs_quintile_plot <- function(tbl, title, subtitle) {
 
   # plot <- ggplot(tbl, aes(x = quintile, y = forecast, group = quintile)) +
   plot <- ggplot(tbl, aes(x = quintile, y = forecast, color = userType)) +
-    geom_boxplot(outlier.shape = NA) +
+    geom_boxplot(outlier.shape = NA, coef = 0) +
     ylab("Forecast") +
     xlab("Quintile") +
     labs(title = title, subtitle = subtitle) +
