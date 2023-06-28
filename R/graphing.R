@@ -5,6 +5,7 @@ library(lubridate)
 library(boot)
 library(ggplot2)
 library(scales)
+library(ncar, include.only = 'Round')
 library(gdata, include.only = 'combine')
 
 # Generate a colorblind-friendly palette with six colors
@@ -453,7 +454,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
       ) +
       geom_point(position = position_jitterdodge()) +
       stat_summary(
-        fun.y = median, geom = "label", aes(label = round(..y.., 2)),
+        fun.y = median, geom = "label", aes(label = Round(..y.., 2)),
         position = position_dodge2(width = 0.75, preserve = "single"),
         vjust = 0.5,
         size = 3,
@@ -2799,7 +2800,7 @@ rs_quintile_plot <- function(tbl, title, subtitle) {
     ) +
     geom_point(position = position_jitterdodge(), aes(x = quintile, y = forecast, group = userType)) +
     stat_summary(
-      fun.y = median, geom = "label", aes(label = round(..y.., 4)),
+      fun.y = median, geom = "label", aes(label = Round(..y.., 4)),
       position = position_dodge2(width = 0.75, preserve = "single"),
       vjust = 0.5,
       size = 3,

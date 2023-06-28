@@ -5,6 +5,7 @@ library(xpt)
 library(lubridate)
 library(ggplot2)
 library(scales)
+library(ncar, include.only = "Round")
 
 test_rs_quintile <- function() {
   # Set seed for reproducibility
@@ -93,6 +94,46 @@ test_mutate_csv <- function() {
     geom_vline(xintercept = ymd("2022 10 3"), linetype = "dashed") #+
     #xlim(phaseTwoMedian, NA)
   plot$labels$color <- ""
+}
+
+test_box_plot() {
+  # Fake box plot data
+  boxData <- data.frame(
+    group = c(rep("A", 3), rep("B", 10)),
+    forecast = c(c(0.3, 0.375, 0.9), rnorm(10, 7, 2))
+  )
+  boxData$group <- factor(boxData$group, levels = c("A", "B"))
+
+  # Box plot code
+  boxPlot <- ggplot(boxData, aes(x = group, y = forecast, color = group)) +
+  geom_boxplot(outlier.shape = NA, coef = 0) +
+  ylab('forecsalkj') +
+  xlab("Group") +
+  labs(title = 'foo', subtitle = 'bar') +
+  theme_bw() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    plot.subtitle = element_text(hjust = 0.5),
+    legend.position = "none",
+    axis.title.x = element_blank()
+  ) +
+  geom_point(position = position_jitterdodge()) +
+  stat_summary(
+    fun.y = median, geom = "label", aes(label = Round(..y.., 2)),
+    position = position_dodge2(width = 0.75, preserve = "single"),
+    vjust = 0.5,
+    size = 3,
+    fill = "white",
+    show.legend = FALSE
+  )
+
+  # Add (n=numrows) for the x-axis labels
+  boxPlot <- boxPlot +
+    scale_x_discrete(labels = function(x) {
+      x <- as.character(x)
+      paste0(x, " (n=", table(boxData$group)[x], ")")
+    },
+    guide = guide_axis(n.dodge = 2))
 }
 
 #test_boot()
