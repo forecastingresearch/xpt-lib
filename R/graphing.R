@@ -367,6 +367,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
                     expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName, beliefSet, year, distrib) {
   #' Basic boxplot function
   #'
+  #' @importFrom ncar Round
   #' @import ggplot2
   #' @import scales
   #' @export
@@ -2780,6 +2781,7 @@ salienceGraphics <- function(salienceTbl, title, subtitle, specialty) {
 rs_quintile_plot <- function(tbl, title, subtitle) {
   #' Boxplot for RS quintiles
   #'
+  #' @importFrom ncar Round
   #' @export
 
   # plot <- ggplot(tbl, aes(x = quintile, y = forecast, group = quintile)) +

@@ -20,6 +20,7 @@ Imports:
     ggthemes,
     ggplot2,
     scales,
-    boot
+    boot,
+    ncar
 Suggests: 
 Config/testthat/edition: 3
