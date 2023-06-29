@@ -485,6 +485,20 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
   
   boxPlot <- boxPlot +
     coord_cartesian(ylim = c(NA, max(tournamentParticipants_95thpctile$percentile_95)))
+  
+  weirdCases <- c("NYT Bestsellers Written by AI", "Generation Attitudes")
+  
+  if(title %in% weirdCases){
+    worthPlotting <- boxData %>% filter(forecast < 1e200)
+    boxPlot <- boxPlot +
+      coord_cartesian(ylim = c(NA, max(worthPlotting$forecast)))
+  }
+  
+  manualCases <- c("Future Worries and Children")
+  
+  if(title %in% manualCases){
+    options(scipen=7)
+  }
 
   if (dir.exists("BoxPlots")) {
     setwd("BoxPlots")
@@ -495,6 +509,10 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
 
   file_path <- getwd()
   ggsave(gsub("%", "%%", paste0(file_path, "/", filenameStart, ".png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
+  
+  if(title %in% manualCases){
+    options(scipen=999)
+  }
 }
 
 boxPlot_distrib <- function(tbl, specialty, title, forecastMin, forecastMax,
