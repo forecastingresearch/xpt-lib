@@ -1070,8 +1070,8 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
 
         write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", currentQuestionName, ".csv"), row.names = FALSE)
 
-        multiYearReciprocalGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName)
-        multiYearReciprocalVarianceGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName)
+        multiYearReciprocalGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName)
+        multiYearReciprocalVarianceGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName)
       }
     }
   }
@@ -1464,8 +1464,8 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
 
       write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", currentAnswerText, ".csv"), row.names = FALSE)
 
-      pointDistribGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName, distrib[j])
-      pointDistribVarianceGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName, currentDistrib = distrib[j])
+      pointDistribGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName, distrib[j])
+      pointDistribVarianceGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName, currentDistrib = distrib[j])
     }
   }
   return(newAdd)
