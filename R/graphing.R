@@ -116,6 +116,7 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
 
   file_path <- getwd()
   ggsave(gsub("%", "%%", paste0(file_path, "/", fname, ".png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  ggsave(gsub("%", "%%", paste0(file_path, "/", fname, "_vector.ps")), plot, width = 9.18, height = 5.78, units = c("in"))
 
   if(FALSE) {
     plot <- plot +
@@ -509,6 +510,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
 
   file_path <- getwd()
   ggsave(gsub("%", "%%", paste0(file_path, "/", filenameStart, ".png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
+  ggsave(gsub("%", "%%", paste0(file_path, "/", filenameStart, "_vector.ps")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
   
   if(title %in% manualCases){
     options(scipen=999)
@@ -1197,6 +1199,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  ggsave(gsub("%", "%%", paste0("VARIANCE - ", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ")_vector.ps")), plot, width = 9.18, height = 5.78, units = c("in"))
 
   #####
 
@@ -1229,6 +1232,7 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
   plot$labels$color <- ""
 
   ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE -", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ").png")), plot, width = 9.18, height = 5.78, units = c("in"))
+  ggsave(gsub("%", "%%", paste0("PERCENT VARIANCE -", currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ")_vector.ps")), plot, width = 9.18, height = 5.78, units = c("in"))
 }
 
 pointDistribFigureData <- function(metaTable, data, phaseTwoMedian, timeline) {
