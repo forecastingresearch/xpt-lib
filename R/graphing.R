@@ -441,6 +441,8 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
 
     boxData$group <- factor(boxData$group, levels = unique(boxData$group), ordered = TRUE)
 
+    rounded_medians <- aggregate(forecast ~ group, median, data=boxData)
+    
     boxPlot <- ggplot(boxData, aes(x = group, y = forecast, color = group)) +
       geom_boxplot(outlier.shape = NA, coef = 0) +
       ylab(yLabel) +
@@ -454,16 +456,8 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
         legend.position = "none",
         axis.title.x = element_blank()
       ) +
-      geom_point(position = position_jitterdodge()) +
-      stat_summary(
-        fun.y = median, geom = "label", aes(label = Round(..y.., 2)),
-        position = position_dodge2(width = 0.75, preserve = "single"),
-        vjust = 0.5,
-        size = 3,
-        fill = "white",
-        show.legend = FALSE
-      )
-
+      geom_point(position = position_jitterdodge())
+    
     # Add (n=numrows) for the x-axis labels
     boxPlot <- boxPlot +
       scale_x_discrete(labels = function(x) {
@@ -471,13 +465,25 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
         paste0(x, " (n=", table(boxData$group)[x], ")")
       },
       guide = guide_axis(n.dodge = 2))
-
+    
     boxPlot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 && forecastMax == 100) {
       boxPlot <- boxPlot +
         scale_y_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
     }
   }
+  
+  boxPlot <- boxPlot +
+    stat_summary(
+      fun.y = median, geom = "label", 
+      data = rounded_medians,
+      aes(label = Round(..y.., 2)),
+      position = position_dodge2(width = 0.75, preserve = "single"),
+      vjust = 0.5,
+      size = 3,
+      fill = "white",
+      show.legend = FALSE
+    )
   
   tournamentParticipants_95thpctile <- boxData %>%
     filter(group != "Public Survey") %>%
@@ -500,14 +506,14 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
   if(title %in% manualCases){
     options(scipen=7)
   }
-
+  
   if (dir.exists("BoxPlots")) {
     setwd("BoxPlots")
   } else {
     dir.create("BoxPlots")
     setwd("BoxPlots")
   }
-
+  
   file_path <- getwd()
   ggsave(gsub("%", "%%", paste0(file_path, "/", filenameStart, ".png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
   ggsave(gsub("%", "%%", paste0(file_path, "/", filenameStart, "_vector.ps")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
