@@ -10,8 +10,6 @@ preprocess(x, q = 0)
 \item{x}{A vector of forecasts}
 
 \item{q}{The quantile to use for replacing 0s and 1s (between 0 and 1)}
-
-\item{specific_function}{The specific aggregation function to be generated}
 }
 \description{
 This does the preprocessing steps that all the agg methods

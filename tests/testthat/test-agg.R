@@ -18,7 +18,7 @@ test_that("trimmed mean works with p arg", {
 
 test_that("P(a) + P(not a) = 1 always", {
   not_forecasts <- 1 - forecasts
-  expect_equal(trim(forecasts) + trim(not_forecasts), 1)
+  expect_equal(trim(forecasts) + xpt::trim(not_forecasts), 1)
   expect_equal(neymanAggCalc(forecasts*100) + neymanAggCalc(not_forecasts*100), 100)
   expect_equal(hd_trim(forecasts) + hd_trim(not_forecasts), 1)
   # GeoMean doesn't have this property
@@ -34,3 +34,11 @@ test_that("Highest isn't more than 10x lowest", {
   expect_equal(max(agg_vec) / min(agg_vec) < 10, TRUE)
 }
 )
+
+test_that("It works when they're all 0", {
+  # Trim surely works
+  forecasts <- rep(0, 100)
+  expect_equal(trim(forecasts), 0)
+  # What about geometric mean of odds?
+  expect_equal(geoMeanOfOddsCalc(forecasts), 0)
+})

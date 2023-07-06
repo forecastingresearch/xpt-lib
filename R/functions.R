@@ -82,6 +82,18 @@ newAddInit <- function() {
     expertsG2GeoMean = numeric(0),
     expertsG2HdTrim = numeric(0),
     expertsG2NeymanAgg = numeric(0),
+    xRiskGeneralistsMean = numeric(0),
+    xRiskGeneralistsMedian = numeric(0),
+    xRiskGeneralistsSd = numeric(0),
+    xRiskGeneralistsN = numeric(0),
+    xRiskGeneralistsTrimmedMean = numeric(0),
+    xRiskGeneralistsPct5th = numeric(0),
+    xRiskGeneralistsPct25th = numeric(0),
+    xRiskGeneralistsPct75th = numeric(0),
+    xRiskGeneralistsPct95th = numeric(0),
+    xRiskGeneralistsGeoMean = numeric(0),
+    xRiskGeneralistsHdTrim = numeric(0),
+    xRiskGeneralistsNeymanAgg = numeric(0),
     domainExpertsMean = numeric(0),
     domainExpertsMedian = numeric(0),
     domainExpertsSd = numeric(0),
@@ -166,6 +178,18 @@ newAddInit <- function() {
     expertsG2GeoMean_exc = numeric(0),
     expertsG2HdTrim_exc = numeric(0),
     expertsG2NeymanAgg_exc = numeric(0),
+    xRiskGeneralistsMean_exc = numeric(0),
+    xRiskGeneralistsMedian_exc = numeric(0),
+    xRiskGeneralistsSd_exc = numeric(0),
+    xRiskGeneralistsN_exc = numeric(0),
+    xRiskGeneralistsTrimmedMean_exc = numeric(0),
+    xRiskGeneralistsPct5th_exc = numeric(0),
+    xRiskGeneralistsPct25th_exc = numeric(0),
+    xRiskGeneralistsPct75th_exc = numeric(0),
+    xRiskGeneralistsPct95th_exc = numeric(0),
+    xRiskGeneralistsGeoMean_exc = numeric(0),
+    xRiskGeneralistsHdTrim_exc = numeric(0),
+    xRiskGeneralistsNeymanAgg_exc = numeric(0),
     domainExpertsMean_exc = numeric(0),
     domainExpertsMedian_exc = numeric(0),
     domainExpertsSd_exc = numeric(0),
@@ -202,7 +226,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   median <- median(questionDataProcessed$forecast)
   sd <- sd(questionDataProcessed$forecast)
   n <- nrow(questionDataProcessed)
-  trimmedMean <- trim(questionDataProcessed$forecast)
+  trimmedMean <- xpt::trim(questionDataProcessed$forecast)
   pct5th <- as.numeric(quantile(questionDataProcessed$forecast, 0.05))
   pct25th <- as.numeric(quantile(questionDataProcessed$forecast, 0.25))
   pct75th <- as.numeric(quantile(questionDataProcessed$forecast, 0.75))
@@ -216,7 +240,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   g1Median <- median(g1Processed$forecast)
   g1Sd <- sd(g1Processed$forecast)
   g1N <- nrow(g1Processed)
-  g1TrimmedMean <- trim(g1Processed$forecast)
+  g1TrimmedMean <- xpt::trim(g1Processed$forecast)
   g1Pct5th <- as.numeric(quantile(g1Processed$forecast, 0.05))
   g1Pct25th <- as.numeric(quantile(g1Processed$forecast, 0.25))
   g1Pct75th <- as.numeric(quantile(g1Processed$forecast, 0.75))
@@ -230,7 +254,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   supersMedian <- median(supersProcessed$forecast)
   supersSd <- sd(supersProcessed$forecast)
   supersN <- nrow(supersProcessed)
-  supersTrimmedMean <- trim(supersProcessed$forecast)
+  supersTrimmedMean <- xpt::trim(supersProcessed$forecast)
   supersPct5th <- as.numeric(quantile(supersProcessed$forecast, 0.05))
   supersPct25th <- as.numeric(quantile(supersProcessed$forecast, 0.25))
   supersPct75th <- as.numeric(quantile(supersProcessed$forecast, 0.75))
@@ -244,7 +268,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG1Median <- median(expertsG1Processed$forecast)
   expertsG1Sd <- sd(expertsG1Processed$forecast)
   expertsG1N <- nrow(expertsG1Processed)
-  expertsG1TrimmedMean <- trim(expertsG1Processed$forecast)
+  expertsG1TrimmedMean <- xpt::trim(expertsG1Processed$forecast)
   expertsG1Pct5th <- as.numeric(quantile(expertsG1Processed$forecast, 0.05))
   expertsG1Pct25th <- as.numeric(quantile(expertsG1Processed$forecast, 0.25))
   expertsG1Pct75th <- as.numeric(quantile(expertsG1Processed$forecast, 0.75))
@@ -258,7 +282,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG2Median <- median(expertsG2Processed$forecast)
   expertsG2Sd <- sd(expertsG2Processed$forecast)
   expertsG2N <- nrow(expertsG2Processed)
-  expertsG2TrimmedMean <- trim(expertsG2Processed$forecast)
+  expertsG2TrimmedMean <- xpt::trim(expertsG2Processed$forecast)
   expertsG2Pct5th <- as.numeric(quantile(expertsG2Processed$forecast, 0.05))
   expertsG2Pct25th <- as.numeric(quantile(expertsG2Processed$forecast, 0.25))
   expertsG2Pct75th <- as.numeric(quantile(expertsG2Processed$forecast, 0.75))
@@ -267,6 +291,26 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG2HdTrim <- hd_trim(expertsG2Processed$forecast)
   expertsG2NeymanAgg <- neymanAggCalc(expertsG2Processed$forecast)
 
+  xRiskGeneralists <- (expertsG1 %>% filter(specialty1 == "General" | specialty2 == "General" | specialty3 == "General"))$userName
+  xRiskGeneralistsProcessed <- questionDataProcessed %>% filter(userName %in% xRiskGeneralists)
+  xRiskGeneralistsMean <- mean(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsMedian <- median(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsSd <- sd(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsN <- nrow(xRiskGeneralistsProcessed)
+  xRiskGeneralistsTrimmedMean <- xpt::trim(xRiskGeneralistsProcessed$forecast)
+  xRiskGeneralistsPct5th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.05))
+  xRiskGeneralistsPct25th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.25))
+  xRiskGeneralistsPct75th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.75))
+  xRiskGeneralistsPct95th <- as.numeric(quantile(xRiskGeneralistsProcessed$forecast, 0.95))
+  xRiskGeneralistsGeoMean <- geoMeanCalc(xRiskGeneralistsProcessed$forecast)
+  if (nrow(xRiskGeneralistsProcessed) > 0) {
+    xRiskGeneralistsHdTrim <- hd_trim(xRiskGeneralistsProcessed$forecast)
+  } else {
+    xRiskGeneralistsHdTrim <- NA
+  }
+  xRiskGeneralistsNeymanAgg <- neymanAggCalc(xRiskGeneralistsProcessed$forecast)
+  
+  
   if (specialty != "") {
     currentSpecialty <- specialty
     specialists <- (expertsG1 %>% filter(specialty1 == specialty | specialty2 == specialty | specialty3 == specialty))$userName
@@ -275,7 +319,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     domainExpertsMedian <- median(domainExpertsProcessed$forecast)
     domainExpertsSd <- sd(domainExpertsProcessed$forecast)
     domainExpertsN <- nrow(domainExpertsProcessed)
-    domainExpertsTrimmedMean <- trim(domainExpertsProcessed$forecast)
+    domainExpertsTrimmedMean <- xpt::trim(domainExpertsProcessed$forecast)
     domainExpertsPct5th <- as.numeric(quantile(domainExpertsProcessed$forecast, 0.05))
     domainExpertsPct25th <- as.numeric(quantile(domainExpertsProcessed$forecast, 0.25))
     domainExpertsPct75th <- as.numeric(quantile(domainExpertsProcessed$forecast, 0.75))
@@ -305,12 +349,13 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   if (specialty != "") {
     nonDomainExpertsProcessed <- questionDataProcessed %>%
       filter(!(userName %in% specialists)) %>%
+      filter(!(userName %in% xRiskGeneralists)) %>%
       filter(userName %in% expertsG1$userName)
     nonDomainExpertsMean <- mean(nonDomainExpertsProcessed$forecast)
     nonDomainExpertsMedian <- median(nonDomainExpertsProcessed$forecast)
     nonDomainExpertsSd <- sd(nonDomainExpertsProcessed$forecast)
     nonDomainExpertsN <- nrow(nonDomainExpertsProcessed)
-    nonDomainExpertsTrimmedMean <- trim(nonDomainExpertsProcessed$forecast)
+    nonDomainExpertsTrimmedMean <- xpt::trim(nonDomainExpertsProcessed$forecast)
     nonDomainExpertsPct5th <- as.numeric(quantile(nonDomainExpertsProcessed$forecast, 0.05))
     nonDomainExpertsPct25th <- as.numeric(quantile(nonDomainExpertsProcessed$forecast, 0.25))
     nonDomainExpertsPct75th <- as.numeric(quantile(nonDomainExpertsProcessed$forecast, 0.75))
@@ -341,7 +386,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   median_exc <- median(questionDataProcessed_exc$forecast)
   sd_exc <- sd(questionDataProcessed_exc$forecast)
   n_exc <- nrow(questionDataProcessed_exc)
-  trimmedMean_exc <- trim(questionDataProcessed_exc$forecast)
+  trimmedMean_exc <- xpt::trim(questionDataProcessed_exc$forecast)
   pct5th_exc <- as.numeric(quantile(questionDataProcessed_exc$forecast, 0.05))
   pct25th_exc <- as.numeric(quantile(questionDataProcessed_exc$forecast, 0.25))
   pct75th_exc <- as.numeric(quantile(questionDataProcessed_exc$forecast, 0.75))
@@ -358,7 +403,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   g1Median_exc <- median(g1Processed_exc$forecast)
   g1Sd_exc <- sd(g1Processed_exc$forecast)
   g1N_exc <- nrow(g1Processed_exc)
-  g1TrimmedMean_exc <- trim(g1Processed_exc$forecast)
+  g1TrimmedMean_exc <- xpt::trim(g1Processed_exc$forecast)
   g1Pct5th_exc <- as.numeric(quantile(g1Processed_exc$forecast, 0.05))
   g1Pct25th_exc <- as.numeric(quantile(g1Processed_exc$forecast, 0.25))
   g1Pct75th_exc <- as.numeric(quantile(g1Processed_exc$forecast, 0.75))
@@ -375,7 +420,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   supersMedian_exc <- median(supersProcessed_exc$forecast)
   supersSd_exc <- sd(supersProcessed_exc$forecast)
   supersN_exc <- nrow(supersProcessed_exc)
-  supersTrimmedMean_exc <- trim(supersProcessed_exc$forecast)
+  supersTrimmedMean_exc <- xpt::trim(supersProcessed_exc$forecast)
   supersPct5th_exc <- as.numeric(quantile(supersProcessed_exc$forecast, 0.05))
   supersPct25th_exc <- as.numeric(quantile(supersProcessed_exc$forecast, 0.25))
   supersPct75th_exc <- as.numeric(quantile(supersProcessed_exc$forecast, 0.75))
@@ -392,7 +437,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG1Median_exc <- median(expertsG1Processed_exc$forecast)
   expertsG1Sd_exc <- sd(expertsG1Processed_exc$forecast)
   expertsG1N_exc <- nrow(expertsG1Processed_exc)
-  expertsG1TrimmedMean_exc <- trim(expertsG1Processed_exc$forecast)
+  expertsG1TrimmedMean_exc <- xpt::trim(expertsG1Processed_exc$forecast)
   expertsG1Pct5th_exc <- as.numeric(quantile(expertsG1Processed_exc$forecast, 0.05))
   expertsG1Pct25th_exc <- as.numeric(quantile(expertsG1Processed_exc$forecast, 0.25))
   expertsG1Pct75th_exc <- as.numeric(quantile(expertsG1Processed_exc$forecast, 0.75))
@@ -404,7 +449,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     expertsG1HdTrim_exc <- NA
   }
   expertsG1NeymanAgg_exc <- neymanAggCalc(expertsG1Processed_exc$forecast)
-
+  
   expertsG2Processed_exc <- questionDataProcessed %>%
     filter(userName %in% expertsG2) %>%
     filter(forecast > expertsG2Median - (10 * expertsG2Sd)) %>%
@@ -413,7 +458,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG2Median_exc <- median(expertsG2Processed_exc$forecast)
   expertsG2Sd_exc <- sd(expertsG2Processed_exc$forecast)
   expertsG2N_exc <- nrow(expertsG2Processed_exc)
-  expertsG2TrimmedMean_exc <- trim(expertsG2Processed_exc$forecast)
+  expertsG2TrimmedMean_exc <- xpt::trim(expertsG2Processed_exc$forecast)
   expertsG2Pct5th_exc <- as.numeric(quantile(expertsG2Processed_exc$forecast, 0.05))
   expertsG2Pct25th_exc <- as.numeric(quantile(expertsG2Processed_exc$forecast, 0.25))
   expertsG2Pct75th_exc <- as.numeric(quantile(expertsG2Processed_exc$forecast, 0.75))
@@ -421,6 +466,28 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG2GeoMean_exc <- geoMeanCalc(expertsG2Processed_exc$forecast)
   expertsG2HdTrim_exc <- hd_trim(expertsG2Processed_exc$forecast)
   expertsG2NeymanAgg_exc <- neymanAggCalc(expertsG2Processed_exc$forecast)
+  
+  xRiskGeneralists <- (expertsG1 %>% filter(specialty1 == "General" | specialty2 == "General" | specialty3 == "General"))$userName
+  xRiskGeneralistsProcessed_exc <- questionDataProcessed %>% 
+    filter(userName %in% xRiskGeneralists) %>%
+    filter(forecast > xRiskGeneralistsMedian - (10 * xRiskGeneralistsSd)) %>%
+    filter(forecast < xRiskGeneralistsMedian + (10 * xRiskGeneralistsSd))
+  xRiskGeneralistsMean_exc <- mean(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsMedian_exc <- median(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsSd_exc <- sd(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsN_exc <- nrow(xRiskGeneralistsProcessed_exc)
+  xRiskGeneralistsTrimmedMean_exc <- xpt::trim(xRiskGeneralistsProcessed_exc$forecast)
+  xRiskGeneralistsPct5th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.05))
+  xRiskGeneralistsPct25th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.25))
+  xRiskGeneralistsPct75th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.75))
+  xRiskGeneralistsPct95th_exc <- as.numeric(quantile(xRiskGeneralistsProcessed_exc$forecast, 0.95))
+  xRiskGeneralistsGeoMean_exc <- geoMeanCalc(xRiskGeneralistsProcessed_exc$forecast)
+  if (nrow(xRiskGeneralistsProcessed_exc) > 0) {
+    xRiskGeneralistsHdTrim_exc <- hd_trim(xRiskGeneralistsProcessed_exc$forecast)
+  } else {
+    xRiskGeneralistsHdTrim_exc <- NA
+  }
+  xRiskGeneralistsNeymanAgg_exc <- neymanAggCalc(xRiskGeneralistsProcessed_exc$forecast)
 
   if (specialty != "") {
     currentSpecialty <- specialty
@@ -433,7 +500,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     domainExpertsMedian_exc <- median(domainExpertsProcessed_exc$forecast)
     domainExpertsSd_exc <- sd(domainExpertsProcessed_exc$forecast)
     domainExpertsN_exc <- nrow(domainExpertsProcessed_exc)
-    domainExpertsTrimmedMean_exc <- trim(domainExpertsProcessed_exc$forecast)
+    domainExpertsTrimmedMean_exc <- xpt::trim(domainExpertsProcessed_exc$forecast)
     domainExpertsPct5th_exc <- as.numeric(quantile(domainExpertsProcessed_exc$forecast, 0.05))
     domainExpertsPct25th_exc <- as.numeric(quantile(domainExpertsProcessed_exc$forecast, 0.25))
     domainExpertsPct75th_exc <- as.numeric(quantile(domainExpertsProcessed_exc$forecast, 0.75))
@@ -462,7 +529,8 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
 
   if (specialty != "") {
     nonDomainExpertsProcessed_exc <- questionDataProcessed %>%
-      filter(!(userName %in% specialists)) %>%
+      filter(!(userName %in% specialists)) %>% 
+      filter(!(userName %in% xRiskGeneralists)) %>%
       filter(userName %in% expertsG1$userName) %>%
       filter(forecast > nonDomainExpertsMedian - (10 * nonDomainExpertsSd)) %>%
       filter(forecast < nonDomainExpertsMedian + (10 * nonDomainExpertsSd))
@@ -470,7 +538,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     nonDomainExpertsMedian_exc <- median(nonDomainExpertsProcessed_exc$forecast)
     nonDomainExpertsSd_exc <- sd(nonDomainExpertsProcessed_exc$forecast)
     nonDomainExpertsN_exc <- nrow(nonDomainExpertsProcessed_exc)
-    nonDomainExpertsTrimmedMean_exc <- trim(nonDomainExpertsProcessed_exc$forecast)
+    nonDomainExpertsTrimmedMean_exc <- xpt::trim(nonDomainExpertsProcessed_exc$forecast)
     nonDomainExpertsPct5th_exc <- as.numeric(quantile(nonDomainExpertsProcessed_exc$forecast, 0.05))
     nonDomainExpertsPct25th_exc <- as.numeric(quantile(nonDomainExpertsProcessed_exc$forecast, 0.25))
     nonDomainExpertsPct75th_exc <- as.numeric(quantile(nonDomainExpertsProcessed_exc$forecast, 0.75))
@@ -551,6 +619,18 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     expertsG1GeoMean,
     expertsG1HdTrim,
     expertsG1NeymanAgg,
+    xRiskGeneralistsMean,
+    xRiskGeneralistsMedian,
+    xRiskGeneralistsSd,
+    xRiskGeneralistsN,
+    xRiskGeneralistsTrimmedMean,
+    xRiskGeneralistsPct5th,
+    xRiskGeneralistsPct25th,
+    xRiskGeneralistsPct75th,
+    xRiskGeneralistsPct95th,
+    xRiskGeneralistsGeoMean,
+    xRiskGeneralistsHdTrim,
+    xRiskGeneralistsNeymanAgg,
     expertsG2Mean,
     expertsG2Median,
     expertsG2Sd,
@@ -635,6 +715,18 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     expertsG1GeoMean_exc,
     expertsG1HdTrim_exc,
     expertsG1NeymanAgg_exc,
+    xRiskGeneralistsMean_exc,
+    xRiskGeneralistsMedian_exc,
+    xRiskGeneralistsSd_exc,
+    xRiskGeneralistsN_exc,
+    xRiskGeneralistsTrimmedMean_exc,
+    xRiskGeneralistsPct5th_exc,
+    xRiskGeneralistsPct25th_exc,
+    xRiskGeneralistsPct75th_exc,
+    xRiskGeneralistsPct95th_exc,
+    xRiskGeneralistsGeoMean_exc,
+    xRiskGeneralistsHdTrim_exc,
+    xRiskGeneralistsNeymanAgg_exc,
     expertsG2Mean_exc,
     expertsG2Median_exc,
     expertsG2Sd_exc,
@@ -675,7 +767,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   return(newRow)
 }
 
-multiYearReciprocal <- function(metaTable, data) {
+multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for the multi-year questions
   #'
   #' @description For the question sets that asked about a forecaster's own
@@ -722,6 +814,12 @@ multiYearReciprocal <- function(metaTable, data) {
     beliefSets <- metaTable[i, ] %>% select(yourBeliefs, expertBeliefs, superBeliefs)
     beliefSets <- as.character(beliefSets)
     beliefSets <- beliefSets[beliefSets != ""]
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(years)) {
       if (!dir.exists(years[j])) {
@@ -834,8 +932,10 @@ multiYearReciprocal <- function(metaTable, data) {
 
           files <- c(paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"))
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - ", currentStage, " Box Plot")
-          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax)
+          
+          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet=beliefSets[k], year=years[l], distrib="")
 
+          
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[l], "/", beliefSets[k]))
 
           newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName, answerText = "", stage = currentStage, specialty = metaTable[i, ]$specialty)
@@ -844,53 +944,53 @@ multiYearReciprocal <- function(metaTable, data) {
       }
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
-    for (j in 1:length(years)) {
-      setwd(years[j])
-      print(years[j])
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
+    # for (j in 1:length(years)) {
+    #   setwd(years[j])
+    #   print(years[j])
 
-      for (k in 1:length(beliefSets)) {
-        setwd(beliefSets[k])
-        print(beliefSets[k])
+    #   for (k in 1:length(beliefSets)) {
+    #     setwd(beliefSets[k])
+    #     print(beliefSets[k])
 
-        phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-        phase1median <- median(phase1$forecast)
-        phase1sd <- sd(phase1$forecast)
-        phase1 <- phase1 %>%
-          filter(forecast > phase1median - (10 * phase1sd)) %>%
-          filter(forecast < phase1median + (10 * phase1sd))
-        phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-        phase2median <- median(phase2$forecast)
-        phase2sd <- sd(phase2$forecast)
-        phase2 <- phase2 %>%
-          filter(forecast > phase2median - (10 * phase2sd)) %>%
-          filter(forecast < phase2median + (10 * phase2sd))
-        phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-        phase3median <- median(phase3$forecast)
-        phase3sd <- sd(phase3$forecast)
-        phase3 <- phase3 %>%
-          filter(forecast > phase3median - (10 * phase3sd)) %>%
-          filter(forecast < phase3median + (10 * phase3sd))
-        phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-        phase4median <- median(phase4$forecast)
-        phase4sd <- sd(phase4$forecast)
-        phase4 <- phase4 %>%
-          filter(forecast > phase4median - (10 * phase4sd)) %>%
-          filter(forecast < phase4median + (10 * phase4sd))
+    #     phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #     phase1median <- median(phase1$forecast)
+    #     phase1sd <- sd(phase1$forecast)
+    #     phase1 <- phase1 %>%
+    #       filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #       filter(forecast < phase1median + (10 * phase1sd))
+    #     phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #     phase2median <- median(phase2$forecast)
+    #     phase2sd <- sd(phase2$forecast)
+    #     phase2 <- phase2 %>%
+    #       filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #       filter(forecast < phase2median + (10 * phase2sd))
+    #     phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #     phase3median <- median(phase3$forecast)
+    #     phase3sd <- sd(phase3$forecast)
+    #     phase3 <- phase3 %>%
+    #       filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #       filter(forecast < phase3median + (10 * phase3sd))
+    #     phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #     phase4median <- median(phase4$forecast)
+    #     phase4sd <- sd(phase4$forecast)
+    #     phase4 <- phase4 %>%
+    #       filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #       filter(forecast < phase4median + (10 * phase4sd))
 
-        setwd(paste0(yourHome, "Summary Data"))
-        convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-        convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #     setwd(paste0(yourHome, "Summary Data"))
+    #     convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #     convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-        write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #     write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-      }
+    #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    #   }
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -964,20 +1064,21 @@ multiYearReciprocal <- function(metaTable, data) {
 
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
-          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = beliefSets[j], year = years[k], date = currentDate, qSpecialty))
+          rownames(currentSetTimeSeries) <- NULL
+          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = beliefSets[j], year = years[k], date = currentDate, qSpecialty, setName = currentSetName))
         }
 
         write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", currentQuestionName, ".csv"), row.names = FALSE)
 
-        multiYearReciprocalGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName)
-        multiYearReciprocalVarianceGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName)
+        multiYearReciprocalGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName)
+        multiYearReciprocalVarianceGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName)
       }
     }
   }
   return(newAdd)
 }
 
-pointDistrib <- function(metaTable, data) {
+pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and Graphs for Point Distribution Questions
   #'
   #' @description For questions where we just asked for a distribution, like:
@@ -1021,6 +1122,12 @@ pointDistrib <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -1155,7 +1262,14 @@ pointDistrib <- function(metaTable, data) {
 
         filenameStart <- paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, " Histogram")
         histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
-
+        
+        setwd("..")
+        
+        files = paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
+        filenameStart <- paste0(currentSetName, " - ", currentAnswerText, " - ", currentStage, " Box Plot")
+        
+        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=currentAnswerText, filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib=currentAnswerText)
+        
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
 
         newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = "", answerText = currentAnswerText, stage = currentStage, specialty = metaTable[i, ]$specialty)
@@ -1192,52 +1306,52 @@ pointDistrib <- function(metaTable, data) {
         setwd("BoxPlots")
       }
 
-      boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "")
+      #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "", numerateCitizens, yLabel, survey_column_matches, setName, beliefSet)
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
 
-    for (j in 1:length(distrib)) {
-      setwd(distrib[j])
-      print(distrib[j])
+    # for (j in 1:length(distrib)) {
+    #   setwd(distrib[j])
+    #   print(distrib[j])
 
-      phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-      phase1median <- median(phase1$forecast)
-      phase1sd <- sd(phase1$forecast)
-      phase1 <- phase1 %>%
-        filter(forecast > phase1median - (10 * phase1sd)) %>%
-        filter(forecast < phase1median + (10 * phase1sd))
-      phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-      phase2median <- median(phase2$forecast)
-      phase2sd <- sd(phase2$forecast)
-      phase2 <- phase2 %>%
-        filter(forecast > phase2median - (10 * phase2sd)) %>%
-        filter(forecast < phase2median + (10 * phase2sd))
-      phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-      phase3median <- median(phase3$forecast)
-      phase3sd <- sd(phase3$forecast)
-      phase3 <- phase3 %>%
-        filter(forecast > phase3median - (10 * phase3sd)) %>%
-        filter(forecast < phase3median + (10 * phase3sd))
-      phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-      phase4median <- median(phase4$forecast)
-      phase4sd <- sd(phase4$forecast)
-      phase4 <- phase4 %>%
-        filter(forecast > phase4median - (10 * phase4sd)) %>%
-        filter(forecast < phase4median + (10 * phase4sd))
+    #   phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #   phase1median <- median(phase1$forecast)
+    #   phase1sd <- sd(phase1$forecast)
+    #   phase1 <- phase1 %>%
+    #     filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #     filter(forecast < phase1median + (10 * phase1sd))
+    #   phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #   phase2median <- median(phase2$forecast)
+    #   phase2sd <- sd(phase2$forecast)
+    #   phase2 <- phase2 %>%
+    #     filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #     filter(forecast < phase2median + (10 * phase2sd))
+    #   phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #   phase3median <- median(phase3$forecast)
+    #   phase3sd <- sd(phase3$forecast)
+    #   phase3 <- phase3 %>%
+    #     filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #     filter(forecast < phase3median + (10 * phase3sd))
+    #   phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #   phase4median <- median(phase4$forecast)
+    #   phase4sd <- sd(phase4$forecast)
+    #   phase4 <- phase4 %>%
+    #     filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #     filter(forecast < phase4median + (10 * phase4sd))
 
-      setwd(paste0(yourHome, "Summary Data"))
-      convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-      convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #   setwd(paste0(yourHome, "Summary Data"))
+    #   convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #   convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-      write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #   write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
 
@@ -1345,19 +1459,19 @@ pointDistrib <- function(metaTable, data) {
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
 
-        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
       }
 
       write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", currentAnswerText, ".csv"), row.names = FALSE)
 
-      pointDistribGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName, distrib[j])
-      pointDistribVarianceGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName, currentDistrib = distrib[j])
+      pointDistribGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName, distrib[j])
+      pointDistribVarianceGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName, currentDistrib = distrib[j])
     }
   }
   return(newAdd)
 }
 
-multiYearDistrib <- function(metaTable, data) {
+multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Distribution Questions
   #'
   #' @description For the questions where we ask for distributions over predefined years, like:
@@ -1408,6 +1522,12 @@ multiYearDistrib <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -1562,8 +1682,15 @@ multiYearDistrib <- function(metaTable, data) {
             setwd("Histograms")
           }
 
-          filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, " Histogram")
+          filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
           histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
+          
+          setwd("..")
+          
+          files = paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
+          filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, " Box Plot")
+          
+          boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear, "-", currentAnswerText), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib=currentAnswerText)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -1610,60 +1737,60 @@ multiYearDistrib <- function(metaTable, data) {
           setwd("BoxPlots")
         }
 
-        boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j])
+        #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j], numerateCitizens, yLabel, survey_column_matches, setName)
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
 
-    for (j in 1:length(years)) {
-      setwd(years[j])
-      print(years[j])
+    # for (j in 1:length(years)) {
+    #   setwd(years[j])
+    #   print(years[j])
 
-      for (k in 1:length(distrib)) {
-        setwd(distrib[k])
-        print(distrib[k])
+    #   for (k in 1:length(distrib)) {
+    #     setwd(distrib[k])
+    #     print(distrib[k])
 
-        phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-        phase1median <- median(phase1$forecast)
-        phase1sd <- sd(phase1$forecast)
-        phase1 <- phase1 %>%
-          filter(forecast > phase1median - (10 * phase1sd)) %>%
-          filter(forecast < phase1median + (10 * phase1sd))
-        phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-        phase2median <- median(phase2$forecast)
-        phase2sd <- sd(phase2$forecast)
-        phase2 <- phase2 %>%
-          filter(forecast > phase2median - (10 * phase2sd)) %>%
-          filter(forecast < phase2median + (10 * phase2sd))
-        phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-        phase3median <- median(phase3$forecast)
-        phase3sd <- sd(phase3$forecast)
-        phase3 <- phase3 %>%
-          filter(forecast > phase3median - (10 * phase3sd)) %>%
-          filter(forecast < phase3median + (10 * phase3sd))
-        phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-        phase4median <- median(phase4$forecast)
-        phase4sd <- sd(phase4$forecast)
-        phase4 <- phase4 %>%
-          filter(forecast > phase4median - (10 * phase4sd)) %>%
-          filter(forecast < phase4median + (10 * phase4sd))
+    #     phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #     phase1median <- median(phase1$forecast)
+    #     phase1sd <- sd(phase1$forecast)
+    #     phase1 <- phase1 %>%
+    #       filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #       filter(forecast < phase1median + (10 * phase1sd))
+    #     phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #     phase2median <- median(phase2$forecast)
+    #     phase2sd <- sd(phase2$forecast)
+    #     phase2 <- phase2 %>%
+    #       filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #       filter(forecast < phase2median + (10 * phase2sd))
+    #     phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #     phase3median <- median(phase3$forecast)
+    #     phase3sd <- sd(phase3$forecast)
+    #     phase3 <- phase3 %>%
+    #       filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #       filter(forecast < phase3median + (10 * phase3sd))
+    #     phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #     phase4median <- median(phase4$forecast)
+    #     phase4sd <- sd(phase4$forecast)
+    #     phase4 <- phase4 %>%
+    #       filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #       filter(forecast < phase4median + (10 * phase4sd))
 
-        setwd(paste0(yourHome, "Summary Data"))
-        convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-        convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #     setwd(paste0(yourHome, "Summary Data"))
+    #     convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #     convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-        write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #     write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-      }
+    #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    #   }
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -1784,7 +1911,7 @@ multiYearDistrib <- function(metaTable, data) {
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
 
-          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = years[j], date = currentDate, qSpecialty, setName = currentSetName))
         }
 
         write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", years[j], " - ", currentAnswerText, ".csv"), row.names = FALSE)
@@ -1797,7 +1924,7 @@ multiYearDistrib <- function(metaTable, data) {
   return(newAdd)
 }
 
-multiYearBinary <- function(metaTable, data) {
+multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Binary Questions
   #'
   #' @description For yes/no multi-year questions, like:
@@ -1846,6 +1973,12 @@ multiYearBinary <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -1939,6 +2072,13 @@ multiYearBinary <- function(metaTable, data) {
 
         filenameStart <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, " Histogram")
         histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
+        
+        setwd("..")
+        
+        files = paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, ".csv")
+        filenameStart <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, " Box Plot")
+        
+        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -1977,53 +2117,53 @@ multiYearBinary <- function(metaTable, data) {
 
         filenameStart <- paste(currentSetName, "-", "Stage", k)
 
-        boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax)
+        boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
 
-    for (j in 1:length(years)) {
-      setwd(years[j])
-      print(years[j])
+    # for (j in 1:length(years)) {
+    #   setwd(years[j])
+    #   print(years[j])
 
-      phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-      phase1median <- median(phase1$forecast)
-      phase1sd <- sd(phase1$forecast)
-      phase1 <- phase1 %>%
-        filter(forecast > phase1median - (10 * phase1sd)) %>%
-        filter(forecast < phase1median + (10 * phase1sd))
-      phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-      phase2median <- median(phase2$forecast)
-      phase2sd <- sd(phase2$forecast)
-      phase2 <- phase2 %>%
-        filter(forecast > phase2median - (10 * phase2sd)) %>%
-        filter(forecast < phase2median + (10 * phase2sd))
-      phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-      phase3median <- median(phase3$forecast)
-      phase3sd <- sd(phase3$forecast)
-      phase3 <- phase3 %>%
-        filter(forecast > phase3median - (10 * phase3sd)) %>%
-        filter(forecast < phase3median + (10 * phase3sd))
-      phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-      phase4median <- median(phase4$forecast)
-      phase4sd <- sd(phase4$forecast)
-      phase4 <- phase4 %>%
-        filter(forecast > phase4median - (10 * phase4sd)) %>%
-        filter(forecast < phase4median + (10 * phase4sd))
+    #   phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #   phase1median <- median(phase1$forecast)
+    #   phase1sd <- sd(phase1$forecast)
+    #   phase1 <- phase1 %>%
+    #     filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #     filter(forecast < phase1median + (10 * phase1sd))
+    #   phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #   phase2median <- median(phase2$forecast)
+    #   phase2sd <- sd(phase2$forecast)
+    #   phase2 <- phase2 %>%
+    #     filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #     filter(forecast < phase2median + (10 * phase2sd))
+    #   phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #   phase3median <- median(phase3$forecast)
+    #   phase3sd <- sd(phase3$forecast)
+    #   phase3 <- phase3 %>%
+    #     filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #     filter(forecast < phase3median + (10 * phase3sd))
+    #   phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #   phase4median <- median(phase4$forecast)
+    #   phase4sd <- sd(phase4$forecast)
+    #   phase4 <- phase4 %>%
+    #     filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #     filter(forecast < phase4median + (10 * phase4sd))
 
-      setwd(paste0(yourHome, "Summary Data"))
-      convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-      convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #   setwd(paste0(yourHome, "Summary Data"))
+    #   convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #   convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-      write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #   write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -2088,7 +2228,7 @@ multiYearBinary <- function(metaTable, data) {
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
 
-        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
       }
 
       write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", years[j], ".csv"), row.names = FALSE)
@@ -2102,7 +2242,7 @@ multiYearBinary <- function(metaTable, data) {
 
 #####
 
-multiYearCountryDistrib <- function(metaTable, data) {
+multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Country Distribution Questions
   #'
   #' @description For questions where we ask for distributions over predefined
@@ -2150,6 +2290,12 @@ multiYearCountryDistrib <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2315,54 +2461,54 @@ multiYearCountryDistrib <- function(metaTable, data) {
       }
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
 
-    for (j in 1:length(years)) {
-      setwd(years[j])
-      print(years[j])
+    # for (j in 1:length(years)) {
+    #   setwd(years[j])
+    #   print(years[j])
 
-      for (k in 1:length(countries)) {
-        setwd(countries[k])
-        print(countries[k])
+    #   for (k in 1:length(countries)) {
+    #     setwd(countries[k])
+    #     print(countries[k])
 
-        phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-        phase1median <- median(phase1$forecast)
-        phase1sd <- sd(phase1$forecast)
-        phase1 <- phase1 %>%
-          filter(forecast > phase1median - (10 * phase1sd)) %>%
-          filter(forecast < phase1median + (10 * phase1sd))
-        phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-        phase2median <- median(phase2$forecast)
-        phase2sd <- sd(phase2$forecast)
-        phase2 <- phase2 %>%
-          filter(forecast > phase2median - (10 * phase2sd)) %>%
-          filter(forecast < phase2median + (10 * phase2sd))
-        phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-        phase3median <- median(phase3$forecast)
-        phase3sd <- sd(phase3$forecast)
-        phase3 <- phase3 %>%
-          filter(forecast > phase3median - (10 * phase3sd)) %>%
-          filter(forecast < phase3median + (10 * phase3sd))
-        phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-        phase4median <- median(phase4$forecast)
-        phase4sd <- sd(phase4$forecast)
-        phase4 <- phase4 %>%
-          filter(forecast > phase4median - (10 * phase4sd)) %>%
-          filter(forecast < phase4median + (10 * phase4sd))
+    #     phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #     phase1median <- median(phase1$forecast)
+    #     phase1sd <- sd(phase1$forecast)
+    #     phase1 <- phase1 %>%
+    #       filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #       filter(forecast < phase1median + (10 * phase1sd))
+    #     phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #     phase2median <- median(phase2$forecast)
+    #     phase2sd <- sd(phase2$forecast)
+    #     phase2 <- phase2 %>%
+    #       filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #       filter(forecast < phase2median + (10 * phase2sd))
+    #     phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #     phase3median <- median(phase3$forecast)
+    #     phase3sd <- sd(phase3$forecast)
+    #     phase3 <- phase3 %>%
+    #       filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #       filter(forecast < phase3median + (10 * phase3sd))
+    #     phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #     phase4median <- median(phase4$forecast)
+    #     phase4sd <- sd(phase4$forecast)
+    #     phase4 <- phase4 %>%
+    #       filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #       filter(forecast < phase4median + (10 * phase4sd))
 
-        setwd(paste0(yourHome, "Summary Data"))
-        convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-        convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #     setwd(paste0(yourHome, "Summary Data"))
+    #     convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #     convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-        write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #     write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-      }
+    #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    #   }
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -2441,7 +2587,7 @@ multiYearCountryDistrib <- function(metaTable, data) {
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
 
-          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+          currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
         }
 
         write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", years[j], ".csv"), row.names = FALSE)
@@ -2454,7 +2600,7 @@ multiYearCountryDistrib <- function(metaTable, data) {
   return(newAdd)
 }
 
-multiCountryBinary <- function(metaTable, data) {
+multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for Multi-year Country Binary Questions
   #'
   #' @description For yes/no country questions, like country-by-country nuclear
@@ -2499,6 +2645,12 @@ multiCountryBinary <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2641,51 +2793,51 @@ multiCountryBinary <- function(metaTable, data) {
         setwd("BoxPlots")
       }
 
-      boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
+      #boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
 
-    for (j in 1:length(countries)) {
-      setwd(countries[j])
-      print(countries[j])
+    # for (j in 1:length(countries)) {
+    #   setwd(countries[j])
+    #   print(countries[j])
 
-      phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-      phase1median <- median(phase1$forecast)
-      phase1sd <- sd(phase1$forecast)
-      phase1 <- phase1 %>%
-        filter(forecast > phase1median - (10 * phase1sd)) %>%
-        filter(forecast < phase1median + (10 * phase1sd))
-      phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-      phase2median <- median(phase2$forecast)
-      phase2sd <- sd(phase2$forecast)
-      phase2 <- phase2 %>%
-        filter(forecast > phase2median - (10 * phase2sd)) %>%
-        filter(forecast < phase2median + (10 * phase2sd))
-      phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-      phase3median <- median(phase3$forecast)
-      phase3sd <- sd(phase3$forecast)
-      phase3 <- phase3 %>%
-        filter(forecast > phase3median - (10 * phase3sd)) %>%
-        filter(forecast < phase3median + (10 * phase3sd))
-      phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-      phase4median <- median(phase4$forecast)
-      phase4sd <- sd(phase4$forecast)
-      phase4 <- phase4 %>%
-        filter(forecast > phase4median - (10 * phase4sd)) %>%
-        filter(forecast < phase4median + (10 * phase4sd))
+    #   phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    #   phase1median <- median(phase1$forecast)
+    #   phase1sd <- sd(phase1$forecast)
+    #   phase1 <- phase1 %>%
+    #     filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #     filter(forecast < phase1median + (10 * phase1sd))
+    #   phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    #   phase2median <- median(phase2$forecast)
+    #   phase2sd <- sd(phase2$forecast)
+    #   phase2 <- phase2 %>%
+    #     filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #     filter(forecast < phase2median + (10 * phase2sd))
+    #   phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    #   phase3median <- median(phase3$forecast)
+    #   phase3sd <- sd(phase3$forecast)
+    #   phase3 <- phase3 %>%
+    #     filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #     filter(forecast < phase3median + (10 * phase3sd))
+    #   phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    #   phase4median <- median(phase4$forecast)
+    #   phase4sd <- sd(phase4$forecast)
+    #   phase4 <- phase4 %>%
+    #     filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #     filter(forecast < phase4median + (10 * phase4sd))
 
-      setwd(paste0(yourHome, "Summary Data"))
-      convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-      convergenceTable <- rbind(convergenceTable, convergenceRow)
+    #   setwd(paste0(yourHome, "Summary Data"))
+    #   convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    #   convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-      write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    #   write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # }
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -2747,7 +2899,7 @@ multiCountryBinary <- function(metaTable, data) {
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
 
-        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+        currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
       }
 
       write.csv(currentSetTimeSeries, paste0(currentSetName, " - ", countries[j], ".csv"), row.names = FALSE)
@@ -2759,7 +2911,7 @@ multiCountryBinary <- function(metaTable, data) {
   return(newAdd)
 }
 
-pointBinary <- function(metaTable, data) {
+pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
   #' Stats and graphs for classic binary questions
   #'
   #' @description For yes/no point questions, like
@@ -2805,6 +2957,12 @@ pointBinary <- function(metaTable, data) {
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
+    
+    #TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i,]$numerateCitizens
+    
+    #y-axis labels
+    yLabel <- metaTable[i,]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2883,6 +3041,13 @@ pointBinary <- function(metaTable, data) {
 
       filenameStart <- paste0(currentSetName, " - Phase ", currentStage, " Histogram")
       histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
+      
+      setwd("..")
+      
+      files = paste0(currentSetName, " - Phase ", currentStage, ".csv")
+      filenameStart <- paste0(currentSetName, " - Phase ", currentStage, " Box Plot")
+      
+      boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle="", filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
 
@@ -2908,43 +3073,43 @@ pointBinary <- function(metaTable, data) {
       currFile <- currFiles[grep(phases[j], currFiles)]
       currFile <- currFile[!grepl("ANON", currFile)]
 
-      boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax)
+      boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
     }
 
-    # CONVERGENCE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    print("Getting convergence data...")
+    # # CONVERGENCE DATA
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # print("Getting convergence data...")
 
-    phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-    phase1median <- median(phase1$forecast)
-    phase1sd <- sd(phase1$forecast)
-    phase1 <- phase1 %>%
-      filter(forecast > phase1median - (10 * phase1sd)) %>%
-      filter(forecast < phase1median + (10 * phase1sd))
-    phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-    phase2median <- median(phase2$forecast)
-    phase2sd <- sd(phase2$forecast)
-    phase2 <- phase2 %>%
-      filter(forecast > phase2median - (10 * phase2sd)) %>%
-      filter(forecast < phase2median + (10 * phase2sd))
-    phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-    phase3median <- median(phase3$forecast)
-    phase3sd <- sd(phase3$forecast)
-    phase3 <- phase3 %>%
-      filter(forecast > phase3median - (10 * phase3sd)) %>%
-      filter(forecast < phase3median + (10 * phase3sd))
-    phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-    phase4median <- median(phase4$forecast)
-    phase4sd <- sd(phase4$forecast)
-    phase4 <- phase4 %>%
-      filter(forecast > phase4median - (10 * phase4sd)) %>%
-      filter(forecast < phase4median + (10 * phase4sd))
+    # phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
+    # phase1median <- median(phase1$forecast)
+    # phase1sd <- sd(phase1$forecast)
+    # phase1 <- phase1 %>%
+    #   filter(forecast > phase1median - (10 * phase1sd)) %>%
+    #   filter(forecast < phase1median + (10 * phase1sd))
+    # phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
+    # phase2median <- median(phase2$forecast)
+    # phase2sd <- sd(phase2$forecast)
+    # phase2 <- phase2 %>%
+    #   filter(forecast > phase2median - (10 * phase2sd)) %>%
+    #   filter(forecast < phase2median + (10 * phase2sd))
+    # phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
+    # phase3median <- median(phase3$forecast)
+    # phase3sd <- sd(phase3$forecast)
+    # phase3 <- phase3 %>%
+    #   filter(forecast > phase3median - (10 * phase3sd)) %>%
+    #   filter(forecast < phase3median + (10 * phase3sd))
+    # phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
+    # phase4median <- median(phase4$forecast)
+    # phase4sd <- sd(phase4$forecast)
+    # phase4 <- phase4 %>%
+    #   filter(forecast > phase4median - (10 * phase4sd)) %>%
+    #   filter(forecast < phase4median + (10 * phase4sd))
 
-    setwd(paste0(yourHome, "Summary Data"))
-    convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-    convergenceTable <- rbind(convergenceTable, convergenceRow)
+    # setwd(paste0(yourHome, "Summary Data"))
+    # convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
+    # convergenceTable <- rbind(convergenceTable, convergenceRow)
 
-    write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
+    # write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -2993,7 +3158,7 @@ pointBinary <- function(metaTable, data) {
         dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
       }
 
-      currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty))
+      currentSetTimeSeries <- rbind(currentSetTimeSeries, figureDataMetrics(dateDataProcessed, beliefSet = "", year = "", date = currentDate, qSpecialty, setName = currentSetName))
     }
 
     write.csv(currentSetTimeSeries, paste0(currentSetName, ".csv"), row.names = FALSE)

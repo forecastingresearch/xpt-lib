@@ -13,7 +13,13 @@ boxPlot(
   filenameStart,
   expectedRisk,
   forecastMin,
-  forecastMax
+  forecastMax,
+  numerateCitizens,
+  yLabel,
+  setName,
+  beliefSet,
+  year,
+  distrib
 )
 }
 \description{
