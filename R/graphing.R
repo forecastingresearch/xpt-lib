@@ -434,7 +434,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
                                 forecast = publicSurvey)
         boxData <- rbind(boxData, addPublic)
       } else{
-       print(paste("no sheet info found:", setName, beliefSet, year, distrib)) 
+        print(paste("no sheet info found:", setName, beliefSet, year, distrib)) 
       }
     }
 
@@ -479,7 +479,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
   }
   
   tournamentParticipants_95thpctile <- boxData %>%
-    filter(group != "Public Survey") %>%
+    #filter(group != "Public Survey") %>%
     group_by(group) %>%
     summarize(percentile_95 = quantile(forecast, 0.95))
   
