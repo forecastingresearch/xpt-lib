@@ -125,12 +125,13 @@ neymanAggCalc <- function(x) {
   #'
   #' @export
 
-  x <- preprocess(x, q = 0)
+  x <- preprocess(x, q = 0.05)  # replace 0% forecasts with 5th percentile forecast
   x <- (x / 100)
   n <- length(x)
   d <- (n * (sqrt((3 * n^2) - (3 * n) + 1) - 2)) / (n^2 - n - 1)
-  t <- (x^d) / ((x^d) + (1 - x)^d)
-  return(mean(t) * 100)
+  logodds <- log(x / (1 - x))  # log odds from probabilities
+  logodds <- mean(logodds) * d  # arithmetic mean, THEN extremize by factor d
+  return(100 * exp(logodds) / (1 + exp(logodds)))  # back to probability
 }
 
 geoMeanCalc <- function(x, q = 0.05) {
