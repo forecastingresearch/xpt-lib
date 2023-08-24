@@ -70,18 +70,6 @@ newAddInit <- function() {
     expertsG1GeoMean = numeric(0),
     expertsG1HdTrim = numeric(0),
     expertsG1NeymanAgg = numeric(0),
-    expertsG2Mean = numeric(0),
-    expertsG2Median = numeric(0),
-    expertsG2Sd = numeric(0),
-    expertsG2N = numeric(0),
-    expertsG2TrimmedMean = numeric(0),
-    expertsG2Pct5th = numeric(0),
-    expertsG2Pct25th = numeric(0),
-    expertsG2Pct75th = numeric(0),
-    expertsG2Pct95th = numeric(0),
-    expertsG2GeoMean = numeric(0),
-    expertsG2HdTrim = numeric(0),
-    expertsG2NeymanAgg = numeric(0),
     xRiskGeneralistsMean = numeric(0),
     xRiskGeneralistsMedian = numeric(0),
     xRiskGeneralistsSd = numeric(0),
@@ -166,18 +154,6 @@ newAddInit <- function() {
     expertsG1GeoMean_exc = numeric(0),
     expertsG1HdTrim_exc = numeric(0),
     expertsG1NeymanAgg_exc = numeric(0),
-    expertsG2Mean_exc = numeric(0),
-    expertsG2Median_exc = numeric(0),
-    expertsG2Sd_exc = numeric(0),
-    expertsG2N_exc = numeric(0),
-    expertsG2TrimmedMean_exc = numeric(0),
-    expertsG2Pct5th_exc = numeric(0),
-    expertsG2Pct25th_exc = numeric(0),
-    expertsG2Pct75th_exc = numeric(0),
-    expertsG2Pct95th_exc = numeric(0),
-    expertsG2GeoMean_exc = numeric(0),
-    expertsG2HdTrim_exc = numeric(0),
-    expertsG2NeymanAgg_exc = numeric(0),
     xRiskGeneralistsMean_exc = numeric(0),
     xRiskGeneralistsMedian_exc = numeric(0),
     xRiskGeneralistsSd_exc = numeric(0),
@@ -276,20 +252,6 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   expertsG1GeoMean <- geoMeanCalc(expertsG1Processed$forecast)
   expertsG1HdTrim <- hd_trim(expertsG1Processed$forecast)
   expertsG1NeymanAgg <- neymanAggCalc(expertsG1Processed$forecast)
-
-  expertsG2Processed <- questionDataProcessed %>% filter(userName %in% expertsG2)
-  expertsG2Mean <- mean(expertsG2Processed$forecast)
-  expertsG2Median <- median(expertsG2Processed$forecast)
-  expertsG2Sd <- sd(expertsG2Processed$forecast)
-  expertsG2N <- nrow(expertsG2Processed)
-  expertsG2TrimmedMean <- xpt::trim(expertsG2Processed$forecast)
-  expertsG2Pct5th <- as.numeric(quantile(expertsG2Processed$forecast, 0.05))
-  expertsG2Pct25th <- as.numeric(quantile(expertsG2Processed$forecast, 0.25))
-  expertsG2Pct75th <- as.numeric(quantile(expertsG2Processed$forecast, 0.75))
-  expertsG2Pct95th <- as.numeric(quantile(expertsG2Processed$forecast, 0.95))
-  expertsG2GeoMean <- geoMeanCalc(expertsG2Processed$forecast)
-  expertsG2HdTrim <- hd_trim(expertsG2Processed$forecast)
-  expertsG2NeymanAgg <- neymanAggCalc(expertsG2Processed$forecast)
 
   xRiskGeneralists <- (expertsG1 %>% filter(specialty1 == "General" | specialty2 == "General" | specialty3 == "General"))$userName
   xRiskGeneralistsProcessed <- questionDataProcessed %>% filter(userName %in% xRiskGeneralists)
@@ -449,23 +411,6 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     expertsG1HdTrim_exc <- NA
   }
   expertsG1NeymanAgg_exc <- neymanAggCalc(expertsG1Processed_exc$forecast)
-  
-  expertsG2Processed_exc <- questionDataProcessed %>%
-    filter(userName %in% expertsG2) %>%
-    filter(forecast > expertsG2Median - (10 * expertsG2Sd)) %>%
-    filter(forecast < expertsG2Median + (10 * expertsG2Sd))
-  expertsG2Mean_exc <- mean(expertsG2Processed_exc$forecast)
-  expertsG2Median_exc <- median(expertsG2Processed_exc$forecast)
-  expertsG2Sd_exc <- sd(expertsG2Processed_exc$forecast)
-  expertsG2N_exc <- nrow(expertsG2Processed_exc)
-  expertsG2TrimmedMean_exc <- xpt::trim(expertsG2Processed_exc$forecast)
-  expertsG2Pct5th_exc <- as.numeric(quantile(expertsG2Processed_exc$forecast, 0.05))
-  expertsG2Pct25th_exc <- as.numeric(quantile(expertsG2Processed_exc$forecast, 0.25))
-  expertsG2Pct75th_exc <- as.numeric(quantile(expertsG2Processed_exc$forecast, 0.75))
-  expertsG2Pct95th_exc <- as.numeric(quantile(expertsG2Processed_exc$forecast, 0.95))
-  expertsG2GeoMean_exc <- geoMeanCalc(expertsG2Processed_exc$forecast)
-  expertsG2HdTrim_exc <- hd_trim(expertsG2Processed_exc$forecast)
-  expertsG2NeymanAgg_exc <- neymanAggCalc(expertsG2Processed_exc$forecast)
   
   xRiskGeneralists <- (expertsG1 %>% filter(specialty1 == "General" | specialty2 == "General" | specialty3 == "General"))$userName
   xRiskGeneralistsProcessed_exc <- questionDataProcessed %>% 
@@ -631,18 +576,6 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     xRiskGeneralistsGeoMean,
     xRiskGeneralistsHdTrim,
     xRiskGeneralistsNeymanAgg,
-    expertsG2Mean,
-    expertsG2Median,
-    expertsG2Sd,
-    expertsG2N,
-    expertsG2TrimmedMean,
-    expertsG2Pct5th,
-    expertsG2Pct25th,
-    expertsG2Pct75th,
-    expertsG2Pct95th,
-    expertsG2GeoMean,
-    expertsG2HdTrim,
-    expertsG2NeymanAgg,
     domainExpertsMean,
     domainExpertsMedian,
     domainExpertsSd,
@@ -727,18 +660,6 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     xRiskGeneralistsGeoMean_exc,
     xRiskGeneralistsHdTrim_exc,
     xRiskGeneralistsNeymanAgg_exc,
-    expertsG2Mean_exc,
-    expertsG2Median_exc,
-    expertsG2Sd_exc,
-    expertsG2N_exc,
-    expertsG2TrimmedMean_exc,
-    expertsG2Pct5th_exc,
-    expertsG2Pct25th_exc,
-    expertsG2Pct75th_exc,
-    expertsG2Pct95th_exc,
-    expertsG2GeoMean_exc,
-    expertsG2HdTrim_exc,
-    expertsG2NeymanAgg_exc,
     domainExpertsMean_exc,
     domainExpertsMedian_exc,
     domainExpertsSd_exc,
@@ -860,63 +781,23 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
             filter(setName == currentSetName) %>%
             filter(questionName == currentQuestionName)
           users <- unique(questionDataRaw$userName)
-          # users = users[!(users %in% c(supers, expertsG1$userName, expertsG2))]
-          users <- users[(users %in% c(supers, expertsG1$userName, expertsG2))]
+          users = users[(users %in% c(supers, expertsG1$userName))]
 
-          questionDataProcessed <- data.frame(row.names = names(supers))
+          questionDataProcessed <- data.frame()
 
-          # TODO: refactor
-          if (currentStage == 1) {
-            for (m in 1:length(users)) {
+          for (m in 1:length(users)) {
               user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              if (!any(is.na(userForecasts$stageTwoTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageTwoTimestamp)
-              } else if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-              } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-              }
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
+              userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+              mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
               questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
             }
-          } else if (currentStage == 2) {
-            for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-              } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-              }
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-            }
-          } else if (currentStage == 3) {
-            for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              if (!any(is.na(userForecasts$stageFourTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-              }
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-            }
-          } else if (currentStage == 4) {
-            for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-            }
-          }
 
           questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
-          questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
+          #questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
 
           write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-          write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
+          #write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
 
           if (dir.exists("Histograms")) {
             setwd("Histograms")
@@ -1050,7 +931,7 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
             dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
           }
           users <- unique(dateDataRaw$userName)
-          users <- users[users %in% c(supers, expertsG1$userName, expertsG2)]
+          users <- users[users %in% c(supers, expertsG1$userName)]
 
           # some of these are NA? what is happening
           dateDataProcessed <- data.frame(row.names = names(dateDataRaw))
@@ -1060,7 +941,7 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
             user <- users[m]
             userForecasts <- dateDataRaw %>% filter(userName == user)
 
-            mostRecentForecast <- filter(userForecasts, timestamp == max(userForecasts$timestamp))
+            mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
 
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
@@ -1159,17 +1040,21 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
         }
 
         questionDataRaw <- data %>% filter(setName == currentSetName)
-        uniqueForecasts <- questionDataRaw %>% select(userName, timestamp)
+        uniqueForecasts <- questionDataRaw %>% select(userName, forecastNum)
         uniqueForecasts <- unique(uniqueForecasts)
 
-        exclude <- data.frame(row.names = names(uniqueForecasts))
+        exclude <- data.frame(userName = character(0),
+                              forecastNum = numeric(0))
 
         # rm non monotonic
         for (l in 1:nrow(uniqueForecasts)) {
           # print(l)
           currRow <- questionDataRaw %>%
             filter(userName == uniqueForecasts[l, ]$userName) %>%
-            filter(timestamp %in% seq(uniqueForecasts[l, ]$timestamp - 60, uniqueForecasts[l, ]$timestamp + 60, 1))
+            filter(forecastNum == uniqueForecasts$forecastNum[l])
+          # if(length(currRow$forecast) != 5){
+          #   print(l)
+          # }
           if (any(
             (currRow[currRow$answerText == "5th %", ]$forecast > currRow[currRow$answerText == "25th %", ]$forecast) |
               (currRow[currRow$answerText == "25th %", ]$forecast > currRow[currRow$answerText == "50th %", ]$forecast) |
@@ -1179,70 +1064,31 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
             exclude <- rbind(exclude, uniqueForecasts[l, ])
           }
         }
-
-        for (l in 1:nrow(exclude)) {
-          removeRow <- questionDataRaw %>%
-            filter(userName == exclude[l, ]$userName) %>%
-            filter(timestamp == exclude[l, ]$timestamp)
-          for (m in 1:nrow(removeRow)) {
-            currRow <- removeRow[m, ]
-            questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$timestamp == currRow$timestamp), ]
+        
+        if(nrow(exclude) > 0){
+          for (l in 1:nrow(exclude)) {
+            removeRow <- questionDataRaw %>%
+              filter(userName == exclude[l, ]$userName) %>%
+              filter(forecastNum == exclude[l, ]$forecastNum)
+            for (m in 1:nrow(removeRow)) {
+              currRow <- removeRow[m, ]
+              questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$forecastNum == currRow$forecastNum), ]
+            }
           }
-        }
+        }  
 
         questionDataRaw <- questionDataRaw %>% filter(answerText == currentAnswerText)
         users <- unique(questionDataRaw$userName)
         # users = users[!(users %in% c(supers, expertsG1$userName, expertsG2))]
-        users <- users[(users %in% c(supers, expertsG1$userName, expertsG2))]
+        users <- users[(users %in% c(supers, expertsG1$userName))]
 
         questionDataProcessed <- data.frame(row.names = names(supers))
-
-        if (currentStage == 1) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            if (nrow(userForecasts) == 0) {
-              print(user)
-            }
-            if (!any(is.na(userForecasts$stageTwoTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageTwoTimestamp)
-            } else if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-            } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-            }
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
-        } else if (currentStage == 2) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-            } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-            }
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
-        } else if (currentStage == 3) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            if (!any(is.na(userForecasts$stageFourTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-            }
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
-        } else if (currentStage == 4) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
+        
+        for (l in 1:length(users)) {
+          user <- users[l]
+          userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+          mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+          questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
         }
 
         questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
@@ -1251,7 +1097,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentAnswerText))
         write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-        write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
+        #write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
 
         if (dir.exists("Histograms")) {
           setwd("Histograms")
@@ -1277,39 +1123,39 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
       }
     }
 
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-
-    phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
-
-    print("Making box plots...")
-
-    for (j in 1:length(phases)) {
-      print(paste("Stage", j))
-
-      currentPhase <- phases[j]
-
-      for (k in 1:length(distrib)) {
-        setwd(distrib[k])
-        currentDistribFiles <- list.files()
-        currFile <- currentDistribFiles[grep(currentPhase, currentDistribFiles)]
-        currFile <- currFile[!grepl("ANON", currFile)]
-        assign(paste0("file", k), read.csv(currFile))
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-      }
-
-      phaseTbl <- rbind(file1, file2, file3, file4, file5)
-
-      if (dir.exists("BoxPlots")) {
-        setwd("BoxPlots")
-      } else {
-        dir.create("BoxPlots")
-        setwd("BoxPlots")
-      }
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # 
+    # phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
+    # 
+    # print("Making box plots...")
+    # 
+    # for (j in 1:length(phases)) {
+    #   print(paste("Stage", j))
+    # 
+    #   currentPhase <- phases[j]
+    # 
+    #   for (k in 1:length(distrib)) {
+    #     setwd(distrib[k])
+    #     currentDistribFiles <- list.files()
+    #     currFile <- currentDistribFiles[grep(currentPhase, currentDistribFiles)]
+    #     currFile <- currFile[!grepl("ANON", currFile)]
+    #     assign(paste0("file", k), read.csv(currFile))
+    #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    #   }
+    # 
+    #   phaseTbl <- rbind(file1, file2, file3, file4, file5)
+    # 
+    #   if (dir.exists("BoxPlots")) {
+    #     setwd("BoxPlots")
+    #   } else {
+    #     dir.create("BoxPlots")
+    #     setwd("BoxPlots")
+    #   }
 
       #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "", numerateCitizens, yLabel, survey_column_matches, setName, beliefSet)
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    }
+    #  setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    #}
 
     # # CONVERGENCE DATA
     # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
@@ -1370,15 +1216,16 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
 
     preQRaw <- data %>% filter(setName == currentSetName)
 
-    uniqueForecasts <- unique(data %>% filter(setName == currentSetName) %>% select(userName, timestamp))
-    exclude <- data.frame(row.names = names(uniqueForecasts))
+    uniqueForecasts <- unique(data %>% filter(setName == currentSetName) %>% select(userName, forecastNum))
+    exclude <- data.frame(userName = character(0),
+                          forecastNum = numeric(0))
 
     # rm non monotonic
     for (j in 1:nrow(uniqueForecasts)) {
       # print(l)
       currRow <- preQRaw %>%
         filter(userName == uniqueForecasts[j, ]$userName) %>%
-        filter(timestamp %in% seq(uniqueForecasts[j, ]$timestamp - 60, uniqueForecasts[j, ]$timestamp + 60, 1))
+        filter(forecastNum == uniqueForecasts[j,]$forecastNum)
       if (any(
         (currRow[currRow$answerText == "5th %", ]$forecast > currRow[currRow$answerText == "25th %", ]$forecast) |
           (currRow[currRow$answerText == "25th %", ]$forecast > currRow[currRow$answerText == "50th %", ]$forecast) |
@@ -1389,15 +1236,18 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
       }
     }
 
-    for (j in 1:nrow(exclude)) {
-      removeRow <- preQRaw %>%
-        filter(userName == exclude[j, ]$userName) %>%
-        filter(timestamp == exclude[j, ]$timestamp)
-      for (k in 1:nrow(removeRow)) {
-        currRow <- removeRow[k, ]
-        preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$timestamp == currRow$timestamp & preQRaw$answerText == currRow$answerText), ]
+    if(nrow(exclude) > 0){
+      for (j in 1:nrow(exclude)) {
+        removeRow <- preQRaw %>%
+          filter(userName == exclude[j, ]$userName) %>%
+          filter(forecastNum == exclude[j, ]$forecastNum)
+        for (k in 1:nrow(removeRow)) {
+          currRow <- removeRow[k, ]
+          preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$forecastNum == currRow$forecastNum & preQRaw$answerText == currRow$answerText), ]
+        }
       }
     }
+    
 
     for (j in 1:length(distrib)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data"))
@@ -1446,7 +1296,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
           dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
         }
         users <- unique(dateDataRaw$userName)
-        users <- users[users %in% c(supers, expertsG1$userName, expertsG2)]
+        users <- users[users %in% c(supers, expertsG1$userName)]
 
         dateDataProcessed <- data.frame(row.names = names(dateDataRaw))
 
@@ -1454,7 +1304,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
           user <- users[l]
           userForecasts <- dateDataRaw %>% filter(userName == user)
 
-          mostRecentForecast <- filter(userForecasts, timestamp == max(userForecasts$timestamp))
+          mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
 
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
@@ -1495,7 +1345,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
 
-    write.csv(newAdd, "multiYearDistrib_partial.csv", row.names = FALSE)
+    #write.csv(newAdd, "multiYearDistrib_partial.csv", row.names = FALSE)
 
     if (dir.exists(currentSetName)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -1576,12 +1426,12 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
           questionDataRaw <- data %>%
             filter(setName == currentSetName) %>%
             filter(questionName == currentYear)
-          uniqueForecasts <- questionDataRaw %>% select(userName, timestamp)
+          uniqueForecasts <- questionDataRaw %>% select(userName, forecastNum)
           uniqueForecasts <- unique(uniqueForecasts)
 
           exclude <- data.frame(
             userName = character(0),
-            timestamp = Date(0)
+            forecastNum = numeric(0)
           )
 
           # rm non monotonic
@@ -1589,7 +1439,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
             # print(m)
             currRow <- questionDataRaw %>%
               filter(userName == uniqueForecasts[m, ]$userName) %>%
-              filter(timestamp %in% seq(uniqueForecasts[m, ]$timestamp - 60, uniqueForecasts[m, ]$timestamp + 60, 1))
+              filter(forecastNum == uniqueForecasts[m,]$forecastNum)
             if (any(
               (currRow[currRow$answerText == "5th %", ]$forecast > currRow[currRow$answerText == "25th %", ]$forecast) |
                 (currRow[currRow$answerText == "25th %", ]$forecast > currRow[currRow$answerText == "50th %", ]$forecast) |
@@ -1605,10 +1455,10 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
             for (m in 1:nrow(exclude)) {
               removeRow <- questionDataRaw %>%
                 filter(userName == exclude[m, ]$userName) %>%
-                filter(timestamp == exclude[m, ]$timestamp)
+                filter(forecastNum == exclude[m, ]$forecastNum)
               for (n in 1:nrow(removeRow)) {
                 currRow <- removeRow[n, ]
-                questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$timestamp == currRow$timestamp), ]
+                questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$forecastNum == currRow$forecastNum), ]
               }
             }
           }
@@ -1616,64 +1466,23 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
           questionDataRaw <- questionDataRaw %>% filter(answerText == currentAnswerText)
           users <- unique(questionDataRaw$userName)
           # users = users[!(users %in% c(supers, expertsG1$userName, expertsG2))]
-          users <- users[(users %in% c(supers, expertsG1$userName, expertsG2))]
+          users <- users[(users %in% c(supers, expertsG1$userName))]
 
           questionDataProcessed <- data.frame(row.names = names(supers))
 
-          if (currentStage == 1) {
-            for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              if (nrow(userForecasts) == 0) {
-                print(user)
-              }
-              if (!any(is.na(userForecasts$stageTwoTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageTwoTimestamp)
-              } else if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-              } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-              }
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-            }
-          } else if (currentStage == 2) {
-            for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-              } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-              }
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-            }
-          } else if (currentStage == 3) {
-            for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              if (!any(is.na(userForecasts$stageFourTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-              }
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-            }
-          } else if (currentStage == 4) {
-            for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-            }
+          for (m in 1:length(users)) {
+            user <- users[m]
+            userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+            mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
           }
 
           questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
-          questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
+          #questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
 
           write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-          write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
+          #write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
 
           if (dir.exists("Histograms")) {
             setwd("Histograms")
@@ -1698,7 +1507,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
           newAdd <- rbind(newAdd, newRow)
 
           setwd(paste0(yourHome, "Summary Data"))
-          write.csv(newAdd, "multiYearDistrib_partial.csv", row.names = FALSE)
+          #write.csv(newAdd, "multiYearDistrib_partial.csv", row.names = FALSE)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -1707,41 +1516,41 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
       }
     }
 
-    for (j in 1:length(years)) {
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-
-      phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
-
-      print(paste0("Making box plots for ", years[j], "..."))
-
-      for (k in 1:length(phases)) {
-        print(paste("Stage", k))
-
-        currentPhase <- phases[k]
-
-        for (l in 1:length(distrib)) {
-          setwd(distrib[l])
-          currentDistribFiles <- list.files()
-          currFile <- currentDistribFiles[grep(currentPhase, currentDistribFiles)]
-          currFile <- currFile[!grepl("ANON", currFile)]
-          assign(paste0("file", l), read.csv(currFile))
-          setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-        }
-
-        phaseTbl <- rbind(file1, file2, file3, file4, file5)
-
-        if (dir.exists("BoxPlots")) {
-          setwd("BoxPlots")
-        } else {
-          dir.create("BoxPlots")
-          setwd("BoxPlots")
-        }
+    # for (j in 1:length(years)) {
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    # 
+    #   phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
+    # 
+    #   print(paste0("Making box plots for ", years[j], "..."))
+    # 
+    #   for (k in 1:length(phases)) {
+    #     print(paste("Stage", k))
+    # 
+    #     currentPhase <- phases[k]
+    # 
+    #     for (l in 1:length(distrib)) {
+    #       setwd(distrib[l])
+    #       currentDistribFiles <- list.files()
+    #       currFile <- currentDistribFiles[grep(currentPhase, currentDistribFiles)]
+    #       currFile <- currFile[!grepl("ANON", currFile)]
+    #       assign(paste0("file", l), read.csv(currFile))
+    #       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    #     }
+    # 
+    #     phaseTbl <- rbind(file1, file2, file3, file4, file5)
+    # 
+    #     if (dir.exists("BoxPlots")) {
+    #       setwd("BoxPlots")
+    #     } else {
+    #       dir.create("BoxPlots")
+    #       setwd("BoxPlots")
+    #     }
 
         #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j], numerateCitizens, yLabel, survey_column_matches, setName)
 
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-      }
-    }
+  #      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+   #   }
+  #  }
 
     # # CONVERGENCE DATA
     # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
@@ -1820,7 +1629,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
         filter(setName == currentSetName) %>%
         filter(questionName == years[j])
 
-      uniqueForecasts <- unique(data %>% filter(setName == currentSetName) %>% select(userName, timestamp))
+      uniqueForecasts <- unique(data %>% filter(setName == currentSetName) %>% select(userName, forecastNum))
       exclude <- data.frame(row.names = names(uniqueForecasts))
 
       # rm non monotonic
@@ -1828,7 +1637,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
         # print(l)
         currRow <- preQRaw %>%
           filter(userName == uniqueForecasts[k, ]$userName) %>%
-          filter(timestamp %in% seq(uniqueForecasts[k, ]$timestamp - 60, uniqueForecasts[k, ]$timestamp + 60, 1))
+          filter(forecastNum == uniqueForecasts[k,]$forecastNum)
         if (any(
           (currRow[currRow$answerText == "5th %", ]$forecast > currRow[currRow$answerText == "25th %", ]$forecast) |
             (currRow[currRow$answerText == "25th %", ]$forecast > currRow[currRow$answerText == "50th %", ]$forecast) |
@@ -1843,10 +1652,10 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
         for (k in 1:nrow(exclude)) {
           removeRow <- preQRaw %>%
             filter(userName == exclude[k, ]$userName) %>%
-            filter(timestamp == exclude[k, ]$timestamp)
+            filter(forecastNum == exclude[k, ]$forecastNum)
           for (l in 1:nrow(removeRow)) {
             currRow <- removeRow[l, ]
-            preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$timestamp == currRow$timestamp & preQRaw$answerText == currRow$answerText), ]
+            preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$forecastNum == currRow$forecastNum & preQRaw$answerText == currRow$answerText), ]
           }
         }
       }
@@ -1898,7 +1707,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
             dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
           }
           users <- unique(dateDataRaw$userName)
-          users <- users[users %in% c(supers, expertsG1$userName, expertsG2)]
+          users <- users[users %in% c(supers, expertsG1$userName)]
 
           dateDataProcessed <- data.frame(row.names = names(dateDataRaw))
 
@@ -1906,7 +1715,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
             user <- users[m]
             userForecasts <- dateDataRaw %>% filter(userName == user)
 
-            mostRecentForecast <- filter(userForecasts, timestamp == max(userForecasts$timestamp))
+            mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
 
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
@@ -1945,8 +1754,6 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-
-    write.csv(newAdd, "multiYearBinary_partial.csv", row.names = FALSE)
 
     if (dir.exists(currentSetName)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -2004,64 +1811,21 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
           filter(questionName == currentYear)
         users <- unique(questionDataRaw$userName)
         # users = users[!(users %in% c(supers, expertsG1$userName, expertsG2))]
-        users <- users[(users %in% c(supers, expertsG1$userName, expertsG2))]
+        users <- users[(users %in% c(supers, expertsG1$userName))]
 
         questionDataProcessed <- data.frame(row.names = names(supers))
 
-        if (currentStage == 1) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            if (nrow(userForecasts) == 0) {
-              print(user)
-            }
-            if (!any(is.na(userForecasts$stageTwoTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageTwoTimestamp)
-            } else if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-            } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-            }
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
-        } else if (currentStage == 2) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-            } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-            }
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
-        } else if (currentStage == 3) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            if (!any(is.na(userForecasts$stageFourTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-            }
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
-        } else if (currentStage == 4) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
+        for (m in 1:length(users)) {
+          user <- users[m]
+          userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+          mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+          questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
         }
 
         questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
-        questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
-
         write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-        write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
+        #write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
 
         if (dir.exists("Histograms")) {
           setwd("Histograms")
@@ -2086,42 +1850,42 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
         newAdd <- rbind(newAdd, newRow)
 
         setwd(paste0(yourHome, "Summary Data"))
-        write.csv(newAdd, "multiYearBinary_partial.csv", row.names = FALSE)
+        #write.csv(newAdd, "multiYearBinary_partial.csv", row.names = FALSE)
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
       }
     }
 
-    for (j in 1:length(years)) {
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-
-      phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
-
-      print(paste0("Making box plots for ", years[j], "..."))
-
-      for (k in 1:length(phases)) {
-        print(paste("Stage", k))
-
-        currFiles <- list.files()
-        currFile <- currFiles[grep(phases[k], currFiles)]
-        currFile <- currFile[!grepl("ANON", currFile)]
-
-        if (dir.exists("BoxPlots")) {
-          setwd("BoxPlots")
-        } else {
-          dir.create("BoxPlots")
-          setwd("BoxPlots")
-        }
-
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-
-        filenameStart <- paste(currentSetName, "-", "Stage", k)
-
-        boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
-
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-      }
-    }
+    # for (j in 1:length(years)) {
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    # 
+    #   phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
+    # 
+    #   print(paste0("Making box plots for ", years[j], "..."))
+    # 
+    #   for (k in 1:length(phases)) {
+    #     print(paste("Stage", k))
+    # 
+    #     currFiles <- list.files()
+    #     currFile <- currFiles[grep(phases[k], currFiles)]
+    #     currFile <- currFile[!grepl("ANON", currFile)]
+    # 
+    #     if (dir.exists("BoxPlots")) {
+    #       setwd("BoxPlots")
+    #     } else {
+    #       dir.create("BoxPlots")
+    #       setwd("BoxPlots")
+    #     }
+    # 
+    #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    # 
+    #     filenameStart <- paste(currentSetName, "-", "Stage", k)
+    # 
+    #     boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
+    # 
+    #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    #   }
+    # }
 
     # # CONVERGENCE DATA
     # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
@@ -2215,7 +1979,7 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
           dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
         }
         users <- unique(dateDataRaw$userName)
-        users <- users[users %in% c(supers, expertsG1$userName, expertsG2)]
+        users <- users[users %in% c(supers, expertsG1$userName)]
 
         dateDataProcessed <- data.frame(row.names = names(dateDataRaw))
 
@@ -2223,7 +1987,7 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
           user <- users[l]
           userForecasts <- dateDataRaw %>% filter(userName == user)
 
-          mostRecentForecast <- filter(userForecasts, timestamp == max(userForecasts$timestamp))
+          mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
 
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
@@ -2259,8 +2023,6 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-
-    write.csv(newAdd, "multiYearCountryDistrib_partial.csv", row.names = FALSE)
 
     if (dir.exists(currentSetName)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -2336,65 +2098,21 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
             filter(questionName == currentQuestionName)
           users <- unique(questionDataRaw$userName)
           # users = users[!(users %in% c(supers, expertsG1$userName, expertsG2))]
-          users <- users[(users %in% c(supers, expertsG1$userName, expertsG2))]
+          users <- users[(users %in% c(supers, expertsG1$userName))]
 
           questionDataProcessed <- data.frame(row.names = names(supers))
 
-          if (currentStage == 1) {
-            for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              if (nrow(userForecasts) == 0) {
-                print(user)
-              }
-              if (!any(is.na(userForecasts$stageTwoTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageTwoTimestamp)
-              } else if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-              } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-              }
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-            }
-          } else if (currentStage == 2) {
-            for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-              } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-              }
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-            }
-          } else if (currentStage == 3) {
-            for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              if (!any(is.na(userForecasts$stageFourTimestamp))) {
-                userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-              }
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-            }
-          } else if (currentStage == 4) {
-            for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user)
-              mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-            }
+          for (m in 1:length(users)) {
+            user <- users[m]
+            userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+            mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
           }
 
           questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
-          questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
-
           write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-          write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
-
+          
           if (dir.exists("Histograms")) {
             setwd("Histograms")
           } else {
@@ -2406,12 +2124,17 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
           histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear, "/", currentCountry))
+          
+          files = paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv")
+          filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, " Box Plot")
+          
+          boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
 
           newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = currentYear, answerText = currentCountry, stage = currentStage, specialty = metaTable[i, ]$specialty)
           newAdd <- rbind(newAdd, newRow)
 
           setwd(paste0(yourHome, "Summary Data"))
-          write.csv(newAdd, "multiYearCountryDistrib_partial.csv", row.names = FALSE)
+          #write.csv(newAdd, "multiYearCountryDistrib_partial.csv", row.names = FALSE)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear, "/", currentCountry))
         }
@@ -2574,7 +2297,7 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
             dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
           }
           users <- unique(dateDataRaw$userName)
-          users <- users[users %in% c(supers, expertsG1$userName, expertsG2)]
+          users <- users[users %in% c(supers, expertsG1$userName)]
 
           dateDataProcessed <- data.frame(row.names = names(dateDataRaw))
 
@@ -2582,7 +2305,7 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
             user <- users[m]
             userForecasts <- dateDataRaw %>% filter(userName == user)
 
-            mostRecentForecast <- filter(userForecasts, timestamp == max(userForecasts$timestamp))
+            mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
 
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
@@ -2617,8 +2340,6 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-
-    write.csv(newAdd, "multiCountryBinary_partial.csv", row.names = FALSE)
 
     if (dir.exists(currentSetName)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -2676,65 +2397,21 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
           filter(answerText == currentCountry)
         users <- unique(questionDataRaw$userName)
         # users = users[!(users %in% c(supers, expertsG1$userName, expertsG2))]
-        users <- users[(users %in% c(supers, expertsG1$userName, expertsG2))]
+        users <- users[(users %in% c(supers, expertsG1$userName))]
 
         questionDataProcessed <- data.frame(row.names = names(supers))
 
-        if (currentStage == 1) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            if (nrow(userForecasts) == 0) {
-              print(user)
-            }
-            if (!any(is.na(userForecasts$stageTwoTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageTwoTimestamp)
-            } else if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-            } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-            }
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
-        } else if (currentStage == 2) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-            } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-            }
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
-        } else if (currentStage == 3) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            if (!any(is.na(userForecasts$stageFourTimestamp))) {
-              userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-            }
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
-        } else if (currentStage == 4) {
-          for (l in 1:length(users)) {
-            user <- users[l]
-            userForecasts <- questionDataRaw %>% filter(userName == user)
-            mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-          }
+        for (l in 1:length(users)) {
+          user <- users[l]
+          userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+          mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+          questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
         }
 
         questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
-        questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
-
         write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentCountry, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-        write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentCountry, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
-
+        
         if (dir.exists("Histograms")) {
           setwd("Histograms")
         } else {
@@ -2747,12 +2424,16 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentCountry))
 
+        files <- paste0(currentSetName, " - ", currentCountry, " - Phase ", currentStage, ".csv")
+        filenameStart <- paste0(currentSetName, " - ", currentCountry, " - Phase ", currentStage, " Box Plot")
+        
+        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentCountry), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
+        
         newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = "", answerText = currentCountry, stage = currentStage, specialty = metaTable[i, ]$specialty)
         newAdd <- rbind(newAdd, newRow)
 
         setwd(paste0(yourHome, "Summary Data"))
-        write.csv(newAdd, "multiCountryBinary_partial.csv", row.names = FALSE)
-
+        
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentCountry))
       }
     }
@@ -2886,7 +2567,7 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
           dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
         }
         users <- unique(dateDataRaw$userName)
-        users <- users[users %in% c(supers, expertsG1$userName, expertsG2)]
+        users <- users[users %in% c(supers, expertsG1$userName)]
 
         dateDataProcessed <- data.frame(row.names = names(dateDataRaw))
 
@@ -2894,7 +2575,7 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
           user <- users[l]
           userForecasts <- dateDataRaw %>% filter(userName == user)
 
-          mostRecentForecast <- filter(userForecasts, timestamp == max(userForecasts$timestamp))
+          mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
 
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
@@ -2932,9 +2613,7 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-
-    write.csv(newAdd, "pointBinary_partial.csv", row.names = FALSE)
-
+    
     if (dir.exists(currentSetName)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName))
     } else {
@@ -2973,65 +2652,21 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
       questionDataRaw <- data %>% filter(setName == currentSetName)
       users <- unique(questionDataRaw$userName)
       # users = users[!(users %in% c(supers, expertsG1$userName, expertsG2))]
-      users <- users[(users %in% c(supers, expertsG1$userName, expertsG2))]
+      users <- users[(users %in% c(supers, expertsG1$userName))]
 
       questionDataProcessed <- data.frame(row.names = names(supers))
 
-      if (currentStage == 1) {
-        for (k in 1:length(users)) {
-          user <- users[k]
-          userForecasts <- questionDataRaw %>% filter(userName == user)
-          if (nrow(userForecasts) == 0) {
-            print(user)
-          }
-          if (!any(is.na(userForecasts$stageTwoTimestamp))) {
-            userForecasts <- userForecasts %>% filter(timestamp < stageTwoTimestamp)
-          } else if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-            userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-          } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-            userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-          }
-          mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-          questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-        }
-      } else if (currentStage == 2) {
-        for (k in 1:length(users)) {
-          user <- users[k]
-          userForecasts <- questionDataRaw %>% filter(userName == user)
-          if (!any(is.na(userForecasts$stageThreeTimestamp))) {
-            userForecasts <- userForecasts %>% filter(timestamp < stageThreeTimestamp)
-          } else if (!any(is.na(userForecasts$stageFourTimestamp))) {
-            userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-          }
-          mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-          questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-        }
-      } else if (currentStage == 3) {
-        for (k in 1:length(users)) {
-          user <- users[k]
-          userForecasts <- questionDataRaw %>% filter(userName == user)
-          if (!any(is.na(userForecasts$stageFourTimestamp))) {
-            userForecasts <- userForecasts %>% filter(timestamp < stageFourTimestamp)
-          }
-          mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-          questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-        }
-      } else if (currentStage == 4) {
-        for (k in 1:length(users)) {
-          user <- users[k]
-          userForecasts <- questionDataRaw %>% filter(userName == user)
-          mostRecentForecast <- userForecasts %>% filter(timestamp == max(timestamp))
-          questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
-        }
+      for (k in 1:length(users)) {
+        user <- users[k]
+        userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+        mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+        questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
       }
 
       questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
-      questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
-
       write.csv(questionDataProcessed, paste0(currentSetName, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-      write.csv(questionDataProcessed_anon, paste0(currentSetName, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
-
+      
       if (dir.exists("Histograms")) {
         setwd("Histograms")
       } else {
@@ -3055,26 +2690,25 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
       newAdd <- rbind(newAdd, newRow)
 
       setwd(paste0(yourHome, "Summary Data"))
-      write.csv(newAdd, "pointBinary_partial.csv", row.names = FALSE)
-
+      
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/"))
     }
 
-    setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-
-    phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
-
-    print(paste0("Making box plots..."))
-
-    for (j in 1:length(phases)) {
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-
-      currFiles <- list.files()
-      currFile <- currFiles[grep(phases[j], currFiles)]
-      currFile <- currFile[!grepl("ANON", currFile)]
-
-      boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
-    }
+    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # 
+    # phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
+    # 
+    # print(paste0("Making box plots..."))
+    # 
+    # for (j in 1:length(phases)) {
+    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+    # 
+    #   currFiles <- list.files()
+    #   currFile <- currFiles[grep(phases[j], currFiles)]
+    #   currFile <- currFile[!grepl("ANON", currFile)]
+    # 
+    #   boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
+    # }
 
     # # CONVERGENCE DATA
     # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
@@ -3145,7 +2779,7 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
         dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
       }
       users <- unique(dateDataRaw$userName)
-      users <- users[users %in% c(supers, expertsG1$userName, expertsG2)]
+      users <- users[users %in% c(supers, expertsG1$userName)]
 
       dateDataProcessed <- data.frame(row.names = names(dateDataRaw))
 
@@ -3153,7 +2787,7 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
         user <- users[k]
         userForecasts <- dateDataRaw %>% filter(userName == user)
 
-        mostRecentForecast <- filter(userForecasts, timestamp == max(userForecasts$timestamp))
+        mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
 
         dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
       }

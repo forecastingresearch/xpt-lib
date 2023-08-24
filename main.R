@@ -21,27 +21,45 @@ assign_user_id <- function(df) {
   return(df)
 }
 
-data <- fread("FORECASTS.csv")
+data <- fread("forecasts_anon_aug10.csv")
 data <- assign_user_id(data)
-data$timestamp <- ymd_hms(data$timestamp)
-data$stageOneTimestamp <- mdy_hms(data$stageOneTimestamp)
-data$stageTwoTimestamp <- mdy_hms(data$stageTwoTimestamp)
-data$stageThreeTimestamp <- mdy_hms(data$stageThreeTimestamp)
-data$stageFourTimestamp <- mdy_hms(data$stageFourTimestamp)
+#data$timestamp <- ymd_hms(data$timestamp)
+#data$stageOneTimestamp <- mdy_hms(data$stageOneTimestamp)
+#data$stageTwoTimestamp <- mdy_hms(data$stageTwoTimestamp)
+#data$stageThreeTimestamp <- mdy_hms(data$stageThreeTimestamp)
+#data$stageFourTimestamp <- mdy_hms(data$stageFourTimestamp)
 data$forecast <- as.numeric(data$forecast)
 
-supers <- fread("supers.csv")
+supers <- fread("supers_anon.csv")
 supers <- supers$x
 
-expertsG1 <- fread("expertsG1.csv")
+expertsG1 <- fread("expertsG1_anon.csv")
 expertsG1 <- assign_user_id(expertsG1)
 
-teams <- data %>% select(userName, userId, teamName, teamId)
+teams <- data %>% select(userName, userId, teamId)
 teams <- unique(teams)
 
 meta <- fread("questionMetadata.csv")
 # meta = fread("GDPGrowthMetadata.csv")
-questionTypes <- unique(meta$questionType)
+#questionTypes <- unique(meta$questionType)
+questions <- unique(meta$setName)
+
+#fix #40 question name
+data$setName[grep("40.", data$setName)] <- unique(meta$setName[grep("40.", meta$setName)])
+
+setwd(paste0(yourHome, "sources/public-survey"))
+survey_column_matches <- read.csv("survey_column_matches.csv")
+survey_column_matches[is.na(survey_column_matches)] = ""
+
+main1 <- read.csv("main1_cleaned_anon.csv")
+main1 <- main1 %>%
+  filter(Finished == TRUE)
+main2 <- read.csv("main2_cleaned_anon.csv")
+main2 <- main2 %>%
+  filter(Finished == TRUE)
+supplement <- read.csv("supplement_cleaned_anon.csv")
+supplement <- supplement %>%
+  filter(Finished == TRUE)
 
 setwd(paste0(yourHome, "Summary Data"))
 
@@ -54,20 +72,17 @@ if ("summaryTable.csv" %in% list.files()) {
 }
 write.csv(summaryTable, "summaryTable.csv", row.names = FALSE)
 
-startDate <- (data %>% select(timestamp) %>% arrange(timestamp) %>% filter(!is.na(timestamp)))$timestamp[1]
-startDate <- ymd(paste(year(startDate), month(startDate), day(startDate)))
 
-phaseTwoMedian <- (data %>% select(stageTwoTimestamp) %>% arrange(stageTwoTimestamp) %>% filter(!is.na(stageTwoTimestamp)))$stageTwoTimestamp
-phaseTwoMedian <- median(phaseTwoMedian)
-phaseTwoMedian <- ymd(paste(year(phaseTwoMedian), month(phaseTwoMedian), day(phaseTwoMedian)))
+#####
 
+startDate <- as.Date("2022-06-16 UTC")
+phaseTwoMedian <- as.Date("2022-07-16")
 endDate <- ymd("2022 10 31")
 
 timeline <- seq(startDate, endDate, 1)
 
-for (i in 1:length(questionTypes)) {
-  print(questionTypes[i])
-  metaTable <- meta %>% filter(questionType == questionTypes[i])
+for (i in 1:length(questions)) {
+  metaTable <- meta %>% filter(setName == questions[i])
   if (metaTable$questionType[1] == "multiYearReciprocal") {
     newAdd <- multiYearReciprocal(metaTable, data)
     summaryTable <- rbind(summaryTable, newAdd)
@@ -129,7 +144,7 @@ write.csv(RSRanking_unincentivized, "RSRanking_unincentivized.csv", row.names = 
 #####Produce Reciprocal Scoring Quintile Graphs#####
 rs_rank <- read.csv("RSRanking_unincentivized_first10.csv")
 
-rs_rank <- rs_rank %>% filter(n >= 30) %>% filter(group %in% c("supers", "domain experts", "non-domain experts"))
+rs_rank <- rs_rank %>% filter(numQuestions >= 30) %>% filter(group %in% c("supers", "domain experts", "non-domain experts"))
 rs_rank$group[rs_rank$group %in% c("domain experts", "non-domain experts")] <- "experts"
 
 rs_rank <- arrange(rs_rank, avgRank)
@@ -156,7 +171,7 @@ q5 = rs_rank[d_80th:nrow(rs_rank),]
 
 setwd(paste0(yourHome, "Summary Data"))
 
-metaTable = meta %>% filter(questionType == questionTypes[1])
+metaTable = meta %>% filter(questionType == "multiYearReciprocal")
 
 for(i in 1:length(unique(metaTable$setName))){
   setwd(paste0(yourHome, "Summary Data"))
@@ -296,7 +311,14 @@ for(i in 1:length(unique(metaTable$setName))){
         
         ggsave(paste0(title, "-", subtitle, ".png"), plot, width=3600, height=2000, units=c("px"))
         
-        setwd(paste0(yourHome, "Summary Data/RS Accuracy"))
+        setwd(paste0(yourHome, "Summary Data"))
+        
+        if(dir.exists("RS Accuracy")){
+          setwd("RS Accuracy")
+        } else{
+          dir.create("RS Accuracy")
+          setwd("RS Accuracy")
+        }
         
         ggsave(paste0(title, "-", subtitle, ".png"), plot, width=3600, height=2000, units=c("px"))
         

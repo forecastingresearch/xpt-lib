@@ -236,7 +236,7 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
             mutate(rank_rs = rank(-score_rs, ties.method = "min", na.last = "keep"))
 
           # This is the first csv we write: everyone's score on each question?
-          csv <- select(phase_csv, userId, teamName, teamId, setName, setId,
+          csv <- select(phase_csv, userId, teamId, setName, setId,
                         questionName, questionId, answerText, answerId,
                         score_unincentivized, score_rs, rank_unincentivized,
                         rank_rs, group)
@@ -449,7 +449,6 @@ pointDistrib_RS <- function(metaTable, data, summaryTable) {
 
       scoreTbl <- data.frame(
         userId = numeric(0),
-        teamName = character(0),
         teamId = numeric(0),
         setName = character(0),
         setId = numeric(0),
@@ -510,7 +509,6 @@ pointDistrib_RS <- function(metaTable, data, summaryTable) {
 
         scoreTbl <- rbind(scoreTbl, data.frame(
           userId = csv_5th[csv_5th$userName == users[k], ]$userId,
-          teamName = csv_5th[csv_5th$userName == users[k], ]$teamName,
           teamId = csv_5th[csv_5th$userName == users[k], ]$teamId,
           setName = csv_5th[csv_5th$userName == users[k], ]$setName,
           setId = csv_5th[csv_5th$userName == users[k], ]$setId,
