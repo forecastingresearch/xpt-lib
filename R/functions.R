@@ -788,7 +788,10 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
           for (m in 1:length(users)) {
               user <- users[m]
               userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
-              mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+              mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
+              if(nrow(mostRecentForecast) > 1){
+                mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+              }
               questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
             }
 
@@ -915,6 +918,8 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
           filter(setName == currentSetName) %>%
           filter(questionName == currentQuestionName) %>%
           filter(forecast != defaultForecast)
+        
+        questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
         totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
         totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
@@ -941,7 +946,10 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
             user <- users[m]
             userForecasts <- dateDataRaw %>% filter(userName == user)
 
-            mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
+            mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
+            if(nrow(mostRecentForecast) > 1){
+              mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+            }
 
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
@@ -1040,18 +1048,18 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
         }
 
         questionDataRaw <- data %>% filter(setName == currentSetName)
-        uniqueForecasts <- questionDataRaw %>% select(userName, forecastNum)
+        uniqueForecasts <- questionDataRaw %>% select(userName, forecastId)
         uniqueForecasts <- unique(uniqueForecasts)
 
         exclude <- data.frame(userName = character(0),
-                              forecastNum = numeric(0))
+                              forecastId = numeric(0))
 
         # rm non monotonic
         for (l in 1:nrow(uniqueForecasts)) {
           # print(l)
           currRow <- questionDataRaw %>%
             filter(userName == uniqueForecasts[l, ]$userName) %>%
-            filter(forecastNum == uniqueForecasts$forecastNum[l])
+            filter(forecastId == uniqueForecasts$forecastId[l])
           # if(length(currRow$forecast) != 5){
           #   print(l)
           # }
@@ -1069,10 +1077,10 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
           for (l in 1:nrow(exclude)) {
             removeRow <- questionDataRaw %>%
               filter(userName == exclude[l, ]$userName) %>%
-              filter(forecastNum == exclude[l, ]$forecastNum)
+              filter(forecastId == exclude[l, ]$forecastId)
             for (m in 1:nrow(removeRow)) {
               currRow <- removeRow[m, ]
-              questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$forecastNum == currRow$forecastNum), ]
+              questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$forecastId == currRow$forecastId), ]
             }
           }
         }  
@@ -1087,7 +1095,10 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
         for (l in 1:length(users)) {
           user <- users[l]
           userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
-          mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+          mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
+          if(nrow(mostRecentForecast) > 1){
+            mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+          }
           questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
         }
 
@@ -1216,16 +1227,16 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
 
     preQRaw <- data %>% filter(setName == currentSetName)
 
-    uniqueForecasts <- unique(data %>% filter(setName == currentSetName) %>% select(userName, forecastNum))
+    uniqueForecasts <- unique(data %>% filter(setName == currentSetName) %>% select(userName, forecastId))
     exclude <- data.frame(userName = character(0),
-                          forecastNum = numeric(0))
+                          forecastId = numeric(0))
 
     # rm non monotonic
     for (j in 1:nrow(uniqueForecasts)) {
       # print(l)
       currRow <- preQRaw %>%
         filter(userName == uniqueForecasts[j, ]$userName) %>%
-        filter(forecastNum == uniqueForecasts[j,]$forecastNum)
+        filter(forecastId == uniqueForecasts[j,]$forecastId)
       if (any(
         (currRow[currRow$answerText == "5th %", ]$forecast > currRow[currRow$answerText == "25th %", ]$forecast) |
           (currRow[currRow$answerText == "25th %", ]$forecast > currRow[currRow$answerText == "50th %", ]$forecast) |
@@ -1240,10 +1251,10 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
       for (j in 1:nrow(exclude)) {
         removeRow <- preQRaw %>%
           filter(userName == exclude[j, ]$userName) %>%
-          filter(forecastNum == exclude[j, ]$forecastNum)
+          filter(forecastId == exclude[j, ]$forecastId)
         for (k in 1:nrow(removeRow)) {
           currRow <- removeRow[k, ]
-          preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$forecastNum == currRow$forecastNum & preQRaw$answerText == currRow$answerText), ]
+          preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$forecastId == currRow$forecastId & preQRaw$answerText == currRow$answerText), ]
         }
       }
     }
@@ -1280,6 +1291,8 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
         filter(setName == currentSetName) %>%
         filter(answerText == currentAnswerText) %>%
         filter(forecast != defaultForecast)
+      
+      questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
       totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
       totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
@@ -1290,7 +1303,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
         if (k == 1 | k %% 30 == 0) {
           print(currentDate)
         }
-
+        
         dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 1)
         if (k == length(timeline)) {
           dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
@@ -1304,7 +1317,10 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
           user <- users[l]
           userForecasts <- dateDataRaw %>% filter(userName == user)
 
-          mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
+          mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
+          if(nrow(mostRecentForecast) > 1){
+            mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+          }
 
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
@@ -1426,12 +1442,13 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
           questionDataRaw <- data %>%
             filter(setName == currentSetName) %>%
             filter(questionName == currentYear)
-          uniqueForecasts <- questionDataRaw %>% select(userName, forecastNum)
+          questionDataRaw <- filter(questionDataRaw, !is.na(stage))
+          uniqueForecasts <- questionDataRaw %>% select(userName, forecastId)
           uniqueForecasts <- unique(uniqueForecasts)
 
           exclude <- data.frame(
             userName = character(0),
-            forecastNum = numeric(0)
+            forecastId = numeric(0)
           )
 
           # rm non monotonic
@@ -1439,7 +1456,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
             # print(m)
             currRow <- questionDataRaw %>%
               filter(userName == uniqueForecasts[m, ]$userName) %>%
-              filter(forecastNum == uniqueForecasts[m,]$forecastNum)
+              filter(forecastId == uniqueForecasts[m,]$forecastId)
             if (any(
               (currRow[currRow$answerText == "5th %", ]$forecast > currRow[currRow$answerText == "25th %", ]$forecast) |
                 (currRow[currRow$answerText == "25th %", ]$forecast > currRow[currRow$answerText == "50th %", ]$forecast) |
@@ -1455,10 +1472,10 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
             for (m in 1:nrow(exclude)) {
               removeRow <- questionDataRaw %>%
                 filter(userName == exclude[m, ]$userName) %>%
-                filter(forecastNum == exclude[m, ]$forecastNum)
+                filter(forecastId == exclude[m, ]$forecastId)
               for (n in 1:nrow(removeRow)) {
                 currRow <- removeRow[n, ]
-                questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$forecastNum == currRow$forecastNum), ]
+                questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$forecastId == currRow$forecastId), ]
               }
             }
           }
@@ -1473,7 +1490,10 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
           for (m in 1:length(users)) {
             user <- users[m]
             userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
-            mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+            mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
+            if(nrow(mostRecentForecast) > 1){
+              mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+            }
             questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
           }
 
@@ -1629,7 +1649,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
         filter(setName == currentSetName) %>%
         filter(questionName == years[j])
 
-      uniqueForecasts <- unique(data %>% filter(setName == currentSetName) %>% select(userName, forecastNum))
+      uniqueForecasts <- unique(data %>% filter(setName == currentSetName) %>% select(userName, forecastId))
       exclude <- data.frame(row.names = names(uniqueForecasts))
 
       # rm non monotonic
@@ -1637,7 +1657,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
         # print(l)
         currRow <- preQRaw %>%
           filter(userName == uniqueForecasts[k, ]$userName) %>%
-          filter(forecastNum == uniqueForecasts[k,]$forecastNum)
+          filter(forecastId == uniqueForecasts[k,]$forecastId)
         if (any(
           (currRow[currRow$answerText == "5th %", ]$forecast > currRow[currRow$answerText == "25th %", ]$forecast) |
             (currRow[currRow$answerText == "25th %", ]$forecast > currRow[currRow$answerText == "50th %", ]$forecast) |
@@ -1652,10 +1672,10 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
         for (k in 1:nrow(exclude)) {
           removeRow <- preQRaw %>%
             filter(userName == exclude[k, ]$userName) %>%
-            filter(forecastNum == exclude[k, ]$forecastNum)
+            filter(forecastId == exclude[k, ]$forecastId)
           for (l in 1:nrow(removeRow)) {
             currRow <- removeRow[l, ]
-            preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$forecastNum == currRow$forecastNum & preQRaw$answerText == currRow$answerText), ]
+            preQRaw <- preQRaw[!(preQRaw$userName == currRow$userName & preQRaw$forecastId == currRow$forecastId & preQRaw$answerText == currRow$answerText), ]
           }
         }
       }
@@ -1691,6 +1711,8 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
           filter(setName == currentSetName) %>%
           filter(answerText == currentAnswerText) %>%
           filter(forecast != defaultForecast)
+        
+        questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
         totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
         totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
@@ -1701,7 +1723,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
           if (l == 1 | l %% 30 == 0) {
             print(currentDate)
           }
-
+          
           dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 1)
           if (l == length(timeline)) {
             dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
@@ -1715,7 +1737,10 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
             user <- users[m]
             userForecasts <- dateDataRaw %>% filter(userName == user)
 
-            mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
+            mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
+            if(nrow(mostRecentForecast) > 1){
+              mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+            }
 
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
@@ -1818,7 +1843,10 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
         for (m in 1:length(users)) {
           user <- users[m]
           userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
-          mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+          mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
+          if(nrow(mostRecentForecast) > 1){
+            mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+          }
           questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
         }
 
@@ -1963,6 +1991,8 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
       questionDataRaw <- preQRaw %>%
         filter(setName == currentSetName) %>%
         filter(forecast != defaultForecast)
+      
+      questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
       totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
       totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
@@ -1973,7 +2003,7 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
         if (k == 1 | k %% 30 == 0) {
           print(currentDate)
         }
-
+        
         dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 1)
         if (k == length(timeline)) {
           dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
@@ -1987,7 +2017,10 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
           user <- users[l]
           userForecasts <- dateDataRaw %>% filter(userName == user)
 
-          mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
+          mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
+          if(nrow(mostRecentForecast) > 1){
+            mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+          }
 
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
@@ -2105,7 +2138,10 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
           for (m in 1:length(users)) {
             user <- users[m]
             userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
-            mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+            mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
+            if(nrow(mostRecentForecast) > 1){
+              mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+            }
             questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
           }
 
@@ -2281,6 +2317,8 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
         questionDataRaw <- preQRaw %>%
           filter(setName == currentSetName) %>%
           filter(forecast != defaultForecast)
+        
+        questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
         totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
         totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
@@ -2291,7 +2329,7 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
           if (l == 1 | l %% 30 == 0) {
             print(currentDate)
           }
-
+          
           dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 1)
           if (l == length(timeline)) {
             dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
@@ -2305,7 +2343,10 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
             user <- users[m]
             userForecasts <- dateDataRaw %>% filter(userName == user)
 
-            mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
+            mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
+            if(nrow(mostRecentForecast) > 1){
+              mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+            }
 
             dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
           }
@@ -2404,7 +2445,10 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
         for (l in 1:length(users)) {
           user <- users[l]
           userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
-          mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+          mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
+          if(nrow(mostRecentForecast) > 1){
+            mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+          }
           questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
         }
 
@@ -2551,6 +2595,8 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
         filter(setName == currentSetName) %>%
         filter(answerText == countries[j]) %>%
         filter(forecast != defaultForecast)
+      
+      questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
       totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
       totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
@@ -2575,7 +2621,10 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
           user <- users[l]
           userForecasts <- dateDataRaw %>% filter(userName == user)
 
-          mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
+          mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
+          if(nrow(mostRecentForecast) > 1){
+            mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+          }
 
           dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
         }
@@ -2659,7 +2708,10 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
       for (k in 1:length(users)) {
         user <- users[k]
         userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
-        mostRecentForecast <- userForecasts %>% filter(forecastNum == max(forecastNum))
+        mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
+        if(nrow(mostRecentForecast) > 1){
+          mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+        }
         questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
       }
 
@@ -2763,6 +2815,8 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
     questionDataRaw <- data %>%
       filter(setName == currentSetName) %>%
       filter(forecast != defaultForecast)
+    
+    questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
     totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
     totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
@@ -2787,7 +2841,10 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
         user <- users[k]
         userForecasts <- dateDataRaw %>% filter(userName == user)
 
-        mostRecentForecast <- filter(userForecasts, forecastNum == max(userForecasts$forecastNum))
+        mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
+        if(nrow(mostRecentForecast) > 1){
+          mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
+        }
 
         dateDataProcessed <- rbind(dateDataProcessed, mostRecentForecast)
       }

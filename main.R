@@ -21,7 +21,7 @@ assign_user_id <- function(df) {
   return(df)
 }
 
-data <- fread("forecasts_anon_aug10.csv")
+data <- fread("forecasts_anon.csv")
 data <- assign_user_id(data)
 #data$timestamp <- ymd_hms(data$timestamp)
 #data$stageOneTimestamp <- mdy_hms(data$stageOneTimestamp)
