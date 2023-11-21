@@ -311,11 +311,6 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
               }
             }
           }
-          # }
-
-          # if(is.na(RSRanking_unincentivized[RSRanking_unincentivized$userId==3990,]$rankSum)){
-          #   print("HEY!")
-          # }
 
           # Write the G1 rankings unincentivized RS rankings to CSV
           write.csv(RSRanking_unincentivized, "RSRanking_unincentivized.csv", row.names = FALSE)

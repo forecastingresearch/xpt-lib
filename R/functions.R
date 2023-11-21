@@ -271,8 +271,8 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     xRiskGeneralistsHdTrim <- NA
   }
   xRiskGeneralistsNeymanAgg <- neymanAggCalc(xRiskGeneralistsProcessed$forecast)
-  
-  
+
+
   if (specialty != "") {
     currentSpecialty <- specialty
     specialists <- (expertsG1 %>% filter(specialty1 == specialty | specialty2 == specialty | specialty3 == specialty))$userName
@@ -411,9 +411,9 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
     expertsG1HdTrim_exc <- NA
   }
   expertsG1NeymanAgg_exc <- neymanAggCalc(expertsG1Processed_exc$forecast)
-  
+
   xRiskGeneralists <- (expertsG1 %>% filter(specialty1 == "General" | specialty2 == "General" | specialty3 == "General"))$userName
-  xRiskGeneralistsProcessed_exc <- questionDataProcessed %>% 
+  xRiskGeneralistsProcessed_exc <- questionDataProcessed %>%
     filter(userName %in% xRiskGeneralists) %>%
     filter(forecast > xRiskGeneralistsMedian - (10 * xRiskGeneralistsSd)) %>%
     filter(forecast < xRiskGeneralistsMedian + (10 * xRiskGeneralistsSd))
@@ -474,7 +474,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
 
   if (specialty != "") {
     nonDomainExpertsProcessed_exc <- questionDataProcessed %>%
-      filter(!(userName %in% specialists)) %>% 
+      filter(!(userName %in% specialists)) %>%
       filter(!(userName %in% xRiskGeneralists)) %>%
       filter(userName %in% expertsG1$userName) %>%
       filter(forecast > nonDomainExpertsMedian - (10 * nonDomainExpertsSd)) %>%
@@ -735,12 +735,12 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
     beliefSets <- metaTable[i, ] %>% select(yourBeliefs, expertBeliefs, superBeliefs)
     beliefSets <- as.character(beliefSets)
     beliefSets <- beliefSets[beliefSets != ""]
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
 
     for (j in 1:length(years)) {
       if (!dir.exists(years[j])) {
@@ -781,26 +781,28 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
             filter(setName == currentSetName) %>%
             filter(questionName == currentQuestionName)
           users <- unique(questionDataRaw$userName)
-          users = users[(users %in% c(supers, expertsG1$userName))]
+          users <- users[(users %in% c(supers, expertsG1$userName))]
 
           questionDataProcessed <- data.frame()
 
           for (m in 1:length(users)) {
-              user <- users[m]
-              userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
-              mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
-              if(nrow(mostRecentForecast) > 1){
-                mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
-              }
-              questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
+            user <- users[m]
+            userForecasts <- questionDataRaw %>%
+              filter(userName == user) %>%
+              filter(stage <= currentStage)
+            mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
+            if (nrow(mostRecentForecast) > 1) {
+              mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
             }
+            questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
+          }
 
           questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
-          #questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
+          # questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
 
           write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-          #write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
+          # write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
 
           if (dir.exists("Histograms")) {
             setwd("Histograms")
@@ -816,10 +818,9 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
 
           files <- c(paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"))
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - ", currentStage, " Box Plot")
-          
-          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet=beliefSets[k], year=years[l], distrib="")
 
-          
+          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = beliefSets[k], year = years[l], distrib = "")
+
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[l], "/", beliefSets[k]))
 
           newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName, answerText = "", stage = currentStage, specialty = metaTable[i, ]$specialty)
@@ -827,54 +828,6 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
         }
       }
     }
-
-    # # CONVERGENCE DATA
-    # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    # print("Getting convergence data...")
-    # for (j in 1:length(years)) {
-    #   setwd(years[j])
-    #   print(years[j])
-
-    #   for (k in 1:length(beliefSets)) {
-    #     setwd(beliefSets[k])
-    #     print(beliefSets[k])
-
-    #     phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
-    #     phase1median <- median(phase1$forecast)
-    #     phase1sd <- sd(phase1$forecast)
-    #     phase1 <- phase1 %>%
-    #       filter(forecast > phase1median - (10 * phase1sd)) %>%
-    #       filter(forecast < phase1median + (10 * phase1sd))
-    #     phase2 <- read.csv(list.files()[grep("Phase 2.csv", list.files())])
-    #     phase2median <- median(phase2$forecast)
-    #     phase2sd <- sd(phase2$forecast)
-    #     phase2 <- phase2 %>%
-    #       filter(forecast > phase2median - (10 * phase2sd)) %>%
-    #       filter(forecast < phase2median + (10 * phase2sd))
-    #     phase3 <- read.csv(list.files()[grep("Phase 3.csv", list.files())])
-    #     phase3median <- median(phase3$forecast)
-    #     phase3sd <- sd(phase3$forecast)
-    #     phase3 <- phase3 %>%
-    #       filter(forecast > phase3median - (10 * phase3sd)) %>%
-    #       filter(forecast < phase3median + (10 * phase3sd))
-    #     phase4 <- read.csv(list.files()[grep("Phase 4.csv", list.files())])
-    #     phase4median <- median(phase4$forecast)
-    #     phase4sd <- sd(phase4$forecast)
-    #     phase4 <- phase4 %>%
-    #       filter(forecast > phase4median - (10 * phase4sd)) %>%
-    #       filter(forecast < phase4median + (10 * phase4sd))
-
-    #     setwd(paste0(yourHome, "Summary Data"))
-    #     convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
-    #     convergenceTable <- rbind(convergenceTable, convergenceRow)
-
-    #     write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
-
-    #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-    #   }
-
-    #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    # }
 
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -918,7 +871,7 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
           filter(setName == currentSetName) %>%
           filter(questionName == currentQuestionName) %>%
           filter(forecast != defaultForecast)
-        
+
         questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
         totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
@@ -947,7 +900,7 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
             userForecasts <- dateDataRaw %>% filter(userName == user)
 
             mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
-            if(nrow(mostRecentForecast) > 1){
+            if (nrow(mostRecentForecast) > 1) {
               mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
             }
 
@@ -1011,12 +964,12 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -1051,8 +1004,10 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
         uniqueForecasts <- questionDataRaw %>% select(userName, forecastId)
         uniqueForecasts <- unique(uniqueForecasts)
 
-        exclude <- data.frame(userName = character(0),
-                              forecastId = numeric(0))
+        exclude <- data.frame(
+          userName = character(0),
+          forecastId = numeric(0)
+        )
 
         # rm non monotonic
         for (l in 1:nrow(uniqueForecasts)) {
@@ -1072,8 +1027,8 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
             exclude <- rbind(exclude, uniqueForecasts[l, ])
           }
         }
-        
-        if(nrow(exclude) > 0){
+
+        if (nrow(exclude) > 0) {
           for (l in 1:nrow(exclude)) {
             removeRow <- questionDataRaw %>%
               filter(userName == exclude[l, ]$userName) %>%
@@ -1083,7 +1038,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
               questionDataRaw <- questionDataRaw[!((questionDataRaw$userName == currRow$userName) & (questionDataRaw$answerText == currRow$answerText) & (questionDataRaw$forecast == currRow$forecast) & questionDataRaw$forecastId == currRow$forecastId), ]
             }
           }
-        }  
+        }
 
         questionDataRaw <- questionDataRaw %>% filter(answerText == currentAnswerText)
         users <- unique(questionDataRaw$userName)
@@ -1091,12 +1046,14 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
         users <- users[(users %in% c(supers, expertsG1$userName))]
 
         questionDataProcessed <- data.frame(row.names = names(supers))
-        
+
         for (l in 1:length(users)) {
           user <- users[l]
-          userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+          userForecasts <- questionDataRaw %>%
+            filter(userName == user) %>%
+            filter(stage <= currentStage)
           mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
-          if(nrow(mostRecentForecast) > 1){
+          if (nrow(mostRecentForecast) > 1) {
             mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
           }
           questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
@@ -1108,7 +1065,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentAnswerText))
         write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-        #write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
+        # write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
 
         if (dir.exists("Histograms")) {
           setwd("Histograms")
@@ -1119,14 +1076,14 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
 
         filenameStart <- paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, " Histogram")
         histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
-        
+
         setwd("..")
-        
-        files = paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
+
+        files <- paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
         filenameStart <- paste0(currentSetName, " - ", currentAnswerText, " - ", currentStage, " Box Plot")
-        
-        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=currentAnswerText, filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib=currentAnswerText)
-        
+
+        boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = currentAnswerText, filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = "", distrib = currentAnswerText)
+
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
 
         newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = "", answerText = currentAnswerText, stage = currentStage, specialty = metaTable[i, ]$specialty)
@@ -1135,16 +1092,16 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
     }
 
     # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    # 
+    #
     # phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
-    # 
+    #
     # print("Making box plots...")
-    # 
+    #
     # for (j in 1:length(phases)) {
     #   print(paste("Stage", j))
-    # 
+    #
     #   currentPhase <- phases[j]
-    # 
+    #
     #   for (k in 1:length(distrib)) {
     #     setwd(distrib[k])
     #     currentDistribFiles <- list.files()
@@ -1153,9 +1110,9 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
     #     assign(paste0("file", k), read.csv(currFile))
     #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     #   }
-    # 
+    #
     #   phaseTbl <- rbind(file1, file2, file3, file4, file5)
-    # 
+    #
     #   if (dir.exists("BoxPlots")) {
     #     setwd("BoxPlots")
     #   } else {
@@ -1163,10 +1120,10 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
     #     setwd("BoxPlots")
     #   }
 
-      #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "", numerateCitizens, yLabel, survey_column_matches, setName, beliefSet)
+    # boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = j, year = "", numerateCitizens, yLabel, survey_column_matches, setName, beliefSet)
 
     #  setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    #}
+    # }
 
     # # CONVERGENCE DATA
     # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
@@ -1228,15 +1185,17 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
     preQRaw <- data %>% filter(setName == currentSetName)
 
     uniqueForecasts <- unique(data %>% filter(setName == currentSetName) %>% select(userName, forecastId))
-    exclude <- data.frame(userName = character(0),
-                          forecastId = numeric(0))
+    exclude <- data.frame(
+      userName = character(0),
+      forecastId = numeric(0)
+    )
 
     # rm non monotonic
     for (j in 1:nrow(uniqueForecasts)) {
       # print(l)
       currRow <- preQRaw %>%
         filter(userName == uniqueForecasts[j, ]$userName) %>%
-        filter(forecastId == uniqueForecasts[j,]$forecastId)
+        filter(forecastId == uniqueForecasts[j, ]$forecastId)
       if (any(
         (currRow[currRow$answerText == "5th %", ]$forecast > currRow[currRow$answerText == "25th %", ]$forecast) |
           (currRow[currRow$answerText == "25th %", ]$forecast > currRow[currRow$answerText == "50th %", ]$forecast) |
@@ -1247,7 +1206,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
       }
     }
 
-    if(nrow(exclude) > 0){
+    if (nrow(exclude) > 0) {
       for (j in 1:nrow(exclude)) {
         removeRow <- preQRaw %>%
           filter(userName == exclude[j, ]$userName) %>%
@@ -1258,7 +1217,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
         }
       }
     }
-    
+
 
     for (j in 1:length(distrib)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data"))
@@ -1291,7 +1250,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
         filter(setName == currentSetName) %>%
         filter(answerText == currentAnswerText) %>%
         filter(forecast != defaultForecast)
-      
+
       questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
       totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
@@ -1303,7 +1262,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
         if (k == 1 | k %% 30 == 0) {
           print(currentDate)
         }
-        
+
         dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 1)
         if (k == length(timeline)) {
           dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
@@ -1318,7 +1277,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
           userForecasts <- dateDataRaw %>% filter(userName == user)
 
           mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
-          if(nrow(mostRecentForecast) > 1){
+          if (nrow(mostRecentForecast) > 1) {
             mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
           }
 
@@ -1361,7 +1320,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
 
-    #write.csv(newAdd, "multiYearDistrib_partial.csv", row.names = FALSE)
+    # write.csv(newAdd, "multiYearDistrib_partial.csv", row.names = FALSE)
 
     if (dir.exists(currentSetName)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName))
@@ -1388,12 +1347,12 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -1456,7 +1415,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
             # print(m)
             currRow <- questionDataRaw %>%
               filter(userName == uniqueForecasts[m, ]$userName) %>%
-              filter(forecastId == uniqueForecasts[m,]$forecastId)
+              filter(forecastId == uniqueForecasts[m, ]$forecastId)
             if (any(
               (currRow[currRow$answerText == "5th %", ]$forecast > currRow[currRow$answerText == "25th %", ]$forecast) |
                 (currRow[currRow$answerText == "25th %", ]$forecast > currRow[currRow$answerText == "50th %", ]$forecast) |
@@ -1489,9 +1448,11 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
 
           for (m in 1:length(users)) {
             user <- users[m]
-            userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+            userForecasts <- questionDataRaw %>%
+              filter(userName == user) %>%
+              filter(stage <= currentStage)
             mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
-            if(nrow(mostRecentForecast) > 1){
+            if (nrow(mostRecentForecast) > 1) {
               mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
             }
             questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
@@ -1499,10 +1460,10 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
 
           questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
-          #questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
+          # questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
 
           write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-          #write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
+          # write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
 
           if (dir.exists("Histograms")) {
             setwd("Histograms")
@@ -1513,13 +1474,13 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
 
           filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
           histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
-          
+
           setwd("..")
-          
-          files = paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
+
+          files <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
           filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, " Box Plot")
-          
-          boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear, "-", currentAnswerText), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib=currentAnswerText)
+
+          boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentYear, "-", currentAnswerText), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, distrib = currentAnswerText)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -1527,7 +1488,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
           newAdd <- rbind(newAdd, newRow)
 
           setwd(paste0(yourHome, "Summary Data"))
-          #write.csv(newAdd, "multiYearDistrib_partial.csv", row.names = FALSE)
+          # write.csv(newAdd, "multiYearDistrib_partial.csv", row.names = FALSE)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -1538,16 +1499,16 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
 
     # for (j in 1:length(years)) {
     #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-    # 
+    #
     #   phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
-    # 
+    #
     #   print(paste0("Making box plots for ", years[j], "..."))
-    # 
+    #
     #   for (k in 1:length(phases)) {
     #     print(paste("Stage", k))
-    # 
+    #
     #     currentPhase <- phases[k]
-    # 
+    #
     #     for (l in 1:length(distrib)) {
     #       setwd(distrib[l])
     #       currentDistribFiles <- list.files()
@@ -1556,9 +1517,9 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
     #       assign(paste0("file", l), read.csv(currFile))
     #       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
     #     }
-    # 
+    #
     #     phaseTbl <- rbind(file1, file2, file3, file4, file5)
-    # 
+    #
     #     if (dir.exists("BoxPlots")) {
     #       setwd("BoxPlots")
     #     } else {
@@ -1566,11 +1527,11 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
     #       setwd("BoxPlots")
     #     }
 
-        #boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j], numerateCitizens, yLabel, survey_column_matches, setName)
+    # boxPlot_distrib(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin = metaTable$forecastMin[i], forecastMax = metaTable$forecastMax[i], stage = k, year = years[j], numerateCitizens, yLabel, survey_column_matches, setName)
 
-  #      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-   #   }
-  #  }
+    #      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
+    #   }
+    #  }
 
     # # CONVERGENCE DATA
     # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
@@ -1657,7 +1618,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
         # print(l)
         currRow <- preQRaw %>%
           filter(userName == uniqueForecasts[k, ]$userName) %>%
-          filter(forecastId == uniqueForecasts[k,]$forecastId)
+          filter(forecastId == uniqueForecasts[k, ]$forecastId)
         if (any(
           (currRow[currRow$answerText == "5th %", ]$forecast > currRow[currRow$answerText == "25th %", ]$forecast) |
             (currRow[currRow$answerText == "25th %", ]$forecast > currRow[currRow$answerText == "50th %", ]$forecast) |
@@ -1711,7 +1672,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
           filter(setName == currentSetName) %>%
           filter(answerText == currentAnswerText) %>%
           filter(forecast != defaultForecast)
-        
+
         questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
         totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
@@ -1723,7 +1684,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
           if (l == 1 | l %% 30 == 0) {
             print(currentDate)
           }
-          
+
           dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 1)
           if (l == length(timeline)) {
             dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
@@ -1738,7 +1699,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
             userForecasts <- dateDataRaw %>% filter(userName == user)
 
             mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
-            if(nrow(mostRecentForecast) > 1){
+            if (nrow(mostRecentForecast) > 1) {
               mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
             }
 
@@ -1805,12 +1766,12 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -1842,9 +1803,11 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
 
         for (m in 1:length(users)) {
           user <- users[m]
-          userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+          userForecasts <- questionDataRaw %>%
+            filter(userName == user) %>%
+            filter(stage <= currentStage)
           mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
-          if(nrow(mostRecentForecast) > 1){
+          if (nrow(mostRecentForecast) > 1) {
             mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
           }
           questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
@@ -1853,7 +1816,7 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
         questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
         write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-        #write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
+        # write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
 
         if (dir.exists("Histograms")) {
           setwd("Histograms")
@@ -1864,13 +1827,13 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
 
         filenameStart <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, " Histogram")
         histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
-        
+
         setwd("..")
-        
-        files = paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, ".csv")
+
+        files <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, ".csv")
         filenameStart <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, " Box Plot")
-        
-        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
+
+        boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, distrib = "")
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -1878,7 +1841,7 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
         newAdd <- rbind(newAdd, newRow)
 
         setwd(paste0(yourHome, "Summary Data"))
-        #write.csv(newAdd, "multiYearBinary_partial.csv", row.names = FALSE)
+        # write.csv(newAdd, "multiYearBinary_partial.csv", row.names = FALSE)
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
       }
@@ -1886,31 +1849,31 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
 
     # for (j in 1:length(years)) {
     #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-    # 
+    #
     #   phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
-    # 
+    #
     #   print(paste0("Making box plots for ", years[j], "..."))
-    # 
+    #
     #   for (k in 1:length(phases)) {
     #     print(paste("Stage", k))
-    # 
+    #
     #     currFiles <- list.files()
     #     currFile <- currFiles[grep(phases[k], currFiles)]
     #     currFile <- currFile[!grepl("ANON", currFile)]
-    # 
+    #
     #     if (dir.exists("BoxPlots")) {
     #       setwd("BoxPlots")
     #     } else {
     #       dir.create("BoxPlots")
     #       setwd("BoxPlots")
     #     }
-    # 
+    #
     #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-    # 
+    #
     #     filenameStart <- paste(currentSetName, "-", "Stage", k)
-    # 
+    #
     #     boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
-    # 
+    #
     #     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
     #   }
     # }
@@ -1991,7 +1954,7 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
       questionDataRaw <- preQRaw %>%
         filter(setName == currentSetName) %>%
         filter(forecast != defaultForecast)
-      
+
       questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
       totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
@@ -2003,7 +1966,7 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
         if (k == 1 | k %% 30 == 0) {
           print(currentDate)
         }
-        
+
         dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 1)
         if (k == length(timeline)) {
           dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
@@ -2018,7 +1981,7 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
           userForecasts <- dateDataRaw %>% filter(userName == user)
 
           mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
-          if(nrow(mostRecentForecast) > 1){
+          if (nrow(mostRecentForecast) > 1) {
             mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
           }
 
@@ -2085,12 +2048,12 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2137,9 +2100,11 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
 
           for (m in 1:length(users)) {
             user <- users[m]
-            userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+            userForecasts <- questionDataRaw %>%
+              filter(userName == user) %>%
+              filter(stage <= currentStage)
             mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
-            if(nrow(mostRecentForecast) > 1){
+            if (nrow(mostRecentForecast) > 1) {
               mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
             }
             questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
@@ -2148,7 +2113,7 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
           questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
           write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-          
+
           if (dir.exists("Histograms")) {
             setwd("Histograms")
           } else {
@@ -2160,17 +2125,17 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
           histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear, "/", currentCountry))
-          
-          files = paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv")
+
+          files <- paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv")
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, " Box Plot")
-          
-          boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
+
+          boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, distrib = "")
 
           newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = currentYear, answerText = currentCountry, stage = currentStage, specialty = metaTable[i, ]$specialty)
           newAdd <- rbind(newAdd, newRow)
 
           setwd(paste0(yourHome, "Summary Data"))
-          #write.csv(newAdd, "multiYearCountryDistrib_partial.csv", row.names = FALSE)
+          # write.csv(newAdd, "multiYearCountryDistrib_partial.csv", row.names = FALSE)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear, "/", currentCountry))
         }
@@ -2317,7 +2282,7 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
         questionDataRaw <- preQRaw %>%
           filter(setName == currentSetName) %>%
           filter(forecast != defaultForecast)
-        
+
         questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
         totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
@@ -2329,7 +2294,7 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
           if (l == 1 | l %% 30 == 0) {
             print(currentDate)
           }
-          
+
           dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 1)
           if (l == length(timeline)) {
             dateDataRaw <- questionDataRaw %>% filter(timestamp < currentDate + 2)
@@ -2344,7 +2309,7 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
             userForecasts <- dateDataRaw %>% filter(userName == user)
 
             mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
-            if(nrow(mostRecentForecast) > 1){
+            if (nrow(mostRecentForecast) > 1) {
               mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
             }
 
@@ -2407,12 +2372,12 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2444,9 +2409,11 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
 
         for (l in 1:length(users)) {
           user <- users[l]
-          userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+          userForecasts <- questionDataRaw %>%
+            filter(userName == user) %>%
+            filter(stage <= currentStage)
           mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
-          if(nrow(mostRecentForecast) > 1){
+          if (nrow(mostRecentForecast) > 1) {
             mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
           }
           questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
@@ -2455,7 +2422,7 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
         questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
         write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentCountry, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-        
+
         if (dir.exists("Histograms")) {
           setwd("Histograms")
         } else {
@@ -2470,14 +2437,14 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
 
         files <- paste0(currentSetName, " - ", currentCountry, " - Phase ", currentStage, ".csv")
         filenameStart <- paste0(currentSetName, " - ", currentCountry, " - Phase ", currentStage, " Box Plot")
-        
-        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentCountry), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
-        
+
+        boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentCountry), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = "", distrib = "")
+
         newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = "", answerText = currentCountry, stage = currentStage, specialty = metaTable[i, ]$specialty)
         newAdd <- rbind(newAdd, newRow)
 
         setwd(paste0(yourHome, "Summary Data"))
-        
+
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentCountry))
       }
     }
@@ -2518,7 +2485,7 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
         setwd("BoxPlots")
       }
 
-      #boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
+      # boxPlot_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j)
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
@@ -2595,7 +2562,7 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
         filter(setName == currentSetName) %>%
         filter(answerText == countries[j]) %>%
         filter(forecast != defaultForecast)
-      
+
       questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
       totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
@@ -2622,7 +2589,7 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
           userForecasts <- dateDataRaw %>% filter(userName == user)
 
           mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
-          if(nrow(mostRecentForecast) > 1){
+          if (nrow(mostRecentForecast) > 1) {
             mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
           }
 
@@ -2662,7 +2629,7 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-    
+
     if (dir.exists(currentSetName)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName))
     } else {
@@ -2685,12 +2652,12 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
 
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -2707,9 +2674,11 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
 
       for (k in 1:length(users)) {
         user <- users[k]
-        userForecasts <- questionDataRaw %>% filter(userName == user) %>% filter(stage <= currentStage)
+        userForecasts <- questionDataRaw %>%
+          filter(userName == user) %>%
+          filter(stage <= currentStage)
         mostRecentForecast <- userForecasts %>% filter(forecastId == max(forecastId))
-        if(nrow(mostRecentForecast) > 1){
+        if (nrow(mostRecentForecast) > 1) {
           mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
         }
         questionDataProcessed <- rbind(questionDataProcessed, unique(mostRecentForecast))
@@ -2718,7 +2687,7 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
       questionDataProcessed <- questionDataProcessed %>% filter(forecast != defaultForecast)
 
       write.csv(questionDataProcessed, paste0(currentSetName, " - Phase ", currentStage, ".csv"), row.names = FALSE)
-      
+
       if (dir.exists("Histograms")) {
         setwd("Histograms")
       } else {
@@ -2728,13 +2697,13 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
 
       filenameStart <- paste0(currentSetName, " - Phase ", currentStage, " Histogram")
       histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
-      
+
       setwd("..")
-      
-      files = paste0(currentSetName, " - Phase ", currentStage, ".csv")
+
+      files <- paste0(currentSetName, " - Phase ", currentStage, ".csv")
       filenameStart <- paste0(currentSetName, " - Phase ", currentStage, " Box Plot")
-      
-      boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle="", filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
+
+      boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = "", filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = "", distrib = "")
 
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
 
@@ -2742,23 +2711,23 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
       newAdd <- rbind(newAdd, newRow)
 
       setwd(paste0(yourHome, "Summary Data"))
-      
+
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/"))
     }
 
     # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    # 
+    #
     # phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
-    # 
+    #
     # print(paste0("Making box plots..."))
-    # 
+    #
     # for (j in 1:length(phases)) {
     #   setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    # 
+    #
     #   currFiles <- list.files()
     #   currFile <- currFiles[grep(phases[j], currFiles)]
     #   currFile <- currFile[!grepl("ANON", currFile)]
-    # 
+    #
     #   boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart = paste0(currentSetName, " - Stage", j), expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
     # }
 
@@ -2815,7 +2784,7 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
     questionDataRaw <- data %>%
       filter(setName == currentSetName) %>%
       filter(forecast != defaultForecast)
-    
+
     questionDataRaw$timestamp <- mdy(questionDataRaw$timestamp)
 
     totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
@@ -2842,7 +2811,7 @@ pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column
         userForecasts <- dateDataRaw %>% filter(userName == user)
 
         mostRecentForecast <- filter(userForecasts, forecastId == max(userForecasts$forecastId))
-        if(nrow(mostRecentForecast) > 1){
+        if (nrow(mostRecentForecast) > 1) {
           mostRecentForecast <- mostRecentForecast %>% filter(timestampId == max(mostRecentForecast$timestampId))
         }
 

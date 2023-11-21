@@ -5,8 +5,8 @@ library(lubridate)
 library(boot)
 library(ggplot2)
 library(scales)
-library(ncar, include.only = 'Round')
-library(gdata, include.only = 'combine')
+library(ncar, include.only = "Round")
+library(gdata, include.only = "combine")
 
 # Generate a colorblind-friendly palette with six colors
 cb_pal <- colorblind_pal()(8)
@@ -83,17 +83,19 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
   #'
   #' @export
 
-  if(FALSE) {
+  if (FALSE) {
     plotTable <- plotTable %>%
       rename(confint_lower = contains("confint_lower"), confint_upper = contains("confint_upper"))
   }
-  
-  if("Domain Experts" %in% plotTable$group){
+
+  if ("Domain Experts" %in% plotTable$group) {
     plotTable <- plotTable %>% filter(group != "Experts")
   }
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
+  group_counts <- plotTable %>%
+    group_by(group) %>%
+    summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = median, group = group, color = group, fill = group)) +
@@ -118,7 +120,7 @@ plot_with_ribbons <- function(plotTable, title, subtitle, phaseTwoMedian, fname)
   ggsave(gsub("%", "%%", paste0(file_path, "/", fname, ".png")), plot, width = 9.18, height = 5.78, units = c("in"))
   ggsave(gsub("%", "%%", paste0(file_path, "/", fname, "_vector.ps")), plot, width = 9.18, height = 5.78, units = c("in"))
 
-  if(FALSE) {
+  if (FALSE) {
     plot <- plot +
       geom_ribbon(aes(ymin = confint_lower, ymax = confint_upper, fill = group, color = group), alpha = 0.1, linetype = "dotted")
     ggsave(paste0(fname, "_with_CI.png"), plot, width = 9.18, height = 5.78, units = c("in"))
@@ -151,7 +153,7 @@ mutate_figure_data_median <- function(csv) {
     )
 
   # Who's getting dropped? Print out the groups where n < 10
-  #print(plotTable %>% group_by(group) %>% summarize(n = first(n)))
+  # print(plotTable %>% group_by(group) %>% summarize(n = first(n)))
 
   # Filter and re-instate the levels now that the group names are correct
   plotTable <- plotTable %>%
@@ -250,8 +252,8 @@ mutate_figure_data_hd_trim <- function(csv) {
     mutate(
       group = factor(group, levels = unique(group), ordered = TRUE),
       hd_trim = replace(hd_trim, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-      #hd_trim_confint_lower = replace(hd_trim_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
-      #hd_trim_confint_upper = replace(hd_trim_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
+      # hd_trim_confint_lower = replace(hd_trim_confint_lower, n < 10 | (group == "Non-domain Experts" & n < 4), NA),
+      # hd_trim_confint_upper = replace(hd_trim_confint_upper, n < 10 | (group == "Non-domain Experts" & n < 4), NA)
     ) %>%
     filter(currentDate > ymd("2022 07 14"))
 
@@ -374,7 +376,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
   #' @export
 
   tbl <- read.csv(files[1])
-  
+
   if (type == "distrib") {
     # FOR LOOP TO ADD TO TBL AND REST
   }
@@ -389,60 +391,65 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
       specialists <- expertsG1 %>% filter(field == specialty1 | field == specialty2 | field == specialty3)
       boxData_special <- tbl %>% filter(userName %in% specialists$userName)
       boxData <- rbind(boxData, boxData_special %>% mutate(group = paste0(field, " Experts")))
-      boxData_nonSpecial <- tbl %>% filter(userName %in% expertsG1$userName) %>% filter(!(userName %in% specialists$userName)) %>% filter(!(userName %in% boxData_general$userName))
+      boxData_nonSpecial <- tbl %>%
+        filter(userName %in% expertsG1$userName) %>%
+        filter(!(userName %in% specialists$userName)) %>%
+        filter(!(userName %in% boxData_general$userName))
       boxData <- rbind(boxData, boxData_nonSpecial %>% mutate(group = "Non-domain Experts"))
     } else {
       boxData <- rbind(boxData, boxData_experts %>% mutate(group = "Experts"))
     }
     boxData <- rbind(boxData, boxData_general %>% mutate(group = "General X-risk Experts"))
-    
+
     boxData <- select(boxData, group, forecast)
-    
+
     sn <- setName
     bs <- beliefSet
     y <- year
     d <- distrib
-    
-    if(numerateCitizens == TRUE){
+
+    if (numerateCitizens == TRUE) {
       wd <- getwd()
-      sheetInfo <- survey_column_matches %>% 
+      sheetInfo <- survey_column_matches %>%
         rowwise() %>%
         filter(setName == sn) %>%
         filter(grepl(beliefSet, bs)) %>%
         filter(year == y) %>%
         filter(distrib == d)
-      if(nrow(sheetInfo) > 0){
-        if(sheetInfo$sheet == "main1"){
+      if (nrow(sheetInfo) > 0) {
+        if (sheetInfo$sheet == "main1") {
           publicSurvey <- as.numeric(unlist(main1 %>%
             select(all_of(sheetInfo$colName))))
           publicSurvey <- publicSurvey[!is.na(publicSurvey)]
-        } else if(sheetInfo$sheet == "main2"){
+        } else if (sheetInfo$sheet == "main2") {
           publicSurvey <- as.numeric(unlist(main2 %>%
-                                              select(all_of(sheetInfo$colName))))
+            select(all_of(sheetInfo$colName))))
           publicSurvey <- publicSurvey[!is.na(publicSurvey)]
-        } else if(sheetInfo$sheet == "supplement"){
+        } else if (sheetInfo$sheet == "supplement") {
           publicSurvey <- as.numeric(unlist(supplement %>%
-                                              select(all_of(sheetInfo$colName))))
+            select(all_of(sheetInfo$colName))))
         }
         publicSurvey <- publicSurvey[!is.na(publicSurvey)]
-        if(!is.na(forecastMin)){
+        if (!is.na(forecastMin)) {
           publicSurvey <- publicSurvey[publicSurvey >= forecastMin]
         }
-        if(!is.na(forecastMax)){
+        if (!is.na(forecastMax)) {
           publicSurvey <- publicSurvey[publicSurvey <= forecastMax]
         }
-        addPublic <- data.frame(group = rep("Public Survey", length(publicSurvey)),
-                                forecast = publicSurvey)
+        addPublic <- data.frame(
+          group = rep("Public Survey", length(publicSurvey)),
+          forecast = publicSurvey
+        )
         boxData <- rbind(boxData, addPublic)
-      } else{
-       print(paste("no sheet info found:", setName, beliefSet, year, distrib)) 
+      } else {
+        print(paste("no sheet info found:", setName, beliefSet, year, distrib))
       }
     }
 
     boxData$group <- factor(boxData$group, levels = unique(boxData$group), ordered = TRUE)
 
-    rounded_medians <- aggregate(forecast ~ group, median, data=boxData)
-    
+    rounded_medians <- aggregate(forecast ~ group, median, data = boxData)
+
     boxPlot <- ggplot(boxData, aes(x = group, y = forecast, color = group)) +
       geom_boxplot(outlier.shape = NA, coef = 0) +
       ylab(yLabel) +
@@ -457,25 +464,27 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
         axis.title.x = element_blank()
       ) +
       geom_point(position = position_jitterdodge())
-    
+
     # Add (n=numrows) for the x-axis labels
     boxPlot <- boxPlot +
-      scale_x_discrete(labels = function(x) {
-        x <- as.character(x)
-        paste0(x, " (n=", table(boxData$group)[x], ")")
-      },
-      guide = guide_axis(n.dodge = 2))
-    
+      scale_x_discrete(
+        labels = function(x) {
+          x <- as.character(x)
+          paste0(x, " (n=", table(boxData$group)[x], ")")
+        },
+        guide = guide_axis(n.dodge = 2)
+      )
+
     boxPlot$labels$color <- ""
     if (expectedRisk == "low" & forecastMin == 0 && forecastMax == 100) {
       boxPlot <- boxPlot +
         scale_y_continuous(trans = pseudo_log_trans(base = 10), breaks = c(0, 0.5, 1, 10, 25, 50, 75, 100), limits = c(0, 100))
     }
   }
-  
+
   boxPlot <- boxPlot +
     stat_summary(
-      fun.y = median, geom = "label", 
+      fun.y = median, geom = "label",
       data = rounded_medians,
       aes(label = Round(..y.., 2)),
       position = position_dodge2(width = 0.75, preserve = "single"),
@@ -484,42 +493,42 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
       fill = "white",
       show.legend = FALSE
     )
-  
+
   tournamentParticipants_95thpctile <- boxData %>%
     filter(group != "Public Survey") %>%
     group_by(group) %>%
     summarize(percentile_95 = quantile(forecast, 0.95))
-  
+
   boxPlot <- boxPlot +
     coord_cartesian(ylim = c(NA, max(tournamentParticipants_95thpctile$percentile_95)))
-  
+
   weirdCases <- c("NYT Bestsellers Written by AI", "Generation Attitudes")
-  
-  if(title %in% weirdCases){
+
+  if (title %in% weirdCases) {
     worthPlotting <- boxData %>% filter(forecast < 1e200)
     boxPlot <- boxPlot +
       coord_cartesian(ylim = c(NA, max(worthPlotting$forecast)))
   }
-  
+
   manualCases <- c("Future Worries and Children")
-  
-  if(title %in% manualCases){
-    options(scipen=7)
+
+  if (title %in% manualCases) {
+    options(scipen = 7)
   }
-  
+
   if (dir.exists("BoxPlots")) {
     setwd("BoxPlots")
   } else {
     dir.create("BoxPlots")
     setwd("BoxPlots")
   }
-  
+
   file_path <- getwd()
   ggsave(gsub("%", "%%", paste0(file_path, "/", filenameStart, ".png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
   ggsave(gsub("%", "%%", paste0(file_path, "/", filenameStart, "_vector.ps")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
-  
-  if(title %in% manualCases){
-    options(scipen=999)
+
+  if (title %in% manualCases) {
+    options(scipen = 999)
   }
 }
 
@@ -815,27 +824,27 @@ figureDataInit <- function() {
     group = character(0),
     n = numeric(0),
     mean = numeric(0),
-    #mean_confint_lower = numeric(0),
-    #mean_confint_upper = numeric(0),
+    # mean_confint_lower = numeric(0),
+    # mean_confint_upper = numeric(0),
     sd = numeric(0),
     median = numeric(0),
-    #median_confint_lower = numeric(0),
-    #median_confint_upper = numeric(0),
+    # median_confint_lower = numeric(0),
+    # median_confint_upper = numeric(0),
     geom_mean = numeric(0),
-    #geom_mean_confint_lower = numeric(0),
-    #geom_mean_confint_upper = numeric(0),
+    # geom_mean_confint_lower = numeric(0),
+    # geom_mean_confint_upper = numeric(0),
     hd_trim = numeric(0),
-    #hd_trim_confint_lower = numeric(0),
-    #hd_trim_confint_upper = numeric(0),
+    # hd_trim_confint_lower = numeric(0),
+    # hd_trim_confint_upper = numeric(0),
     simple_trim = numeric(0),
-    #simple_trim_confint_lower = numeric(0),
-    #simple_trim_confint_upper = numeric(0),
+    # simple_trim_confint_lower = numeric(0),
+    # simple_trim_confint_upper = numeric(0),
     neyman = numeric(0),
-    #neyman_confint_lower = numeric(0),
-    #neyman_confint_upper = numeric(0),
+    # neyman_confint_lower = numeric(0),
+    # neyman_confint_upper = numeric(0),
     geom_mean_of_odds = numeric(0)
-    #geom_mean_of_odds_confint_lower = numeric(0),
-    #geom_mean_of_odds_confint_upper = numeric(0)
+    # geom_mean_of_odds_confint_lower = numeric(0),
+    # geom_mean_of_odds_confint_upper = numeric(0)
   )
 
   return(statsEmpty)
@@ -855,54 +864,54 @@ figureDataBasics <- function(dateDataProcessed, year, beliefSet, setName, subset
       summarize(
         n = n(),
         mean = mean(forecast),
-        #mean_confint_lower = boot_results(forecast, statistic = "mean")$confint_lower,
-        #mean_confint_upper = boot_results(forecast, statistic = "mean")$confint_upper,
+        # mean_confint_lower = boot_results(forecast, statistic = "mean")$confint_lower,
+        # mean_confint_upper = boot_results(forecast, statistic = "mean")$confint_upper,
         sd = sd(forecast),
         median = median(forecast),
-        #median_confint_lower = boot_results(forecast, statistic = "median")$confint_lower,
-        #median_confint_upper = boot_results(forecast, statistic = "median")$confint_upper,
+        # median_confint_lower = boot_results(forecast, statistic = "median")$confint_lower,
+        # median_confint_upper = boot_results(forecast, statistic = "median")$confint_upper,
         geom_mean = geoMeanCalc(forecast),
-        #geom_mean_confint_lower = boot_results(forecast, statistic = "geoMeanCalc")$confint_lower,
-        #geom_mean_confint_upper = boot_results(forecast, statistic = "geoMeanCalc")$confint_upper,
+        # geom_mean_confint_lower = boot_results(forecast, statistic = "geoMeanCalc")$confint_lower,
+        # geom_mean_confint_upper = boot_results(forecast, statistic = "geoMeanCalc")$confint_upper,
         hd_trim = hd_trim(forecast),
-        #hd_trim_confint_lower = boot_results(forecast, statistic = "hd_trim")$confint_lower,
-        #hd_trim_confint_upper = boot_results(forecast, statistic = "hd_trim")$confint_upper,
+        # hd_trim_confint_lower = boot_results(forecast, statistic = "hd_trim")$confint_lower,
+        # hd_trim_confint_upper = boot_results(forecast, statistic = "hd_trim")$confint_upper,
         simple_trim = trim(forecast),
-        #simple_trim_confint_lower = boot_results(forecast, statistic = "trim")$confint_lower,
-        #simple_trim_confint_upper = boot_results(forecast, statistic = "trim")$confint_upper,
+        # simple_trim_confint_lower = boot_results(forecast, statistic = "trim")$confint_lower,
+        # simple_trim_confint_upper = boot_results(forecast, statistic = "trim")$confint_upper,
         neyman = neymanAggCalc(forecast),
-        #neyman_confint_lower = boot_results(forecast, statistic = "neymanAggCalc")$confint_lower,
-        #neyman_confint_upper = boot_results(forecast, statistic = "neymanAggCalc")$confint_upper,
+        # neyman_confint_lower = boot_results(forecast, statistic = "neymanAggCalc")$confint_lower,
+        # neyman_confint_upper = boot_results(forecast, statistic = "neymanAggCalc")$confint_upper,
         geom_mean_of_odds = geoMeanOfOddsCalc(forecast)
-        #geom_mean_of_odds_confint_lower = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_lower,
-        #geom_mean_of_odds_confint_upper = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_upper
+        # geom_mean_of_odds_confint_lower = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_lower,
+        # geom_mean_of_odds_confint_upper = boot_results(forecast, statistic = "geoMeanOfOddsCalc")$confint_upper
       )
   } else {
     dateData <- dateDataProcessed %>%
       summarize(
         n = n(),
         mean = mean(forecast),
-        #mean_confint_lower = NA,
-        #mean_confint_upper = NA,
+        # mean_confint_lower = NA,
+        # mean_confint_upper = NA,
         sd = sd(forecast),
         median = median(forecast),
-        #median_confint_lower = NA,
-        #median_confint_upper = NA,
+        # median_confint_lower = NA,
+        # median_confint_upper = NA,
         geom_mean = geoMeanCalc(forecast),
-        #geom_mean_confint_lower = NA,
-        #geom_mean_confint_upper = NA,
+        # geom_mean_confint_lower = NA,
+        # geom_mean_confint_upper = NA,
         hd_trim = hd_trim(forecast),
-        #hd_trim_confint_lower = NA,
-        #hd_trim_confint_upper = NA,
+        # hd_trim_confint_lower = NA,
+        # hd_trim_confint_upper = NA,
         simple_trim = trim(forecast),
-        #simple_trim_confint_lower = NA,
-        #simple_trim_confint_upper = NA,
+        # simple_trim_confint_lower = NA,
+        # simple_trim_confint_upper = NA,
         neyman = neymanAggCalc(forecast),
-        #neyman_confint_lower = NA,
-        #neyman_confint_upper = NA,
+        # neyman_confint_lower = NA,
+        # neyman_confint_upper = NA,
         geom_mean_of_odds = geoMeanOfOddsCalc(forecast)
-        #geom_mean_of_odds_confint_lower = NA,
-        #geom_mean_of_odds_confint_upper = NA
+        # geom_mean_of_odds_confint_lower = NA,
+        # geom_mean_of_odds_confint_upper = NA
       )
   }
 
@@ -932,59 +941,61 @@ figureDataMetrics <- function(dateDataProcessed, beliefSet, year, date, qSpecial
     domainExperts <- data.frame(
       n = NA,
       mean = NA,
-      #mean_confint_lower = NA,
-      #mean_confint_upper = NA,
+      # mean_confint_lower = NA,
+      # mean_confint_upper = NA,
       sd = NA,
       median = NA,
-      #median_confint_lower = NA,
-      #median_confint_upper = NA,
+      # median_confint_lower = NA,
+      # median_confint_upper = NA,
       geom_mean = NA,
-      #geom_mean_confint_lower = NA,
-      #geom_mean_confint_upper = NA,
+      # geom_mean_confint_lower = NA,
+      # geom_mean_confint_upper = NA,
       hd_trim = NA,
-      #hd_trim_confint_lower = NA,
-      #hd_trim_confint_upper = NA,
+      # hd_trim_confint_lower = NA,
+      # hd_trim_confint_upper = NA,
       simple_trim = NA,
-      #simple_trim_confint_lower = NA,
-      #simple_trim_confint_upper = NA,
+      # simple_trim_confint_lower = NA,
+      # simple_trim_confint_upper = NA,
       neyman = NA,
-      #neyman_confint_lower = NA,
-      #neyman_confint_upper = NA,
+      # neyman_confint_lower = NA,
+      # neyman_confint_upper = NA,
       geom_mean_of_odds = NA
-      #geom_mean_of_odds_confint_lower = NA,
-      #geom_mean_of_odds_confint_upper = NA
+      # geom_mean_of_odds_confint_lower = NA,
+      # geom_mean_of_odds_confint_upper = NA
     )
   }
 
   if (qSpecialty != "") {
-    nonDomainExpertsUsers <- expertsG1 %>% filter(specialty1 != qSpecialty & specialty2 != qSpecialty & specialty3 != qSpecialty) %>% filter(specialty1 != "General" & specialty2 != "General" & specialty3 != "General")
+    nonDomainExpertsUsers <- expertsG1 %>%
+      filter(specialty1 != qSpecialty & specialty2 != qSpecialty & specialty3 != qSpecialty) %>%
+      filter(specialty1 != "General" & specialty2 != "General" & specialty3 != "General")
     nonDomainExperts <- figureDataBasics(dateDataProcessed, year, beliefSet, setName, nonDomainExpertsUsers$userName)
   } else {
     # Create a dataframe with the same columns as the other dataframes
     nonDomainExperts <- data.frame(
       n = NA,
       mean = NA,
-      #mean_confint_lower = NA,
-      #mean_confint_upper = NA,
+      # mean_confint_lower = NA,
+      # mean_confint_upper = NA,
       sd = NA,
       median = NA,
-      #median_confint_lower = NA,
-      #median_confint_upper = NA,
+      # median_confint_lower = NA,
+      # median_confint_upper = NA,
       geom_mean = NA,
-      #geom_mean_confint_lower = NA,
-      #geom_mean_confint_upper = NA,
+      # geom_mean_confint_lower = NA,
+      # geom_mean_confint_upper = NA,
       hd_trim = NA,
-      #hd_trim_confint_lower = NA,
-      #hd_trim_confint_upper = NA,
+      # hd_trim_confint_lower = NA,
+      # hd_trim_confint_upper = NA,
       simple_trim = NA,
-      #simple_trim_confint_lower = NA,
-      #simple_trim_confint_upper = NA,
+      # simple_trim_confint_lower = NA,
+      # simple_trim_confint_upper = NA,
       neyman = NA,
-      #neyman_confint_lower = NA,
-      #neyman_confint_upper = NA,
+      # neyman_confint_lower = NA,
+      # neyman_confint_upper = NA,
       geom_mean_of_odds = NA
-      #geom_mean_of_odds_confint_lower = NA,
-      #geom_mean_of_odds_confint_upper = NA
+      # geom_mean_of_odds_confint_lower = NA,
+      # geom_mean_of_odds_confint_upper = NA
     )
   }
 
@@ -1171,7 +1182,6 @@ multiYearReciprocalGraphics <- function(title, subtitle, csv, currentSetName) {
 
   fname <- paste0(currentSetName, " - Figure One (", csv$year[1], " ", csv$beliefSet[1], ")")
   plot <- plot_with_ribbons(plotTable, paste(title, "by", csv$year[1]), subtitle, phaseTwoMedian, fname)
-  
 }
 
 multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
@@ -1185,7 +1195,9 @@ multiYearReciprocalVarianceGraphics <- function(title, subtitle, csv, currentSet
   subtitle <- "Variance over Time"
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
+  group_counts <- plotTable %>%
+    group_by(group) %>%
+    summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1396,7 +1408,9 @@ pointDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, c
   subtitle <- "Variance over Time"
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
+  group_counts <- plotTable %>%
+    group_by(group) %>%
+    summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1593,9 +1607,8 @@ multiYearDistribGraphics <- function(title, subtitle, csv, currentSetName, year,
   } else {
     fname <- paste0(currentSetName, " - Figure One (", year, "-", currentDistrib, "%)")
   }
-  
+
   plot <- plot_with_ribbons(plotTable, paste(title, "-", year, "-", currentDistrib), subtitle, phaseTwoMedian, fname)
-  
 }
 
 multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetName, year, currentDistrib) {
@@ -1609,7 +1622,9 @@ multiYearDistribVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   subtitle <- "Variance over Time"
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
+  group_counts <- plotTable %>%
+    group_by(group) %>%
+    summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1759,7 +1774,9 @@ multiYearBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName
   subtitle <- "Variance over Time"
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
+  group_counts <- plotTable %>%
+    group_by(group) %>%
+    summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1837,7 +1854,9 @@ multiYearCountryVarianceGraphics <- function(title, subtitle, csv, currentSetNam
   subtitle <- "Variance over Time"
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
+  group_counts <- plotTable %>%
+    group_by(group) %>%
+    summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +
@@ -1986,7 +2005,9 @@ pointBinaryVarianceGraphics <- function(title, subtitle, csv, currentSetName) {
   subtitle <- "Variance over Time"
 
   # Table for legend labels
-  group_counts <- plotTable %>% group_by(group) %>% summarise(n = max(n))
+  group_counts <- plotTable %>%
+    group_by(group) %>%
+    summarise(n = max(n))
   legend_labels <- paste0(group_counts$group, " (n = ", group_counts$n, ")")
 
   plot <- ggplot(plotTable, aes(x = currentDate, y = sd, group = group, color = group)) +

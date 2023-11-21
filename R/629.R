@@ -14,38 +14,38 @@ multiYearReciprocal_629 <- function(metaTable, data, main1, main2, supplement, s
   #' @param data - data for all users on all multi-year reciprocal question sets
   #'
   #' @export
-  
+
   newAdd <- newAddInit()
-  
+
   # For each of the risk categories (genetically engineered pathogen risk, AI catastrophe, etc.)
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-    
+
     # Time horizons (2030...)
     years <- metaTable[i, ] %>% select(year1, year2, year3)
     years <- as.character(years)
     years <- years[years != ""]
-    
+
     # Belief sets: yours, other experts', other superforecasters'
     beliefSets <- metaTable[i, ] %>% select(yourBeliefs, expertBeliefs, superBeliefs)
     beliefSets <- as.character(beliefSets)
     beliefSets <- beliefSets[beliefSets != ""]
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
-    
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
+
     defaultForecast <- metaTable[i, ]$defaultForecast50
-    
+
     specialty <- metaTable[i, ]$specialty
-    
+
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
+
     # For each (year, belief set, user) combination, calculate the reciprocal score.
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
@@ -55,46 +55,45 @@ multiYearReciprocal_629 <- function(metaTable, data, main1, main2, supplement, s
         for (l in 1:length(years)) {
           print(years[l])
           currentQuestionName <- paste(years[l], beliefSets[k])
-          
+
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[l], "/", beliefSets[k]))
-          
+
           files <- c(paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"))
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - ", currentStage, " Box Plot")
-          
-          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet=beliefSets[k], year=years[l], distrib="")
-          
-          
+
+          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = beliefSets[k], year = years[l], distrib = "")
+
+
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[l], "/", beliefSets[k]))
-          
         }
       }
     }
-    
+
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
-    
+
     qSpecialty <- metaTable[i, ]$specialty
-    
+
     for (j in 1:length(beliefSets)) {
       print(beliefSets[j])
-      
+
       for (k in 1:length(years)) {
         print(years[k])
         currentQuestionName <- paste(years[k], beliefSets[j])
-        
+
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data/", years[k], "/", beliefSets[j]))
-        
+
         questionDataRaw <- data %>%
           filter(setName == currentSetName) %>%
           filter(questionName == currentQuestionName) %>%
           filter(forecast != defaultForecast)
-        
+
         totalSupers <- nrow(unique(questionDataRaw %>% filter(userName %in% supers) %>% select(userName)))
         totalExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName) %>% select(userName)))
         totalDomainExperts <- nrow(unique(questionDataRaw %>% filter(userName %in% expertsG1$userName[expertsG1$specialty1 == qSpecialty | expertsG1$specialty2 == qSpecialty | expertsG1$specialty3 == qSpecialty]) %>% select(userName)))
-        
+
         currentSetTimeSeries <- read.csv(paste0(currentSetName, " - ", currentQuestionName, ".csv"))
-        
+
         multiYearReciprocalGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName)
         multiYearReciprocalVarianceGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName)
       }
@@ -115,62 +114,61 @@ pointDistrib_629 <- function(metaTable, data, main1, main2, supplement, survey_c
   #'
   #' @export
   distrib <- c("5th %", "25th %", "50th %", "75th %", "95th %")
-  
+
   # For each of the risk categories (genetically engineered pathogen risk, AI catastrophe, etc.)
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-   
+
     specialty <- metaTable[i, ]$specialty
-    
+
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
-    
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
+
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
       currentStage <- unique(metaTable$stage)[j]
-      
+
       for (k in 1:length(distrib)) {
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-        
+
         print(distrib[k])
         currentAnswerText <- distrib[k]
-        
+
         setwd(distrib[k])
-        
-        files = paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
+
+        files <- paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
         filenameStart <- paste0(currentSetName, " - ", currentAnswerText, " - ", currentStage, " Box Plot")
-        
-        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=currentAnswerText, filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib=currentAnswerText)
-        
+
+        boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = currentAnswerText, filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = "", distrib = currentAnswerText)
+
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-        
       }
     }
-    
+
     # FIGURE DATA
-    
+
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
-    
+
     qSpecialty <- metaTable[i, ]$specialty
-    
+
     distrib <- c("5th %", "25th %", "50th %", "75th %", "95th %")
-    
+
     for (j in 1:length(distrib)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data"))
-      
+
       print(distrib[j])
       currentAnswerText <- distrib[j]
-      
-        setwd(distrib[j])
-      
+
+      setwd(distrib[j])
+
       if (currentAnswerText == "5th %") {
         defaultForecast <- metaTable[i, ]$defaultForecast5
       } else if (currentAnswerText == "25th %") {
@@ -182,9 +180,9 @@ pointDistrib_629 <- function(metaTable, data, main1, main2, supplement, survey_c
       } else if (currentAnswerText == "95th %") {
         defaultForecast <- metaTable[i, ]$defaultForecast95
       }
-      
+
       currentSetTimeSeries <- read.csv(paste0(currentSetName, " - ", currentAnswerText, ".csv"))
-      
+
       pointDistribGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName, distrib[j])
       pointDistribVarianceGraphics(title = metaTable[i, ]$title, subtitle = "", csv = currentSetTimeSeries, currentSetName, currentDistrib = distrib[j])
     }
@@ -206,47 +204,47 @@ multiYearDistrib_629 <- function(metaTable, data, main1, main2, supplement, surv
   #' @param data - data for all users on all multi-year distribution question sets
   #'
   #' @export
-  
+
   distrib <- c("5th %", "25th %", "50th %", "75th %", "95th %")
-  
+
   for (i in 1:length(unique(metaTable$setName))) {
     # for(i in 19:length(unique(metaTable$setName))){
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-    
+
     years <- c(metaTable$year1[i], metaTable$year2[i], metaTable$year3[i])
     years <- years[years != ""]
-    
+
     specialty <- metaTable[i, ]$specialty
-    
+
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
-    
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
+
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
       currentStage <- unique(metaTable$stage)[j]
-      
+
       for (k in 1:length(years)) {
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-        
+
         print(years[k])
-        
+
         currentYear <- years[k]
-      
+
         for (l in 1:length(distrib)) {
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[k]))
-          
+
           print(distrib[l])
-          
+
           currentAnswerText <- distrib[l]
-          
+
           if (currentAnswerText == "5th %") {
             defaultForecast <- metaTable[i, ]$defaultForecast5
           } else if (currentAnswerText == "25th %") {
@@ -258,42 +256,42 @@ multiYearDistrib_629 <- function(metaTable, data, main1, main2, supplement, surv
           } else if (currentAnswerText == "95th %") {
             defaultForecast <- metaTable[i, ]$defaultForecast95
           }
-          
-          files=paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
+
+          files <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
 
           filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, " Box Plot")
-          
+
           setwd(distrib[l])
-          
-          boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear, "-", currentAnswerText), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib=currentAnswerText)
-          
+
+          boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentYear, "-", currentAnswerText), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, distrib = currentAnswerText)
+
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
-          
+
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
-          
+
           ####
         }
       }
     }
-    
+
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
-    
+
     qSpecialty <- metaTable[i, ]$specialty
-    
+
     for (j in 1:length(years)) {
       print(years[j])
-      
+
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data"))
-      
+
       for (k in 1:length(distrib)) {
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data/", years[j]))
-        
+
         print(distrib[k])
         currentAnswerText <- distrib[k]
-        
+
         setwd(distrib[k])
-        
+
         if (currentAnswerText == "5th %") {
           defaultForecast <- metaTable[i, ]$defaultForecast5
         } else if (currentAnswerText == "25th %") {
@@ -305,9 +303,9 @@ multiYearDistrib_629 <- function(metaTable, data, main1, main2, supplement, surv
         } else if (currentAnswerText == "95th %") {
           defaultForecast <- metaTable[i, ]$defaultForecast95
         }
-        
+
         currentSetTimeSeries <- read.csv(paste0(currentSetName, " - ", years[j], " - ", currentAnswerText, ".csv"))
-        
+
         multiYearDistribGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName, year = years[j], currentDistrib = distrib[k])
         multiYearDistribVarianceGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName, year = years[j], currentDistrib = distrib[k])
       }
@@ -331,93 +329,93 @@ multiYearBinary_629 <- function(metaTable, data, main1, main2, supplement, surve
   #' @param data - data for all users on all multi-year reciprocal question sets
   #'
   #' @export
-  
+
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-    
+
     years <- c(metaTable$year1[i], metaTable$year2[i], metaTable$year3[i])
     years <- years[years != ""]
-    
+
     specialty <- metaTable[i, ]$specialty
-    
+
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
-    
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
+
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
       currentStage <- unique(metaTable$stage)[j]
-      
+
       for (k in 1:length(years)) {
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-        
+
         print(years[k])
         currentYear <- years[k]
-        
+
         setwd(currentYear)
-        
+
         defaultForecast <- metaTable[i, ]$defaultForecast50
-        
-        files = paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, ".csv")
+
+        files <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, ".csv")
         filenameStart <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, " Box Plot")
-        
-        boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle=paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
-        
+
+        boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, distrib = "")
+
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
       }
     }
-    
+
     for (j in 1:length(years)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-      
+
       phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
-      
+
       print(paste0("Making box plots for ", years[j], "..."))
-      
+
       for (k in 1:length(phases)) {
         print(paste("Stage", k))
-        
+
         currFiles <- list.files()
         currFile <- currFiles[grep(phases[k], currFiles)]
         currFile <- currFile[!grepl("ANON", currFile)]
-        
+
         if (dir.exists("BoxPlots")) {
           setwd("BoxPlots")
         } else {
           dir.create("BoxPlots")
           setwd("BoxPlots")
         }
-        
+
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-        
+
         filenameStart <- paste(currentSetName, "-", "Stage", k)
-        
-        boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year=currentYear, distrib="")
-        
+
+        boxPlot(files = currFile, type = "regGroups", specialty, title = metaTable$title[i], subtitle = metaTable$subtitle[i], filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, distrib = "")
+
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
     }
-    
+
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
-    
+
     qSpecialty <- metaTable[i, ]$specialty
-    
+
     for (j in 1:length(years)) {
       print(years[j])
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data"))
       setwd(years[j])
-      
-      
+
+
       currentSetTimeSeries <- read.csv(paste0(currentSetName, " - ", years[j], ".csv"))
-      
+
       multiYearBinaryGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName, year = years[j])
       multiYearBinaryVarianceGraphics(title = metaTable[i, ]$title, subtitle = metaTable[i, ]$subtitle, csv = currentSetTimeSeries, currentSetName, year = years[j])
     }
@@ -435,113 +433,113 @@ multiYearCountryDistrib_629 <- function(metaTable, data, main1, main2, supplemen
   #' @param data - data for all users on all multi-year country distribution question sets
   #'
   #' @export
-  
+
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-    
+
     years <- c(metaTable$year1[i], metaTable$year2[i], metaTable$year3[i])
     years <- years[years != ""]
-    
+
     countries <- c(metaTable$country1[i], metaTable$country2[i], metaTable$country3[i], metaTable$country4[i], metaTable$country5[i], metaTable$country6[i], metaTable$country7[i], metaTable$country8[i], metaTable$country9[i], metaTable$country10[i], metaTable$country11[i], metaTable$country12[i])
     countries <- countries[countries != ""]
-    
+
     specialty <- metaTable[i, ]$specialty
-    
+
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
-    
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
+
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
       currentStage <- unique(metaTable$stage)[j]
-      
+
       for (k in 1:length(years)) {
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-        
+
         print(years[k])
         currentYear <- years[k]
-        
+
         setwd(years[k])
-        
+
         for (l in 1:length(countries)) {
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
-          
+
           print(countries[l])
           currentCountry <- countries[l]
-          
+
           setwd(countries[l])
-          
+
           defaultForecast <- metaTable[i, ]$defaultForecast50
-          
+
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear, "/", currentCountry))
         }
       }
     }
-    
+
     for (j in 1:length(years)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-      
+
       phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
-      
+
       print(paste0("Making box plots for ", years[j], "..."))
-      
+
       for (k in 1:length(phases)) {
         print(paste("Stage", k))
-        
+
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j], "/", countries[1]))
-        
+
         currFiles <- list.files()
         currFile <- currFiles[grep(phases[k], currFiles)]
         currFile <- read.csv(currFile[!grepl("ANON", currFile)])
-        
+
         phaseTbl <- currFile
-        
+
         for (l in 2:length(countries)) {
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j], "/", countries[l]))
-          
+
           currFiles <- list.files()
           currFile <- currFiles[grep(phases[k], currFiles)]
           currFile <- read.csv(currFile[!grepl("ANON", currFile)])
-          
+
           phaseTbl <- rbind(phaseTbl, currFile)
         }
-        
+
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
-        
+
         setwd("BoxPlots")
-        
+
         boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable[i, ]$title, forecastMin, forecastMax, stage = k, year = years[j])
-        
+
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[j]))
       }
     }
-    
+
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
-    
+
     qSpecialty <- metaTable[i, ]$specialty
-    
+
     for (j in 1:length(years)) {
       print(years[j])
-      
+
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data"))
-      
+
       for (k in 1:length(countries)) {
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data/", years[j]))
-        
+
         print(countries[k])
-        
+
         setwd(countries[k])
-        
+
         currentSetTimeSeries <- read.csv(paste0(currentSetName, " - ", years[j], ".csv"))
-        
+
         multiYearCountryDistribGraphics(title = metaTable$title[i], subtitle = metaTable$subtitle[i], csv = currentSetTimeSeries, currentSetName, year = years[j], country = countries[k])
       }
     }
@@ -559,111 +557,111 @@ multiCountryBinary_629 <- function(metaTable, data, main1, main2, supplement, su
   #' @param data - data for all users on all multi-year country binary question sets
   #'
   #' @export
-  
+
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-    
+
     countries <- c(metaTable$country1[i], metaTable$country2[i], metaTable$country3[i], metaTable$country4[i], metaTable$country5[i], metaTable$country6[i], metaTable$country7[i], metaTable$country8[i], metaTable$country9[i], metaTable$country10[i], metaTable$country11[i], metaTable$country12[i])
     countries <- countries[countries != ""]
-    
+
     specialty <- metaTable[i, ]$specialty
-    
+
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
-    
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
+
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
       currentStage <- unique(metaTable$stage)[j]
-      
+
       for (k in 1:length(countries)) {
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-        
+
         print(countries[k])
         currentCountry <- countries[k]
-        
+
         setwd(countries[k])
-        
+
         defaultForecast <- metaTable[i, ]$defaultForecast50
-        
+
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentCountry))
       }
     }
-    
+
     setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-    
+
     phases <- c("Phase 1", "Phase 2", "Phase 3", "Phase 4")
-    
+
     print(paste0("Making box plots..."))
-    
+
     for (j in 1:length(phases)) {
       print(paste("Stage:", j))
-      
+
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", countries[1]))
-      
+
       currFiles <- list.files()
       currFile <- currFiles[grep(phases[j], currFiles)]
       currFile <- read.csv(currFile[!grepl("ANON", currFile)])
-      
+
       phaseTbl <- currFile
-      
+
       for (k in 2:length(countries)) {
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", countries[k]))
-        
+
         currFiles <- list.files()
         currFile <- currFiles[grep(phases[j], currFiles)]
         currFile <- read.csv(currFile[!grepl("ANON", currFile)])
-        
+
         phaseTbl <- rbind(phaseTbl, currFile)
       }
-      
+
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-      
+
       if (dir.exists("BoxPlots")) {
         setwd("BoxPlots")
       } else {
         dir.create("BoxPlots")
         setwd("BoxPlots")
       }
-      
-      #boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j, year="")
-      
+
+      # boxPlot_distrib_country(tbl = phaseTbl, specialty, title = metaTable$title[i], forecastMin, forecastMax, stage = j, year="")
+
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     }
-    
-   
+
+
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
-    
+
     if (dir.exists("Figure Data")) {
       setwd("Figure Data")
     } else {
       dir.create("Figure Data")
       setwd("Figure Data")
     }
-    
+
     qSpecialty <- metaTable[i, ]$specialty
-    
+
     for (j in 1:length(countries)) {
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data"))
-      
+
       print(countries[j])
-      
+
       if (dir.exists(countries[j])) {
         setwd(countries[j])
       } else {
         dir.create(countries[j])
         setwd(countries[j])
       }
-      
+
       currentSetTimeSeries <- read.csv(paste0(currentSetName, " - ", countries[j], ".csv"))
-      
+
       multiCountryBinaryGraphics(title = metaTable$title[i], subtitle = metaTable$subtitle[i], csv = currentSetTimeSeries, currentSetName, country = countries[j])
     }
   }
@@ -684,43 +682,42 @@ pointBinary_629 <- function(metaTable, data, main1, main2, supplement, survey_co
   #' @param data - data for all users on all point binary question sets
   #'
   #' @export
-  
+
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
-    
+
     specialty <- metaTable[i, ]$specialty
-    
+
     expectedRisk <- metaTable[i, ]$expectedRisk
     forecastMin <- metaTable[i, ]$forecastMin
     forecastMax <- metaTable[i, ]$forecastMax
-    
-    #TRUE/FALSE numerate citizens flag
-    numerateCitizens <- metaTable[i,]$numerateCitizens
-    
-    #y-axis labels
-    yLabel <- metaTable[i,]$yLabels
-    
+
+    # TRUE/FALSE numerate citizens flag
+    numerateCitizens <- metaTable[i, ]$numerateCitizens
+
+    # y-axis labels
+    yLabel <- metaTable[i, ]$yLabels
+
     for (j in 1:length(unique(metaTable$stage))) {
       print(paste("Stage:", (unique(metaTable$stage)[j])))
       currentStage <- unique(metaTable$stage)[j]
-      
+
       defaultForecast <- metaTable[i, ]$defaultForecast50
-      
+
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-      
-      files = paste0(currentSetName, " - Phase ", currentStage, ".csv")
+
+      files <- paste0(currentSetName, " - Phase ", currentStage, ".csv")
       filenameStart <- paste0(currentSetName, " - Phase ", currentStage, " Box Plot")
-      
-      boxPlot(files, type="regGroups", specialty=specialty, title=metaTable$title[i], subtitle="", filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName=currentSetName, beliefSet="", year="", distrib="")
-      
+
+      boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = "", filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = "", distrib = "")
+
       setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
-      
     }
     # # CONVERGENCE DATA
     # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
     # print("Getting convergence data...")
-    
+
     # phase1 <- read.csv(list.files()[grep("Phase 1.csv", list.files())])
     # phase1median <- median(phase1$forecast)
     # phase1sd <- sd(phase1$forecast)
@@ -745,29 +742,28 @@ pointBinary_629 <- function(metaTable, data, main1, main2, supplement, survey_co
     # phase4 <- phase4 %>%
     #   filter(forecast > phase4median - (10 * phase4sd)) %>%
     #   filter(forecast < phase4median + (10 * phase4sd))
-    
+
     # setwd(paste0(yourHome, "Summary Data"))
     # convergenceRow <- convergenceAdd_active(phase1, phase2, phase3, phase4, convergenceTable)
     # convergenceTable <- rbind(convergenceTable, convergenceRow)
-    
+
     # write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
-    
+
     # FIGURE DATA
     setwd(paste0(yourHome, "Summary Data/", currentSetName))
-    
+
     if (dir.exists("Figure Data")) {
       setwd("Figure Data")
     } else {
       dir.create("Figure Data")
       setwd("Figure Data")
     }
-    
+
     qSpecialty <- metaTable[i, ]$specialty
-    
+
     currentSetTimeSeries <- read.csv(paste0(currentSetName, ".csv"))
-    
+
     pointBinaryGraphics(title = metaTable$title[i], subtitle = metaTable$subtitle[i], csv = currentSetTimeSeries, currentSetName)
     pointBinaryVarianceGraphics(title = metaTable$title[i], subtitle = metaTable$subtitle[i], csv = currentSetTimeSeries, currentSetName)
   }
-  
 }

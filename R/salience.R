@@ -86,9 +86,8 @@ salienceCalc <- function(median, sd, g1Median, g1Sd, supersMedian,
       t344Opt <- (median - row$t344Median) / sd
       t345Opt <- (median - row$t345Median) / sd
       overallOpt <- (median - row$median) / sd
-    } else if (expPosSalience == "other") {
-      # print("CODE FOR 34")
     }
+
     newTbl <- rbind(newTbl, data.frame(
       date,
       g1Opt,
