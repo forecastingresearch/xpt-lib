@@ -688,7 +688,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   return(newRow)
 }
 
-multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
+multiYearReciprocal <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
   #' Stats and graphs for the multi-year questions
   #'
   #' @description For the question sets that asked about a forecaster's own
@@ -920,7 +920,7 @@ multiYearReciprocal <- function(metaTable, data, main1, main2, supplement, surve
   return(newAdd)
 }
 
-pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
+pointDistrib <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
   #' Stats and Graphs for Point Distribution Questions
   #'
   #' @description For questions where we just asked for a distribution, like:
@@ -1296,7 +1296,7 @@ pointDistrib <- function(metaTable, data, main1, main2, supplement, survey_colum
   return(newAdd)
 }
 
-multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
+multiYearDistrib <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
   #' Stats and graphs for Multi-year Distribution Questions
   #'
   #' @description For the questions where we ask for distributions over predefined years, like:
@@ -1719,7 +1719,7 @@ multiYearDistrib <- function(metaTable, data, main1, main2, supplement, survey_c
   return(newAdd)
 }
 
-multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
+multiYearBinary <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
   #' Stats and graphs for Multi-year Binary Questions
   #'
   #' @description For yes/no multi-year questions, like:
@@ -2002,7 +2002,7 @@ multiYearBinary <- function(metaTable, data, main1, main2, supplement, survey_co
 
 #####
 
-multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
+multiYearCountryDistrib <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
   #' Stats and graphs for Multi-year Country Distribution Questions
   #'
   #' @description For questions where we ask for distributions over predefined
@@ -2329,7 +2329,7 @@ multiYearCountryDistrib <- function(metaTable, data, main1, main2, supplement, s
   return(newAdd)
 }
 
-multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
+multiCountryBinary <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
   #' Stats and graphs for Multi-year Country Binary Questions
   #'
   #' @description For yes/no country questions, like country-by-country nuclear
@@ -2608,7 +2608,7 @@ multiCountryBinary <- function(metaTable, data, main1, main2, supplement, survey
   return(newAdd)
 }
 
-pointBinary <- function(metaTable, data, main1, main2, supplement, survey_column_matches) {
+pointBinary <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
   #' Stats and graphs for classic binary questions
   #'
   #' @description For yes/no point questions, like

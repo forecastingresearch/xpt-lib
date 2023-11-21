@@ -1,0 +1,237 @@
+﻿setName,questionType,year1,year2,year3,country1,country2,country3,country4,country5,country6,country7,country8,country9,country10,country11,country12,yourBeliefs,expertBeliefs,superBeliefs,title,subtitle,stage,specialty,defaultForecast5,defaultForecast25,defaultForecast50,defaultForecast75,defaultForecast95,expectedRisk,forecastMin,forecastMax,numerateCitizens,yLabels
+1. Genetically Engineered Pathogen Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Genetically Engineered Pathogen Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",1,Biorisk,,,50,,,low,0,100,FALSE,Probability
+2. Non-Genetically Engineered Pathogen Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Genetically Engineered Pathogen Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",1,Biorisk,,,50,,,low,0,100,FALSE,Probability
+3. AI Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),AI Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",1,AI,,,50,,,low,0,100,TRUE,Probability
+4. AI Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),AI Extinction Risk,"(Human extinction or reduction of the population below 5,000)",1,AI,,,50,,,low,0,100,TRUE,Probability
+5. Nuclear Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Nuclear Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",1,Nuclear,,,50,,,low,0,100,TRUE,Probability
+6. Nuclear Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Nuclear Extinction Risk,"(Human extinction or reduction of the population below 5,000)",1,Nuclear,,,50,,,low,0,100,TRUE,Probability
+7. Non-Anthropogenic Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Anthropogenic Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",1,,,,50,,,low,0,100,TRUE,Probability
+8. Non-Anthropogenic Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Anthropogenic Extinction Risk,"(Human extinction or reduction of the population below 5,000)",1,,,,50,,,low,0,100,TRUE,Probability
+9. Total Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Total Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",1,,,,50,,,low,0,100,TRUE,Probability
+10. Total Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Total Extinction Risk,"(Human extinction or reduction of the population below 5,000)",1,,,,50,,,low,0,100,TRUE,Probability
+11. Year of Extinction,pointDistrib,,,,,,,,,,,,,,,,,,,Year of Extinction,,1,,2045,2053,2061,2069,2077,normal,2021,1000000,TRUE,Year
+12. Future Human Births,pointDistrib,,,,,,,,,,,,,,,,,,,Future Human Births,,1,,30,40,50,60,70,,,,TRUE,Number of Future Humans
+13. Non-Coronavirus mRNA Vaccine,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Non-Coronavirus mRNA Vaccine,,1,Biorisk,30,40,50,60,70,,,,FALSE,Number of Vaccinated People
+14. Novel Infectious Disease Surveillance System,multiYearBinary,2024,2030,,,,,,,,,,,,,,,,,Novel Infectious Disease Surveillance System,,1,Biorisk,,,50,,,,,,FALSE,Probability
+15. Non-State Actor Bioweapon 1k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Non-State Actor Bioweapon 1k Deaths,,1,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+16. State Actor Bioweapon 1k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,State Actor Bioweapon 1k Deaths,,1,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+17. Non-State Actor Bioweapon 100k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Non-State Actor Bioweapon 100k Deaths,,1,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+18. State Actor Bioweapon 100k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,State Actor Bioweapon 100k Deaths,,1,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+19. Lab Leaks,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Lab Leaks,,1,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+20. Individual Countries with Biological Weapons Programs,multiYearCountryDistrib,2024,2030,2050,U.S.,Russia,China,North Korea,Israel,Iran,Syria,,,,,,,,,Individual Countries with Biological Weapons Programs,,1,Biorisk,,,50,,,,,,FALSE,Number of Biosecurity Experts
+21. Number of Countries with Biological Weapons Programs,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Number of Countries with Biological Weapons Programs,,1,Biorisk,30,40,50,60,70,,,,FALSE,Number of Countries
+22. PHEIC Declarations with 10k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,PHEIC Declarations with 10k Deaths,,1,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+23. Assassinations with Biological Weapons,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Assassinations with Biological Weapons,,1,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+24. Malaria Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Malaria Deaths,,1,Biorisk,30,40,50,60,70,,,,FALSE,Number of Deaths
+25. Average Global Surface Temperature,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Average Global Surface Temperature,,1,Climate,-40,-20,0,20,40,,,,FALSE,Degrees Celsius
+26. Cost of Utility-Scale Solar Energy,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Cost of Utility-Scale Solar Energy,,1,Climate,30,40,50,60,70,,,,FALSE,Cost in 2017 USD
+27. Nuclear Fusion Energy,pointDistrib,,,,,,,,,,,,,,,,,,,Nuclear Fusion Energy,,1,Climate,2045,2053,2061,2069,2077,,,,TRUE,Year
+28. Solar and Wind Energy,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Solar and Wind Energy,,1,Climate,30,40,50,60,70,,,,FALSE,Percentage
+29. Annual Direct Air CO2 Capture,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Annual Direct Air CO2 Capture,,1,Climate,30,40,50,60,70,,,,FALSE,Mt of CO2 Captured
+30. Cost of Hydrogen,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Cost of Hydrogen,,1,Climate,30,40,50,60,70,,,,FALSE,$ per kg Hydrogen
+31. Nuclear Weapon Use,multiYearBinary,2024,2030,,,,,,,,,,,,,,,,,Nuclear Weapon Use,,1,Nuclear,,,50,,,,,,TRUE,Probability
+32. Total Nuclear Warheads,multiYearDistrib,2024,2030,2040,,,,,,,,,,,,,,,,Total Nuclear Warheads,,1,Nuclear,30,40,50,60,70,,,,FALSE,Number of Warheads
+33. Countries with Nuclear Warheads,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Countries with Nuclear Warheads,,1,Nuclear,30,40,50,60,70,,,,TRUE,Number of Countries
+34. Country-by-Country Nuclear Use,multiCountryBinary,,,,China,France,India,Israel,North Korea,Pakistan,Russia,The United Kingdom,The United States,Other actor (state),Other actor (non-state),This will not occur,,,,Country-by-Country Nuclear Use,,1,Nuclear,,,8,,,,,,FALSE,Probability
+35. GPT Revenue,pointBinary,,,,,,,,,,,,,,,,,,,GPT Revenue,,1,AI,,,50,,,,,,FALSE,Probability
+36. US GDP From Software,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,US GDP From Software,,1,AI,30,40,50,60,70,,,,TRUE,Percentage of U.S. GDP
+37. US Computer R&D Spending,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,US Computer R&D Spending,,1,AI,30,40,50,60,70,,,,FALSE,USD Spent
+38. Labor Force Participation Rate in OECD,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Labor Force Participation Rate in OECD,,1,AI,30,40,50,60,70,,,,TRUE,Labor Force Participation Rate
+39. MATH Dataset Benchmark,multiYearDistrib,June 30 2024,June 30 2030,,,,,,,,,,,,,,,,,MATH Dataset Benchmark,,1,AI,30,40,50,60,70,,,,FALSE,Accuracy
+"40. ""Massive Multitask Language Understanding"" Benchmark",multiYearDistrib,June 30 2024,June 30 2030,,,,,,,,,,,,,,,,,"""Massive Multitask Language Understanding"" Benchmark",,1,AI,30,40,50,60,70,,,,FALSE,Accuracy
+41. QuALITY Dataset Benchmark,multiYearDistrib,June 30 2024,June 30 2030,June 30 2040,,,,,,,,,,,,,,,,QuALITY Dataset Benchmark,,1,AI,30,40,50,60,70,,,,FALSE,Score
+42. AI Wins International Mathematical Olympiad,pointDistrib,,,,,,,,,,,,,,,,,,,AI Wins International Mathematical Olympiad,,1,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+43. NYT Bestsellers Written by AI,pointDistrib,,,,,,,,,,,,,,,,,,,NYT Bestsellers Written by AI,,1,AI,2045,2053,2061,2069,2077,,,,FALSE,Year
+44. Date of Advanced AI,pointDistrib,,,,,,,,,,,,,,,,,,,Date of Advanced AI,,1,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+45. Maximum Compute Used in an AI Experiment,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Maximum Compute Used in an AI Experiment,,1,AI,30,40,50,60,70,,,,FALSE,petaFLOP/s-days
+46. Largest AI Experiment Cost of Compute,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Largest AI Experiment Cost of Compute,,1,AI,30,40,50,60,70,,,,TRUE,Cost in 2021 USD
+47. Lowest Price of GFLOPS,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Lowest Price of GFLOPS,,1,AI,30,40,50,60,70,,,,TRUE,Cost in 2021 USD
+48. ImageNet Classification Training Efficiency,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,ImageNet Classification Training Efficiency,,1,AI,30,40,50,60,70,,,,FALSE,Factor
+49. Largest Number of Parameters in a Machine Learning  Model,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Largest Number of Parameters in a Machine Learning  Model,,1,AI,30,40,50,60,70,,,,FALSE,Count of Parameters
+50. Negative Public Opinion of AI,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Negative Public Opinion of AI,,1,AI,30,40,50,60,70,,,,TRUE,Percentage of People
+51. Nick Bostrom Affirms Existence of AGI,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Nick Bostrom Affirms Existence of AGI,,1,AI,,,50,,,,,,FALSE,Probability
+52. Probability of GDP Growth Over 15%,pointBinary,,,,,,,,,,,,,,,,,,,Probability of GDP Growth Over 15%,,1,AI,,,50,,,,,,TRUE,Probability
+53. Year of GDP Growth over 15%,pointDistrib,,,,,,,,,,,,,,,,,,,Year of GDP Growth over 15%,,1,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+54. Loss of Agricultural Production,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Loss of Agricultural Production,,1,,,,50,,,,,,FALSE,Probability
+55. Space Colony,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Space Colony,,1,,,,50,,,,,,FALSE,Probability
+56. Happiness in America,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Happiness in America,,1,,30,40,50,60,70,,,,TRUE,Percentage of Americans
+57. Prevalence of Autocracies,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Prevalence of Autocracies,,1,,30,40,50,60,70,,,,TRUE,Percentage
+58. Future Worries and Children,pointDistrib,,,,,,,,,,,,,,,,,,,Future Worries and Children,,1,,2045,2053,2061,2069,2077,,,,FALSE,Year
+59. Generation Attitudes,pointDistrib,,,,,,,,,,,,,,,,,,,Generation Attitudes,,1,,2045,2053,2061,2069,2077,,,,FALSE,Year
+1. Genetically Engineered Pathogen Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Genetically Engineered Pathogen Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",2,Biorisk,,,50,,,low,0,100,FALSE,Probability
+2. Non-Genetically Engineered Pathogen Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Genetically Engineered Pathogen Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",2,Biorisk,,,50,,,low,0,100,FALSE,Probability
+3. AI Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),AI Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",2,AI,,,50,,,low,0,100,TRUE,Probability
+4. AI Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),AI Extinction Risk,"(Human extinction or reduction of the population below 5,000)",2,AI,,,50,,,low,0,100,TRUE,Probability
+5. Nuclear Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Nuclear Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",2,Nuclear,,,50,,,low,0,100,TRUE,Probability
+6. Nuclear Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Nuclear Extinction Risk,"(Human extinction or reduction of the population below 5,000)",2,Nuclear,,,50,,,low,0,100,TRUE,Probability
+7. Non-Anthropogenic Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Anthropogenic Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",2,,,,50,,,low,0,100,TRUE,Probability
+8. Non-Anthropogenic Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Anthropogenic Extinction Risk,"(Human extinction or reduction of the population below 5,000)",2,,,,50,,,low,0,100,TRUE,Probability
+9. Total Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Total Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",2,,,,50,,,low,0,100,TRUE,Probability
+10. Total Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Total Extinction Risk,"(Human extinction or reduction of the population below 5,000)",2,,,,50,,,low,0,100,TRUE,Probability
+11. Year of Extinction,pointDistrib,,,,,,,,,,,,,,,,,,,Year of Extinction,,2,,2045,2053,2061,2069,2077,,2021,1000000,TRUE,Year
+12. Future Human Births,pointDistrib,,,,,,,,,,,,,,,,,,,Future Human Births,,2,,30,40,50,60,70,,,,TRUE,Number of Future Humans
+13. Non-Coronavirus mRNA Vaccine,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Non-Coronavirus mRNA Vaccine,,2,Biorisk,30,40,50,60,70,,,,FALSE,Number of Vaccinated People
+14. Novel Infectious Disease Surveillance System,multiYearBinary,2024,2030,,,,,,,,,,,,,,,,,Novel Infectious Disease Surveillance System,,2,Biorisk,,,50,,,,,,FALSE,Probability
+15. Non-State Actor Bioweapon 1k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Non-State Actor Bioweapon 1k Deaths,,2,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+16. State Actor Bioweapon 1k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,State Actor Bioweapon 1k Deaths,,2,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+17. Non-State Actor Bioweapon 100k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Non-State Actor Bioweapon 100k Deaths,,2,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+18. State Actor Bioweapon 100k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,State Actor Bioweapon 100k Deaths,,2,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+19. Lab Leaks,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Lab Leaks,,2,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+20. Individual Countries with Biological Weapons Programs,multiYearCountryDistrib,2024,2030,2050,U.S.,Russia,China,North Korea,Israel,Iran,Syria,,,,,,,,,Individual Countries with Biological Weapons Programs,,2,Biorisk,,,50,,,,,,FALSE,Number of Biosecurity Experts
+21. Number of Countries with Biological Weapons Programs,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Number of Countries with Biological Weapons Programs,,2,Biorisk,30,40,50,60,70,,,,FALSE,Number of Countries
+22. PHEIC Declarations with 10k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,PHEIC Declarations with 10k Deaths,,2,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+23. Assassinations with Biological Weapons,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Assassinations with Biological Weapons,,2,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+24. Malaria Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Malaria Deaths,,2,Biorisk,30,40,50,60,70,,,,FALSE,Number of Deaths
+25. Average Global Surface Temperature,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Average Global Surface Temperature,,2,Climate,-40,-20,0,20,40,,,,FALSE,Degrees Celsius
+26. Cost of Utility-Scale Solar Energy,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Cost of Utility-Scale Solar Energy,,2,Climate,30,40,50,60,70,,,,FALSE,Cost in 2017 USD
+27. Nuclear Fusion Energy,pointDistrib,,,,,,,,,,,,,,,,,,,Nuclear Fusion Energy,,2,Climate,2045,2053,2061,2069,2077,,,,TRUE,Year
+28. Solar and Wind Energy,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Solar and Wind Energy,,2,Climate,30,40,50,60,70,,,,FALSE,Percentage
+29. Annual Direct Air CO2 Capture,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Annual Direct Air CO2 Capture,,2,Climate,30,40,50,60,70,,,,FALSE,Mt of CO2 Captured
+30. Cost of Hydrogen,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Cost of Hydrogen,,2,Climate,30,40,50,60,70,,,,FALSE,$ per kg Hydrogen
+31. Nuclear Weapon Use,multiYearBinary,2024,2030,,,,,,,,,,,,,,,,,Nuclear Weapon Use,,2,Nuclear,,,50,,,,,,TRUE,Probability
+32. Total Nuclear Warheads,multiYearDistrib,2024,2030,2040,,,,,,,,,,,,,,,,Total Nuclear Warheads,,2,Nuclear,30,40,50,60,70,,,,FALSE,Number of Warheads
+33. Countries with Nuclear Warheads,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Countries with Nuclear Warheads,,2,Nuclear,30,40,50,60,70,,,,TRUE,Number of Countries
+34. Country-by-Country Nuclear Use,multiCountryBinary,,,,China,France,India,Israel,North Korea,Pakistan,Russia,The United Kingdom,The United States,Other actor (state),Other actor (non-state),This will not occur,,,,Country-by-Country Nuclear Use,,2,Nuclear,,,8,,,,,,FALSE,Probability
+35. GPT Revenue,pointBinary,,,,,,,,,,,,,,,,,,,GPT Revenue,,2,AI,,,50,,,,,,FALSE,Probability
+36. US GDP From Software,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,US GDP From Software,,2,AI,30,40,50,60,70,,,,TRUE,Percentage of U.S. GDP
+37. US Computer R&D Spending,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,US Computer R&D Spending,,2,AI,30,40,50,60,70,,,,FALSE,USD Spent
+38. Labor Force Participation Rate in OECD,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Labor Force Participation Rate in OECD,,2,AI,30,40,50,60,70,,,,TRUE,Labor Force Participation Rate
+39. MATH Dataset Benchmark,multiYearDistrib,30-Jun-24,30-Jun-30,,,,,,,,,,,,,,,,,MATH Dataset Benchmark,,2,AI,30,40,50,60,70,,,,FALSE,Accuracy
+"40. ""Massive Multitask Language Understanding"" Benchmark",multiYearDistrib,30-Jun-24,30-Jun-30,,,,,,,,,,,,,,,,,"""Massive Multitask Language Understanding"" Benchmark",,2,AI,30,40,50,60,70,,,,FALSE,Accuracy
+41. QuALITY Dataset Benchmark,multiYearDistrib,30-Jun-24,30-Jun-30,30-Jun-40,,,,,,,,,,,,,,,,QuALITY Dataset Benchmark,,2,AI,30,40,50,60,70,,,,FALSE,Score
+42. AI Wins International Mathematical Olympiad,pointDistrib,,,,,,,,,,,,,,,,,,,AI Wins International Mathematical Olympiad,,2,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+43. NYT Bestsellers Written by AI,pointDistrib,,,,,,,,,,,,,,,,,,,NYT Bestsellers Written by AI,,2,AI,2045,2053,2061,2069,2077,,,,FALSE,Year
+44. Date of Advanced AI,pointDistrib,,,,,,,,,,,,,,,,,,,Date of Advanced AI,,2,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+45. Maximum Compute Used in an AI Experiment,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Maximum Compute Used in an AI Experiment,,2,AI,30,40,50,60,70,,,,FALSE,petaFLOP/s-days
+46. Largest AI Experiment Cost of Compute,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Largest AI Experiment Cost of Compute,,2,AI,30,40,50,60,70,,,,TRUE,Cost in 2021 USD
+47. Lowest Price of GFLOPS,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Lowest Price of GFLOPS,,2,AI,30,40,50,60,70,,,,TRUE,Cost in 2021 USD
+48. ImageNet Classification Training Efficiency,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,ImageNet Classification Training Efficiency,,2,AI,30,40,50,60,70,,,,FALSE,Factor
+49. Largest Number of Parameters in a Machine Learning  Model,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Largest Number of Parameters in a Machine Learning  Model,,2,AI,30,40,50,60,70,,,,FALSE,Count of Parameters
+50. Negative Public Opinion of AI,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Negative Public Opinion of AI,,2,AI,30,40,50,60,70,,,,TRUE,Percentage of People
+51. Nick Bostrom Affirms Existence of AGI,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Nick Bostrom Affirms Existence of AGI,,2,AI,,,50,,,,,,FALSE,Probability
+52. Probability of GDP Growth Over 15%,pointBinary,,,,,,,,,,,,,,,,,,,Probability of GDP Growth Over 15%,,2,AI,,,50,,,,,,TRUE,Probability
+53. Year of GDP Growth over 15%,pointDistrib,,,,,,,,,,,,,,,,,,,Year of GDP Growth over 15%,,2,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+54. Loss of Agricultural Production,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Loss of Agricultural Production,,2,,,,50,,,,,,FALSE,Probability
+55. Space Colony,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Space Colony,,2,,,,50,,,,,,FALSE,Probability
+56. Happiness in America,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Happiness in America,,2,,30,40,50,60,70,,,,TRUE,Percentage of Americans
+57. Prevalence of Autocracies,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Prevalence of Autocracies,,2,,30,40,50,60,70,,,,TRUE,Percentage
+58. Future Worries and Children,pointDistrib,,,,,,,,,,,,,,,,,,,Future Worries and Children,,2,,2045,2053,2061,2069,2077,,,,FALSE,Year
+59. Generation Attitudes,pointDistrib,,,,,,,,,,,,,,,,,,,Generation Attitudes,,2,,2045,2053,2061,2069,2077,,,,FALSE,Year
+1. Genetically Engineered Pathogen Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Genetically Engineered Pathogen Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",3,Biorisk,,,50,,,low,0,100,FALSE,Probability
+2. Non-Genetically Engineered Pathogen Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Genetically Engineered Pathogen Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",3,Biorisk,,,50,,,low,0,100,FALSE,Probability
+3. AI Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),AI Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",3,AI,,,50,,,low,0,100,TRUE,Probability
+4. AI Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),AI Extinction Risk,"(Human extinction or reduction of the population below 5,000)",3,AI,,,50,,,low,0,100,TRUE,Probability
+5. Nuclear Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Nuclear Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",3,Nuclear,,,50,,,low,0,100,TRUE,Probability
+6. Nuclear Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Nuclear Extinction Risk,"(Human extinction or reduction of the population below 5,000)",3,Nuclear,,,50,,,low,0,100,TRUE,Probability
+7. Non-Anthropogenic Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Anthropogenic Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",3,,,,50,,,low,0,100,TRUE,Probability
+8. Non-Anthropogenic Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Anthropogenic Extinction Risk,"(Human extinction or reduction of the population below 5,000)",3,,,,50,,,low,0,100,TRUE,Probability
+9. Total Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Total Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",3,,,,50,,,low,0,100,TRUE,Probability
+10. Total Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Total Extinction Risk,"(Human extinction or reduction of the population below 5,000)",3,,,,50,,,low,0,100,TRUE,Probability
+11. Year of Extinction,pointDistrib,,,,,,,,,,,,,,,,,,,Year of Extinction,,3,,2045,2053,2061,2069,2077,,2021,1000000,TRUE,Year
+12. Future Human Births,pointDistrib,,,,,,,,,,,,,,,,,,,Future Human Births,,3,,30,40,50,60,70,,,,TRUE,Number of Future Humans
+13. Non-Coronavirus mRNA Vaccine,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Non-Coronavirus mRNA Vaccine,,3,Biorisk,30,40,50,60,70,,,,FALSE,Number of Vaccinated People
+14. Novel Infectious Disease Surveillance System,multiYearBinary,2024,2030,,,,,,,,,,,,,,,,,Novel Infectious Disease Surveillance System,,3,Biorisk,,,50,,,,,,FALSE,Probability
+15. Non-State Actor Bioweapon 1k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Non-State Actor Bioweapon 1k Deaths,,3,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+16. State Actor Bioweapon 1k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,State Actor Bioweapon 1k Deaths,,3,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+17. Non-State Actor Bioweapon 100k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Non-State Actor Bioweapon 100k Deaths,,3,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+18. State Actor Bioweapon 100k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,State Actor Bioweapon 100k Deaths,,3,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+19. Lab Leaks,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Lab Leaks,,3,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+20. Individual Countries with Biological Weapons Programs,multiYearCountryDistrib,2024,2030,2050,U.S.,Russia,China,North Korea,Israel,Iran,Syria,,,,,,,,,Individual Countries with Biological Weapons Programs,,3,Biorisk,,,50,,,,,,FALSE,Number of Biosecurity Experts
+21. Number of Countries with Biological Weapons Programs,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Number of Countries with Biological Weapons Programs,,3,Biorisk,30,40,50,60,70,,,,FALSE,Number of Countries
+22. PHEIC Declarations with 10k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,PHEIC Declarations with 10k Deaths,,3,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+23. Assassinations with Biological Weapons,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Assassinations with Biological Weapons,,3,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+24. Malaria Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Malaria Deaths,,3,Biorisk,30,40,50,60,70,,,,FALSE,Number of Deaths
+25. Average Global Surface Temperature,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Average Global Surface Temperature,,3,Climate,-40,-20,0,20,40,,,,FALSE,Degrees Celsius
+26. Cost of Utility-Scale Solar Energy,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Cost of Utility-Scale Solar Energy,,3,Climate,30,40,50,60,70,,,,FALSE,Cost in 2017 USD
+27. Nuclear Fusion Energy,pointDistrib,,,,,,,,,,,,,,,,,,,Nuclear Fusion Energy,,3,Climate,2045,2053,2061,2069,2077,,,,TRUE,Year
+28. Solar and Wind Energy,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Solar and Wind Energy,,3,Climate,30,40,50,60,70,,,,FALSE,Percentage
+29. Annual Direct Air CO2 Capture,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Annual Direct Air CO2 Capture,,3,Climate,30,40,50,60,70,,,,FALSE,Mt of CO2 Captured
+30. Cost of Hydrogen,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Cost of Hydrogen,,3,Climate,30,40,50,60,70,,,,FALSE,$ per kg Hydrogen
+31. Nuclear Weapon Use,multiYearBinary,2024,2030,,,,,,,,,,,,,,,,,Nuclear Weapon Use,,3,Nuclear,,,50,,,,,,TRUE,Probability
+32. Total Nuclear Warheads,multiYearDistrib,2024,2030,2040,,,,,,,,,,,,,,,,Total Nuclear Warheads,,3,Nuclear,30,40,50,60,70,,,,FALSE,Number of Warheads
+33. Countries with Nuclear Warheads,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Countries with Nuclear Warheads,,3,Nuclear,30,40,50,60,70,,,,TRUE,Number of Countries
+34. Country-by-Country Nuclear Use,multiCountryBinary,,,,China,France,India,Israel,North Korea,Pakistan,Russia,The United Kingdom,The United States,Other actor (state),Other actor (non-state),This will not occur,,,,Country-by-Country Nuclear Use,,3,Nuclear,,,8,,,,,,FALSE,Probability
+35. GPT Revenue,pointBinary,,,,,,,,,,,,,,,,,,,GPT Revenue,,3,AI,,,50,,,,,,FALSE,Probability
+36. US GDP From Software,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,US GDP From Software,,3,AI,30,40,50,60,70,,,,TRUE,Percentage of U.S. GDP
+37. US Computer R&D Spending,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,US Computer R&D Spending,,3,AI,30,40,50,60,70,,,,FALSE,USD Spent
+38. Labor Force Participation Rate in OECD,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Labor Force Participation Rate in OECD,,3,AI,30,40,50,60,70,,,,TRUE,Labor Force Participation Rate
+39. MATH Dataset Benchmark,multiYearDistrib,30-Jun-24,30-Jun-30,,,,,,,,,,,,,,,,,MATH Dataset Benchmark,,3,AI,30,40,50,60,70,,,,FALSE,Accuracy
+"40. ""Massive Multitask Language Understanding"" Benchmark",multiYearDistrib,30-Jun-24,30-Jun-30,,,,,,,,,,,,,,,,,"""Massive Multitask Language Understanding"" Benchmark",,3,AI,30,40,50,60,70,,,,FALSE,Accuracy
+41. QuALITY Dataset Benchmark,multiYearDistrib,30-Jun-24,30-Jun-30,30-Jun-40,,,,,,,,,,,,,,,,QuALITY Dataset Benchmark,,3,AI,30,40,50,60,70,,,,FALSE,Score
+42. AI Wins International Mathematical Olympiad,pointDistrib,,,,,,,,,,,,,,,,,,,AI Wins International Mathematical Olympiad,,3,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+43. NYT Bestsellers Written by AI,pointDistrib,,,,,,,,,,,,,,,,,,,NYT Bestsellers Written by AI,,3,AI,2045,2053,2061,2069,2077,,,,FALSE,Year
+44. Date of Advanced AI,pointDistrib,,,,,,,,,,,,,,,,,,,Date of Advanced AI,,3,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+45. Maximum Compute Used in an AI Experiment,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Maximum Compute Used in an AI Experiment,,3,AI,30,40,50,60,70,,,,FALSE,petaFLOP/s-days
+46. Largest AI Experiment Cost of Compute,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Largest AI Experiment Cost of Compute,,3,AI,30,40,50,60,70,,,,TRUE,Cost in 2021 USD
+47. Lowest Price of GFLOPS,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Lowest Price of GFLOPS,,3,AI,30,40,50,60,70,,,,TRUE,Cost in 2021 USD
+48. ImageNet Classification Training Efficiency,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,ImageNet Classification Training Efficiency,,3,AI,30,40,50,60,70,,,,FALSE,Factor
+49. Largest Number of Parameters in a Machine Learning  Model,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Largest Number of Parameters in a Machine Learning  Model,,3,AI,30,40,50,60,70,,,,FALSE,Count of Parameters
+50. Negative Public Opinion of AI,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Negative Public Opinion of AI,,3,AI,30,40,50,60,70,,,,TRUE,Percentage of People
+51. Nick Bostrom Affirms Existence of AGI,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Nick Bostrom Affirms Existence of AGI,,3,AI,,,50,,,,,,FALSE,Probability
+52. Probability of GDP Growth Over 15%,pointBinary,,,,,,,,,,,,,,,,,,,Probability of GDP Growth Over 15%,,3,AI,,,50,,,,,,TRUE,Probability
+53. Year of GDP Growth over 15%,pointDistrib,,,,,,,,,,,,,,,,,,,Year of GDP Growth over 15%,,3,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+54. Loss of Agricultural Production,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Loss of Agricultural Production,,3,,,,50,,,,,,FALSE,Probability
+55. Space Colony,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Space Colony,,3,,,,50,,,,,,FALSE,Probability
+56. Happiness in America,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Happiness in America,,3,,30,40,50,60,70,,,,TRUE,Percentage of Americans
+57. Prevalence of Autocracies,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Prevalence of Autocracies,,3,,30,40,50,60,70,,,,TRUE,Percentage
+58. Future Worries and Children,pointDistrib,,,,,,,,,,,,,,,,,,,Future Worries and Children,,3,,2045,2053,2061,2069,2077,,,,FALSE,Year
+59. Generation Attitudes,pointDistrib,,,,,,,,,,,,,,,,,,,Generation Attitudes,,3,,2045,2053,2061,2069,2077,,,,FALSE,Year
+1. Genetically Engineered Pathogen Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Genetically Engineered Pathogen Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",4,Biorisk,,,50,,,low,0,100,FALSE,Probability
+2. Non-Genetically Engineered Pathogen Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Genetically Engineered Pathogen Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",4,Biorisk,,,50,,,low,0,100,FALSE,Probability
+3. AI Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),AI Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",4,AI,,,50,,,low,0,100,TRUE,Probability
+4. AI Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),AI Extinction Risk,"(Human extinction or reduction of the population below 5,000)",4,AI,,,50,,,low,0,100,TRUE,Probability
+5. Nuclear Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Nuclear Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",4,Nuclear,,,50,,,low,0,100,TRUE,Probability
+6. Nuclear Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Nuclear Extinction Risk,"(Human extinction or reduction of the population below 5,000)",4,Nuclear,,,50,,,low,0,100,TRUE,Probability
+7. Non-Anthropogenic Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Anthropogenic Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",4,,,,50,,,low,0,100,TRUE,Probability
+8. Non-Anthropogenic Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Non-Anthropogenic Extinction Risk,"(Human extinction or reduction of the population below 5,000)",4,,,,50,,,low,0,100,TRUE,Probability
+9. Total Catastrophic Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Total Catastrophic Risk,"(Cause of death, within a 5-year period, for more than 1% of humans alive at the beginning of the period)",4,,,,50,,,low,0,100,TRUE,Probability
+10. Total Extinction Risk,multiYearReciprocal,2030,2050,2100,,,,,,,,,,,,,(Your Beliefs),(Other Experts' Beliefs),(Other Superforecasters' Beliefs),Total Extinction Risk,"(Human extinction or reduction of the population below 5,000)",4,,,,50,,,low,0,100,TRUE,Probability
+11. Year of Extinction,pointDistrib,,,,,,,,,,,,,,,,,,,Year of Extinction,,4,,2045,2053,2061,2069,2077,,2021,1000000,TRUE,Year
+12. Future Human Births,pointDistrib,,,,,,,,,,,,,,,,,,,Future Human Births,,4,,30,40,50,60,70,,,,TRUE,Number of Future Humans
+13. Non-Coronavirus mRNA Vaccine,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Non-Coronavirus mRNA Vaccine,,4,Biorisk,30,40,50,60,70,,,,FALSE,Number of Vaccinated People
+14. Novel Infectious Disease Surveillance System,multiYearBinary,2024,2030,,,,,,,,,,,,,,,,,Novel Infectious Disease Surveillance System,,4,Biorisk,,,50,,,,,,FALSE,Probability
+15. Non-State Actor Bioweapon 1k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Non-State Actor Bioweapon 1k Deaths,,4,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+16. State Actor Bioweapon 1k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,State Actor Bioweapon 1k Deaths,,4,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+17. Non-State Actor Bioweapon 100k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Non-State Actor Bioweapon 100k Deaths,,4,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+18. State Actor Bioweapon 100k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,State Actor Bioweapon 100k Deaths,,4,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+19. Lab Leaks,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Lab Leaks,,4,Biorisk,30,40,50,60,70,,,,TRUE,Number of Events
+20. Individual Countries with Biological Weapons Programs,multiYearCountryDistrib,2024,2030,2050,U.S.,Russia,China,North Korea,Israel,Iran,Syria,,,,,,,,,Individual Countries with Biological Weapons Programs,,4,Biorisk,,,50,,,,,,FALSE,Number of Biosecurity Experts
+21. Number of Countries with Biological Weapons Programs,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Number of Countries with Biological Weapons Programs,,4,Biorisk,30,40,50,60,70,,,,FALSE,Number of Countries
+22. PHEIC Declarations with 10k Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,PHEIC Declarations with 10k Deaths,,4,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+23. Assassinations with Biological Weapons,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Assassinations with Biological Weapons,,4,Biorisk,30,40,50,60,70,,,,FALSE,Number of Events
+24. Malaria Deaths,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Malaria Deaths,,4,Biorisk,30,40,50,60,70,,,,FALSE,Number of Deaths
+25. Average Global Surface Temperature,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Average Global Surface Temperature,,4,Climate,-40,-20,0,20,40,,,,FALSE,Degrees Celsius
+26. Cost of Utility-Scale Solar Energy,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Cost of Utility-Scale Solar Energy,,4,Climate,30,40,50,60,70,,,,FALSE,Cost in 2017 USD
+27. Nuclear Fusion Energy,pointDistrib,,,,,,,,,,,,,,,,,,,Nuclear Fusion Energy,,4,Climate,2045,2053,2061,2069,2077,,,,TRUE,Year
+28. Solar and Wind Energy,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Solar and Wind Energy,,4,Climate,30,40,50,60,70,,,,FALSE,Percentage
+29. Annual Direct Air CO2 Capture,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Annual Direct Air CO2 Capture,,4,Climate,30,40,50,60,70,,,,FALSE,Mt of CO2 Captured
+30. Cost of Hydrogen,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,Cost of Hydrogen,,4,Climate,30,40,50,60,70,,,,FALSE,$ per kg Hydrogen
+31. Nuclear Weapon Use,multiYearBinary,2024,2030,,,,,,,,,,,,,,,,,Nuclear Weapon Use,,4,Nuclear,,,50,,,,,,TRUE,Probability
+32. Total Nuclear Warheads,multiYearDistrib,2024,2030,2040,,,,,,,,,,,,,,,,Total Nuclear Warheads,,4,Nuclear,30,40,50,60,70,,,,FALSE,Number of Warheads
+33. Countries with Nuclear Warheads,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Countries with Nuclear Warheads,,4,Nuclear,30,40,50,60,70,,,,TRUE,Number of Countries
+34. Country-by-Country Nuclear Use,multiCountryBinary,,,,China,France,India,Israel,North Korea,Pakistan,Russia,The United Kingdom,The United States,Other actor (state),Other actor (non-state),This will not occur,,,,Country-by-Country Nuclear Use,,4,Nuclear,,,8,,,,,,FALSE,Probability
+35. GPT Revenue,pointBinary,,,,,,,,,,,,,,,,,,,GPT Revenue,,4,AI,,,50,,,,,,FALSE,Probability
+36. US GDP From Software,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,US GDP From Software,,4,AI,30,40,50,60,70,,,,TRUE,Percentage of U.S. GDP
+37. US Computer R&D Spending,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,US Computer R&D Spending,,4,AI,30,40,50,60,70,,,,FALSE,USD Spent
+38. Labor Force Participation Rate in OECD,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Labor Force Participation Rate in OECD,,4,AI,30,40,50,60,70,,,,TRUE,Labor Force Participation Rate
+39. MATH Dataset Benchmark,multiYearDistrib,30-Jun-24,30-Jun-30,,,,,,,,,,,,,,,,,MATH Dataset Benchmark,,4,AI,30,40,50,60,70,,,,FALSE,Accuracy
+"40. ""Massive Multitask Language Understanding"" Benchmark",multiYearDistrib,30-Jun-24,30-Jun-30,,,,,,,,,,,,,,,,,"""Massive Multitask Language Understanding"" Benchmark",,4,AI,30,40,50,60,70,,,,FALSE,Accuracy
+41. QuALITY Dataset Benchmark,multiYearDistrib,30-Jun-24,30-Jun-30,30-Jun-40,,,,,,,,,,,,,,,,QuALITY Dataset Benchmark,,4,AI,30,40,50,60,70,,,,FALSE,Score
+42. AI Wins International Mathematical Olympiad,pointDistrib,,,,,,,,,,,,,,,,,,,AI Wins International Mathematical Olympiad,,4,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+43. NYT Bestsellers Written by AI,pointDistrib,,,,,,,,,,,,,,,,,,,NYT Bestsellers Written by AI,,4,AI,2045,2053,2061,2069,2077,,,,FALSE,Year
+44. Date of Advanced AI,pointDistrib,,,,,,,,,,,,,,,,,,,Date of Advanced AI,,4,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+45. Maximum Compute Used in an AI Experiment,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Maximum Compute Used in an AI Experiment,,4,AI,30,40,50,60,70,,,,FALSE,petaFLOP/s-days
+46. Largest AI Experiment Cost of Compute,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Largest AI Experiment Cost of Compute,,4,AI,30,40,50,60,70,,,,TRUE,Cost in 2021 USD
+47. Lowest Price of GFLOPS,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Lowest Price of GFLOPS,,4,AI,30,40,50,60,70,,,,TRUE,Cost in 2021 USD
+48. ImageNet Classification Training Efficiency,multiYearDistrib,2024,2030,,,,,,,,,,,,,,,,,ImageNet Classification Training Efficiency,,4,AI,30,40,50,60,70,,,,FALSE,Factor
+49. Largest Number of Parameters in a Machine Learning  Model,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Largest Number of Parameters in a Machine Learning  Model,,4,AI,30,40,50,60,70,,,,FALSE,Count of Parameters
+50. Negative Public Opinion of AI,multiYearDistrib,2024,2030,2050,,,,,,,,,,,,,,,,Negative Public Opinion of AI,,4,AI,30,40,50,60,70,,,,TRUE,Percentage of People
+51. Nick Bostrom Affirms Existence of AGI,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Nick Bostrom Affirms Existence of AGI,,4,AI,,,50,,,,,,FALSE,Probability
+52. Probability of GDP Growth Over 15%,pointBinary,,,,,,,,,,,,,,,,,,,Probability of GDP Growth Over 15%,,4,AI,,,50,,,,,,TRUE,Probability
+53. Year of GDP Growth over 15%,pointDistrib,,,,,,,,,,,,,,,,,,,Year of GDP Growth over 15%,,4,AI,2045,2053,2061,2069,2077,,,,TRUE,Year
+54. Loss of Agricultural Production,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Loss of Agricultural Production,,4,,,,50,,,,,,FALSE,Probability
+55. Space Colony,multiYearBinary,2030,2050,2100,,,,,,,,,,,,,,,,Space Colony,,4,,,,50,,,,,,FALSE,Probability
+56. Happiness in America,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Happiness in America,,4,,30,40,50,60,70,,,,TRUE,Percentage of Americans
+57. Prevalence of Autocracies,multiYearDistrib,2030,2050,2100,,,,,,,,,,,,,,,,Prevalence of Autocracies,,4,,30,40,50,60,70,,,,TRUE,Percentage
+58. Future Worries and Children,pointDistrib,,,,,,,,,,,,,,,,,,,Future Worries and Children,,4,,2045,2053,2061,2069,2077,,,,FALSE,Year
+59. Generation Attitudes,pointDistrib,,,,,,,,,,,,,,,,,,,Generation Attitudes,,4,,2045,2053,2061,2069,2077,,,,FALSE,Year

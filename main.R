@@ -53,14 +53,14 @@ setwd(paste0(yourHome, "sources/public-survey"))
 survey_column_matches <- read.csv("survey_column_matches.csv")
 survey_column_matches[is.na(survey_column_matches)] <- ""
 
-main1 <- read.csv("main1_cleaned_anon.csv")
-main1 <- main1 %>%
+public_supplement1 <- read.csv("public_supplement1_anon.csv")
+public_supplement1 <- public_supplement1 %>%
   filter(Finished == TRUE)
-main2 <- read.csv("main2_cleaned_anon.csv")
-main2 <- main2 %>%
+public_supplement2 <- read.csv("public_supplement2_anon.csv")
+public_supplement2 <- public_supplement2 %>%
   filter(Finished == TRUE)
-supplement <- read.csv("supplement_cleaned_anon.csv")
-supplement <- supplement %>%
+public_supplement3 <- read.csv("public_supplement3_anon.csv")
+public_supplement3 <- public_supplement3 %>%
   filter(Finished == TRUE)
 
 setwd(paste0(yourHome, "Summary Data"))

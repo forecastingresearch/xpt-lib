@@ -417,16 +417,16 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
         filter(year == y) %>%
         filter(distrib == d)
       if (nrow(sheetInfo) > 0) {
-        if (sheetInfo$sheet == "main1") {
-          publicSurvey <- as.numeric(unlist(main1 %>%
+        if (sheetInfo$sheet == "public_supplement1") {
+          publicSurvey <- as.numeric(unlist(public_supplement1 %>%
             select(all_of(sheetInfo$colName))))
           publicSurvey <- publicSurvey[!is.na(publicSurvey)]
-        } else if (sheetInfo$sheet == "main2") {
-          publicSurvey <- as.numeric(unlist(main2 %>%
+        } else if (sheetInfo$sheet == "public_supplement2") {
+          publicSurvey <- as.numeric(unlist(public_supplement2 %>%
             select(all_of(sheetInfo$colName))))
           publicSurvey <- publicSurvey[!is.na(publicSurvey)]
-        } else if (sheetInfo$sheet == "supplement") {
-          publicSurvey <- as.numeric(unlist(supplement %>%
+        } else if (sheetInfo$sheet == "public_supplement3") {
+          publicSurvey <- as.numeric(unlist(public_supplement3 %>%
             select(all_of(sheetInfo$colName))))
         }
         publicSurvey <- publicSurvey[!is.na(publicSurvey)]
