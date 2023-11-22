@@ -1,6 +1,17 @@
+xpt-lib: Existential Risk Persuasion Tournament replication package
+================
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+This repository contains all the code used to produce the analysis in the
+[XPT report](https://forecastingresearch.org/s/XPT.pdf) by the Forecasting
+Research Institute.
+
 ## Installation
 
-To install the xpt package from a private GitHub repository, follow these steps:
+To install the xpt package from this GitHub repository, follow these steps:
 
 1. Clone the private repository to your local machine.
 
@@ -14,21 +25,18 @@ devtools::install()
 
 Replace /path/to/xpt with the actual path to your cloned xpt package directory.
 
-If you make changes to `xpt-lib`, just run `document()`, then `install()` again, and you're golden. `devtools::document` updates the NAMESPACE file (important).
+Should you want to make changes to `xpt-lib` locally, just run
+`devtools::document()`, then `install()` again, and you're golden.
+`devtools::document` updates the NAMESPACE file (important).
 
 ## Usage
 
-Once you've installed it that way, you can load it from anywhere with `library(xpt)`.
-Then you can use any of the functions that have `@export` in their docstrings.
-I designated those functions kind of haphazardly and probably missed some.
+Once you've installed `xpt`, you can load it using `library(xpt)`.
+`main.R` runs all the code used in the XPT report.
 
-## Running tests
+[TODO: explain the sources files and give an example of how to get the median/gmod/mean by group on one question??]
 
-You can run tests with `devtools` or `testthat`. E.g.:
+## Questions
 
-```R
-
-devtools::test()  # runs them all
-testthat::test_dir("tests/testthat/")  # equivalent, in theory
-testthat::test_file("tests/testthat/test-agg.R")  # only the tests in test-agg.R
-```
+Please feel free to contact molly@forecastingresearch.org with any questions
+about the tournament or the analysis herein.

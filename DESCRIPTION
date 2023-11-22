@@ -1,18 +1,24 @@
 Package: xpt
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Existential Risk Persuasion Tournament (XPT) Replication Package
+Version: 1.0.0
 Authors@R: c(
     person("Zach", "Jacobs", email="zach@forecastingresearch.org", role=c("aut", "cre")),
     person("Molly", "Hickman", email="molly@forecastingresearch.org", role=c("ctb")))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Description: Provides the data (anonymized) and code necessary to replicate the
+    results of the Existential Risk Persuasion Tournament (XPT). The XPT was a
+    forecasting tournament that explored potential threats to humanity, with
+    a focus on artificial intelligence, biosecurity, climate, and nuclear arms.
+    The tournament ran from June-October 2022 and included over 200 experts and
+    highly skilled forecasters working individually and in teams to craft
+    forecasts and persuasive explanations.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Imports:
     dplyr,
     ggplot2,
+    gdata,
     lubridate,
     docstring,
     data.table (>= 1.14.6),
