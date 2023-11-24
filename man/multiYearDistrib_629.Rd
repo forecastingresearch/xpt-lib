@@ -7,9 +7,9 @@
 multiYearDistrib_629(
   metaTable,
   data,
-  main1,
-  main2,
-  supplement,
+  public_supplement1,
+  public_supplement2,
+  public_supplement3,
   survey_column_matches
 )
 }

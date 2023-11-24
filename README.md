@@ -29,8 +29,6 @@ Should you want to make changes to `xpt-lib` locally, just run
 `devtools::document()`, then `install()` again, and you're golden.
 `devtools::document` updates the NAMESPACE file (important).
 
-## Usage
-
 Once you've installed `xpt`, you can load it using `library(xpt)`.
 
 ## Files
