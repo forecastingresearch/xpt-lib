@@ -1,10 +1,10 @@
 rm(list = ls())
 
 # Change this to the dir that houses the git repo (xpt-lib) # nolint
-yourHome <<- #####
+yourHome <<- "/path/to/xpt/"
 
-  # Set-up
-  options(scipen = 999)
+# Set-up
+options(scipen = 999)
 setwd(paste0(yourHome, "sources"))
 
 library(data.table)
@@ -350,3 +350,262 @@ for (i in 1:length(unique(metaTable$setName))) {
 
   setwd(paste0(yourHome, "Summary Data"))
 }
+
+##### Aggregation Methods #####
+
+main1 <- fread("public-survey/public_supplement1_anon.csv") %>%
+  filter(Finished == "TRUE")
+main2 <- fread("public-survey/public_supplement2_anon.csv") %>%
+  filter(Finished == "TRUE")
+main3 <- fread("public-survey/public_supplement3_anon.csv") %>%
+  filter(Finished == "TRUE")
+mapping <- fread("public-survey/survey_column_matches.csv")
+
+getPublicSurveyForecasts <- function(sn, bs, y, d) {
+  sheetInfo <- mapping %>%
+    rowwise() %>%
+    filter(grepl(sn, setName)) %>%
+    filter(grepl(bs, beliefSet)) %>%
+    filter(distrib == d)
+  if (is.na(y)) {
+    sheetInfo <- sheetInfo %>%
+      filter(is.na(year))
+  } else {
+    sheetInfo <- sheetInfo %>%
+      filter(year == y)
+  }
+  if (nrow(sheetInfo) > 0) {
+    if (sheetInfo$sheet == "public_supplement1") {
+      publicSurvey <- as.numeric(unlist(main1 %>%
+        select(all_of(sheetInfo$colName))))
+      publicSurvey <- publicSurvey[!is.na(publicSurvey)]
+    } else if (sheetInfo$sheet == "public_supplement2") {
+      publicSurvey <- as.numeric(unlist(main2 %>%
+        select(all_of(sheetInfo$colName))))
+      publicSurvey <- publicSurvey[!is.na(publicSurvey)]
+    } else if (sheetInfo$sheet == "public_supplement3") {
+      publicSurvey <- as.numeric(unlist(main3 %>%
+        select(all_of(sheetInfo$colName))))
+    }
+  }
+  publicSurvey <- publicSurvey[publicSurvey >= 0]
+  publicSurvey <- publicSurvey[publicSurvey <= 100]
+
+  data <- data.frame(
+    userId = "Public Survey Respondent",
+    forecast = publicSurvey
+  )
+
+  return(data)
+}
+
+make_agg_methods_table <- function(set, year, data = fread("forecasts_anon.csv") %>% mutate(questionName = tolower(questionName))) {
+  #' Make a table for a given question with a few different aggregation
+  #' methods, by group. Groups and methods currently hardcoded.
+  #'
+  #' @usage make_agg_methods_table("AI Catastrophic Risk", 2100)
+
+  if (grepl("Future Human", set)) {
+    data <- data %>% filter(questionName == "Future Humans")
+    psData <- getPublicSurveyForecasts("12. Future Human Births", "", NA, "50th %")
+  } else if (grepl("Year of Extinction", set)) {
+    data <- data %>% filter(questionName == "Extinction Year")
+    psData <- getPublicSurveyForecasts("11. Year of Extinction", "", NA, "50th %")
+  } else {
+    data <- data %>%
+      filter(
+        grepl(set, setName),
+        questionName == paste0(year, " (your beliefs)")
+      )
+    psData <- getPublicSurveyForecasts(set, "Your", year, "")
+  }
+
+  if ("timestampId" %in% colnames(data)) {
+    data <- data %>%
+      group_by(userId) %>%
+      slice_max(timestampId) %>%
+      ungroup() %>%
+      select(userId, forecast, timestampId, setName) %>%
+      mutate(forecast = as.numeric(forecast))
+  }
+
+  if (nrow(data) == 0) {
+    stop("No data for this question (did you perhaps typo something).")
+  }
+
+  # Map questions to domains and merge with data, IF it's not the post mortem data.
+  if (!grepl("_you", set)) {
+    questionMeta <- fread("questionMetadata.csv") %>%
+      mutate(domain = specialty) %>%
+      mutate(defaultForecast = defaultForecast50) %>%
+      select(setName, domain, defaultForecast) %>%
+      distinct(setName, .keep_all = TRUE)
+    data <- merge(data, questionMeta, by = "setName")
+  }
+
+  # Get what group people belonged to (supers, G1 experts)
+  supers <- fread("supers_anon.csv") %>%
+    rename(userId = x) %>%
+    mutate(group = "super") %>%
+    select(userId, group)
+
+  experts <- fread("expertsG1_anon.csv") %>%
+    mutate(
+      specialty = ifelse(specialty2 != "", paste(specialty1, specialty2, sep = ", "), specialty1),
+      specialty = ifelse(specialty3 != "", paste(specialty, specialty3, sep = ", "), specialty)
+    ) %>%
+    select(userId, specialty) %>%
+    mutate(group = "expertG1")
+
+  # Join supers with experts
+  supers$specialty <- NA
+  allUsers <- rbind(supers, experts)
+
+  # Merge specialties with data.
+  data <- merge(data, allUsers, by = "userId", all.x = TRUE)
+
+  # Filter out G2 experts and distinguish domain from non-domain experts.
+  if (all(data$domain == "")) {
+    data <- data %>%
+      filter(!(group == "expertG2")) %>%
+      rowwise() %>%
+      mutate(group = case_when(
+        group == "super" ~ "super",
+        grepl("General", specialty) ~ "generalist",
+        (group == "expertG1" && domain == "") ~ "experts (w/o generalists)",
+        .default = "non-domain expert"
+      ))
+  } else {
+    data <- data %>%
+      filter(!(group == "expertG2")) %>%
+      rowwise() %>%
+      mutate(group = case_when(
+        group == "super" ~ "super",
+        grepl(domain, specialty) ~ "domain expert",
+        grepl("General", specialty) ~ "generalist",
+        .default = "non-domain expert"
+      ))
+  }
+
+  # Check whether "forecast" in colnames
+  if ("forecast" %in% colnames(psData)) {
+    # Merge with public survey data now
+    psData$group <- "public survey"
+    data <- data %>% mutate(userId = as.character(userId))
+    psData <- psData %>% mutate(forecast = as.numeric(forecast))
+    # NO default forecast for public survey (effect: don't drop any forecasts)
+    psData$defaultForecast <- 101
+    data <- bind_rows(data, psData)
+  }
+
+  # Filter out default forecasts.
+  warning(paste0("Filtering out ", sum(data$forecast == data$defaultForecast), " default forecasts."))
+  data <- data %>%
+    filter(forecast != defaultForecast)
+
+  # Group by group and get the median, mean, HD trimmed mean, and Neyman's.
+  our_table <- data %>%
+    group_by(group) %>%
+    summarize(
+      n_ids = n(),
+      median = median(forecast),
+      median_confint = boot_results(forecast, statistic = "median"),
+      mean = mean(forecast),
+      mean_confint = boot_results(forecast, statistic = "mean"),
+      geom_mean = geoMeanCalc(forecast),
+      geom_mean_confint = boot_results(forecast, statistic = "geoMeanCalc"),
+      hd_trim = hd_trim(forecast),
+      hd_trim_confint = boot_results(forecast, statistic = "hd_trim"),
+      simple_trim = trim(forecast),
+      simple_trim_confint = boot_results(forecast, statistic = "trim"),
+      neyman = neymanAggCalc(forecast),
+      neyman_confint = boot_results(forecast, statistic = "neymanAggCalc"),
+      geom_mean_of_odds = geoMeanOfOddsCalc(forecast),
+      geom_mean_of_odds_confint = boot_results(forecast, statistic = "geoMeanOfOddsCalc")
+    )
+
+  # Now add the "all experts" group back
+  data_experts <- data %>%
+    rowwise() %>%
+    mutate(group = case_when(
+      (group != "super" && group != "public survey") ~ "all experts",
+    )) %>%
+    filter(group == "all experts")
+
+  data_experts <- data_experts %>%
+    group_by(group) %>%
+    summarize(
+      n_ids = n(),
+      median = median(forecast),
+      median_confint = boot_results(forecast, statistic = "median"),
+      mean = mean(forecast),
+      mean_confint = boot_results(forecast, statistic = "mean"),
+      geom_mean = geoMeanCalc(forecast),
+      geom_mean_confint = boot_results(forecast, statistic = "geoMeanCalc"),
+      hd_trim = hd_trim(forecast),
+      hd_trim_confint = boot_results(forecast, statistic = "hd_trim"),
+      simple_trim = trim(forecast),
+      simple_trim_confint = boot_results(forecast, statistic = "trim"),
+      neyman = neymanAggCalc(forecast),
+      neyman_confint = boot_results(forecast, statistic = "neymanAggCalc"),
+      geom_mean_of_odds = geoMeanOfOddsCalc(forecast),
+      geom_mean_of_odds_confint = boot_results(forecast, statistic = "geoMeanOfOddsCalc")
+    )
+
+  our_table <- bind_rows(our_table, data_experts)
+
+  return(our_table)
+}
+
+# Create an empty list
+agg_methods_tables <- list()
+
+for (question in c(
+  "AI Catastrophic Risk", "AI Extinction Risk",
+  "Nuclear Catastrophic Risk", "Nuclear Extinction Risk",
+  "Non-Anthropogenic Catastrophic Risk", "Non-Anthropogenic Extinction Risk",
+  "Total Catastrophic", "Total Extinction"
+)) {
+  print(question)
+
+  a <- make_agg_methods_table(question, 2100)
+
+  # For each of the columns that are lists, make them into two separate columns
+  a <- a %>%
+    mutate(
+      median_confint_lower = median_confint$confint_lower,
+      median_confint_upper = median_confint$confint_upper,
+      mean_confint_lower = mean_confint$confint_lower,
+      mean_confint_upper = mean_confint$confint_upper,
+      geom_mean_confint_lower = geom_mean_confint$confint_lower,
+      geom_mean_confint_upper = geom_mean_confint$confint_upper,
+      hd_trim_confint_lower = hd_trim_confint$confint_lower,
+      hd_trim_confint_upper = hd_trim_confint$confint_upper,
+      simple_trim_confint_lower = simple_trim_confint$confint_lower,
+      simple_trim_confint_upper = simple_trim_confint$confint_upper,
+      neyman_confint_lower = neyman_confint$confint_lower,
+      neyman_confint_upper = neyman_confint$confint_upper,
+      geom_mean_of_odds_confint_lower = geom_mean_of_odds_confint$confint_lower,
+      geom_mean_of_odds_confint_upper = geom_mean_of_odds_confint$confint_upper
+    ) %>%
+    select(-median_confint, -mean_confint, -geom_mean_confint, -hd_trim_confint, -simple_trim_confint, -neyman_confint, -geom_mean_of_odds_confint)
+
+  # Append to the list
+  agg_methods_tables[[question]] <- a
+}
+
+all_tables <- bind_rows(agg_methods_tables, .id = "question")
+all_tables_next <- all_tables %>%
+  select(-contains("simple_trim"))
+
+# Put the columns in alphabetical order, except question, group, n_ids (put them first)
+all_tables_next <- all_tables_next[, c("question", "group", "n_ids", sort(colnames(all_tables_next)[!(colnames(all_tables_next) %in% c("question", "group", "n_ids"))]))]
+
+all_tables_next <- distinct(all_tables_next)
+
+# Round to 5 significant digits, which will always be enough AND avoid the weird base R rounding
+all_tables_next <- all_tables_next %>%
+  mutate_if(is.numeric, ~ signif(., 5))
+
+# Write to csv with no row names
+write.csv(all_tables_next, "agg_methods_tables_with_ci.csv", row.names = FALSE)
