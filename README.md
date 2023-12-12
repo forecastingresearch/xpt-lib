@@ -53,4 +53,4 @@ There are a few minor discrepancies between the results we produced in the origi
 ## Questions
 
 Please feel free to contact molly@forecastingresearch.org with any questions
-about the tournament or the analysis herein.
+about the tournament or the analysis herein, or if you wish to contribute.
