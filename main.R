@@ -147,7 +147,7 @@ RSRanking_unincentivized <- RSRanking_unincentivized %>% mutate(avgRank = rankSu
 write.csv(RSRanking_unincentivized, "RSRanking_unincentivized.csv", row.names = FALSE)
 
 ##### Produce Reciprocal Scoring Quintile Graphs #####
-rs_rank <- read.csv("RSRanking_unincentivized_first10.csv")
+rs_rank <- read.csv("RSRanking_unincentivized.csv")
 
 rs_rank <- rs_rank %>%
   filter(numQuestions >= 30) %>%

@@ -323,13 +323,13 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
     }
   }
   setwd(paste0(yourHome, "Summary Data"))
-  RSRanking_unincentivized <- read.csv("RSRanking_unincentivized.csv")
+  #RSRanking_unincentivized <- read.csv("RSRanking_unincentivized.csv")
   # Average ranking means we should expect the highest (and lowest) ranked will
   # be people who answered very few questions
-  RSRanking_unincentivized <- RSRanking_unincentivized %>%
-    mutate(avgRank = rankSum / numQuestions) %>%
-    arrange(avgRank)
-  write.csv(RSRanking_unincentivized, "RSRanking_unincentivized_first10.csv", row.names = FALSE)
+  #RSRanking_unincentivized <- RSRanking_unincentivized %>%
+   # mutate(avgRank = rankSum / numQuestions) %>%
+  #  arrange(avgRank)
+  #write.csv(RSRanking_unincentivized, "RSRanking_unincentivized_first10.csv", row.names = FALSE)
 }
 
 pointDistrib_RS <- function(metaTable, data, summaryTable) {
