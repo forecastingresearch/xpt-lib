@@ -1,7 +1,7 @@
 rm(list = ls())
 
 # Change this to the dir that houses the git repo (xpt-lib) # nolint
-yourHome <<- "/path/to/xpt/"
+yourHome <<- "~/Documents/xpt-lib/"
 
 # Set-up
 options(scipen = 999)
@@ -356,7 +356,7 @@ for (i in 1:length(unique(metaTable$setName))) {
 }
 
 ##### Aggregation Methods #####
-
+setwd(paste0(yourHome, "data"))
 main1 <- fread("public-survey/public_supplement1_anon.csv") %>%
   filter(Finished == "TRUE")
 main2 <- fread("public-survey/public_supplement2_anon.csv") %>%
