@@ -1,7 +1,7 @@
 rm(list = ls())
 
 # Change this to the dir that houses the git repo (xpt-lib) # nolint
-yourHome <<- "~/Documents/xpt-lib/"
+yourHome <<- "/path/to/xpt/"
 
 # Set-up
 options(scipen = 999)
