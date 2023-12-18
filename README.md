@@ -3,7 +3,11 @@ xpt-lib: Existential Risk Persuasion Tournament replication package
 
 <!-- badges: start -->
 
+![GitHub R package version](https://img.shields.io/github/r-package/v/forecastingresearch/xpt-lib)
+![GitHub forks](https://img.shields.io/github/forks/forecastingresearch/xpt-lib)
+
 <!-- badges: end -->
+
 
 This repository contains all the code used to produce the analysis in the
 [XPT report](https://forecastingresearch.org/s/XPT.pdf) from the Forecasting
