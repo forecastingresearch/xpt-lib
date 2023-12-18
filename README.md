@@ -38,6 +38,7 @@ Once you've installed `xpt`, you can load it using `library(xpt)`.
 ## Files
 
 - `main.R` runs all the code used in the XPT report.
+- `QuestionInfo.csv` contains full question text, resolution criteria, and clarifications that were issued to forecasters. For some details, you must refer to the XPT report ([pdf](https://forecastingresearch.org/s/XPT.pdf)).
 - Data (`sources` directory)
     - expertsG1_anon.csv: user IDs for the experts and their specialty (or specialties).
     - supers_anon.csv: user IDs for [Superforecasters](https://goodjudgment.com/services/custom-superforecasts/)
