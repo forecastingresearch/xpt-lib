@@ -1,115 +1,215 @@
-﻿setName,beliefSet,year,distrib,sheet,colName
-3. AI Catastrophic Risk,Your,2030,,public_supplement1,AIRisk_1_1
-3. AI Catastrophic Risk,Superforecasters,2030,,public_supplement1,AIRisk_1_4
-3. AI Catastrophic Risk,Experts,2030,,public_supplement1,AIRisk_1_5
-4. AI Extinction Risk,Your,2030,,public_supplement1,AIRisk_1_6
-4. AI Extinction Risk,Superforecasters,2030,,public_supplement1,AIRisk_1_7
-4. AI Extinction Risk,Experts,2030,,public_supplement1,AIRisk_1_8
-3. AI Catastrophic Risk,Your,2050,,public_supplement1,AIRisk_2_1
-3. AI Catastrophic Risk,Superforecasters,2050,,public_supplement1,AIRisk_2_4
-3. AI Catastrophic Risk,Experts,2050,,public_supplement1,AIRisk_2_5
-4. AI Extinction Risk,Your,2050,,public_supplement1,AIRisk_2_6
-4. AI Extinction Risk,Superforecasters,2050,,public_supplement1,AIRisk_2_7
-4. AI Extinction Risk,Experts,2050,,public_supplement1,AIRisk_2_8
-3. AI Catastrophic Risk,Your,2100,,public_supplement1,AIRisk_3_1
-3. AI Catastrophic Risk,Superforecasters,2100,,public_supplement1,AIRisk_3_4
-3. AI Catastrophic Risk,Experts,2100,,public_supplement1,AIRisk_3_5
-4. AI Extinction Risk,Your,2100,,public_supplement1,AIRisk_3_6
-4. AI Extinction Risk,Superforecasters,2100,,public_supplement1,AIRisk_3_7
-4. AI Extinction Risk,Experts,2100,,public_supplement1,AIRisk_3_8
-5. Nuclear Catastrophic Risk,Your,2030,,public_supplement1,NuclearRisk_1_1
-5. Nuclear Catastrophic Risk,Superforecasters,2030,,public_supplement1,NuclearRisk_1_4
-5. Nuclear Catastrophic Risk,Experts,2030,,public_supplement1,NuclearRisk_1_5
-6. Nuclear Extinction Risk,Your,2030,,public_supplement1,NuclearRisk_1_6
-6. Nuclear Extinction Risk,Superforecasters,2030,,public_supplement1,NuclearRisk_1_7
-6. Nuclear Extinction Risk,Experts,2030,,public_supplement1,NuclearRisk_1_8
-5. Nuclear Catastrophic Risk,Your,2050,,public_supplement1,NuclearRisk_2_1
-5. Nuclear Catastrophic Risk,Superforecasters,2050,,public_supplement1,NuclearRisk_2_4
-5. Nuclear Catastrophic Risk,Experts,2050,,public_supplement1,NuclearRisk_2_5
-6. Nuclear Extinction Risk,Your,2050,,public_supplement1,NuclearRisk_2_6
-6. Nuclear Extinction Risk,Superforecasters,2050,,public_supplement1,NuclearRisk_2_7
-6. Nuclear Extinction Risk,Experts,2050,,public_supplement1,NuclearRisk_2_8
-5. Nuclear Catastrophic Risk,Your,2100,,public_supplement1,NuclearRisk_3_1
-5. Nuclear Catastrophic Risk,Superforecasters,2100,,public_supplement1,NuclearRisk_3_4
-5. Nuclear Catastrophic Risk,Experts,2100,,public_supplement1,NuclearRisk_3_5
-6. Nuclear Extinction Risk,Your,2100,,public_supplement1,NuclearRisk_3_6
-6. Nuclear Extinction Risk,Superforecasters,2100,,public_supplement1,NuclearRisk_3_7
-6. Nuclear Extinction Risk,Experts,2100,,public_supplement1,NuclearRisk_3_8
-7. Non-Anthropogenic Catastrophic Risk,Your,2030,,public_supplement1,NonAnthroRisk_1_1
-7. Non-Anthropogenic Catastrophic Risk,Superforecasters,2030,,public_supplement1,NonAnthroRisk_1_4
-7. Non-Anthropogenic Catastrophic Risk,Experts,2030,,public_supplement1,NonAnthroRisk_1_5
-8. Non-Anthropogenic Extinction Risk,Your,2030,,public_supplement1,NonAnthroRisk_1_6
-8. Non-Anthropogenic Extinction Risk,Superforecasters,2030,,public_supplement1,NonAnthroRisk_1_7
-8. Non-Anthropogenic Extinction Risk,Experts,2030,,public_supplement1,NonAnthroRisk_1_8
-7. Non-Anthropogenic Catastrophic Risk,Your,2050,,public_supplement1,NonAnthroRisk_2_1
-7. Non-Anthropogenic Catastrophic Risk,Superforecasters,2050,,public_supplement1,NonAnthroRisk_2_4
-7. Non-Anthropogenic Catastrophic Risk,Experts,2050,,public_supplement1,NonAnthroRisk_2_5
-8. Non-Anthropogenic Extinction Risk,Your,2050,,public_supplement1,NonAnthroRisk_2_6
-8. Non-Anthropogenic Extinction Risk,Superforecasters,2050,,public_supplement1,NonAnthroRisk_2_7
-8. Non-Anthropogenic Extinction Risk,Experts,2050,,public_supplement1,NonAnthroRisk_2_8
-7. Non-Anthropogenic Catastrophic Risk,Your,2100,,public_supplement1,NonAnthroRisk_3_1
-7. Non-Anthropogenic Catastrophic Risk,Superforecasters,2100,,public_supplement1,NonAnthroRisk_3_4
-7. Non-Anthropogenic Catastrophic Risk,Experts,2100,,public_supplement1,NonAnthroRisk_3_5
-8. Non-Anthropogenic Extinction Risk,Your,2100,,public_supplement1,NonAnthroRisk_3_6
-8. Non-Anthropogenic Extinction Risk,Superforecasters,2100,,public_supplement1,NonAnthroRisk_3_7
-8. Non-Anthropogenic Extinction Risk,Experts,2100,,public_supplement1,NonAnthroRisk_3_8
-9. Total Catastrophic Risk,Your,2030,,public_supplement1,TotalRisk_1_1
-9. Total Catastrophic Risk,Superforecasters,2030,,public_supplement1,TotalRisk_1_4
-9. Total Catastrophic Risk,Experts,2030,,public_supplement1,TotalRisk_1_5
-10. Total Extinction Risk,Your,2030,,public_supplement1,TotalRisk_1_6
-10. Total Extinction Risk,Superforecasters,2030,,public_supplement1,TotalRisk_1_7
-10. Total Extinction Risk,Experts,2030,,public_supplement1,TotalRisk_1_8
-9. Total Catastrophic Risk,Your,2050,,public_supplement1,TotalRisk_2_1
-9. Total Catastrophic Risk,Superforecasters,2050,,public_supplement1,TotalRisk_2_4
-9. Total Catastrophic Risk,Experts,2050,,public_supplement1,TotalRisk_2_5
-10. Total Extinction Risk,Your,2050,,public_supplement1,TotalRisk_2_6
-10. Total Extinction Risk,Superforecasters,2050,,public_supplement1,TotalRisk_2_7
-10. Total Extinction Risk,Experts,2050,,public_supplement1,TotalRisk_2_8
-9. Total Catastrophic Risk,Your,2100,,public_supplement1,TotalRisk_3_1
-9. Total Catastrophic Risk,Superforecasters,2100,,public_supplement1,TotalRisk_3_4
-9. Total Catastrophic Risk,Experts,2100,,public_supplement1,TotalRisk_3_5
-10. Total Extinction Risk,Your,2100,,public_supplement1,TotalRisk_3_6
-10. Total Extinction Risk,Superforecasters,2100,,public_supplement1,TotalRisk_3_7
-10. Total Extinction Risk,Experts,2100,,public_supplement1,TotalRisk_3_8
-11. Year of Extinction,,,50th %,public_supplement1,Extinction
-12. Future Human Births,,,50th %,public_supplement1,FutureHumanBirths
-15. Non-State Actor Bioweapon 1k Deaths,,2024,50th %,public_supplement1,NonStateBio_1_1
-15. Non-State Actor Bioweapon 1k Deaths,,2030,50th %,public_supplement1,NonStateBio_2_1
-15. Non-State Actor Bioweapon 1k Deaths,,2050,50th %,public_supplement1,NonStateBio_3_1
-16. State Actor Bioweapon 1k Deaths,,2024,50th %,public_supplement1,StateBio_1_1
-16. State Actor Bioweapon 1k Deaths,,2030,50th %,public_supplement1,StateBio_2_1
-16. State Actor Bioweapon 1k Deaths,,2050,50th %,public_supplement1,StateBio_3_1
-27. Nuclear Fusion Energy,,,50th %,public_supplement1,Fusion
-31. Nuclear Weapon Use,,2024,,public_supplement1,NukeEvent_1_1
-31. Nuclear Weapon Use,,2030,,public_supplement1,NukeEvent_2_1
-33. Countries with Nuclear Warheads,,2024,50th %,public_supplement1,NuclearCountries_1_1
-33. Countries with Nuclear Warheads,,2030,50th %,public_supplement1,NuclearCountries_2_1
-33. Countries with Nuclear Warheads,,2050,50th %,public_supplement1,NuclearCountries_3_1
-38. Labor Force Participation Rate in OECD,,2024,50th %,public_supplement1,LFPR_1_1
-38. Labor Force Participation Rate in OECD,,2030,50th %,public_supplement1,LFPR_2_1
-38. Labor Force Participation Rate in OECD,,2050,50th %,public_supplement1,LFPR_3_1
-42. AI Wins International Mathematical Olympiad,,,50th %,public_supplement1,IMOGold
-46. Largest AI Experiment Cost of Compute,,2024,50th %,public_supplement2,ComputeCost_1_1
-46. Largest AI Experiment Cost of Compute,,2030,50th %,public_supplement2,ComputeCost_2_1
-46. Largest AI Experiment Cost of Compute,,2050,50th %,public_supplement2,ComputeCost_3_1
-52. Probability of GDP Growth Over 15%,,,,public_supplement3,GDP115_actual
-53. Year of GDP Growth over 15%,,,50th %,public_supplement1,GDPYear
-44. Date of Advanced AI,,,50th %,public_supplement1,FirstAIDate
-57. Prevalence of Autocracies,,2030,50th %,public_supplement1,VDem_1_1
-57. Prevalence of Autocracies,,2050,50th %,public_supplement1,VDem_2_1
-57. Prevalence of Autocracies,,2100,50th %,public_supplement1,VDem_3_1
-19. Lab Leaks,,2024,50th %,public_supplement2,Lab.Leak_1_1
-19. Lab Leaks,,2030,50th %,public_supplement2,Lab.Leak_2_1
-19. Lab Leaks,,2050,50th %,public_supplement2,Lab.Leak_3_1
-36. US GDP From Software,,2024,50th %,public_supplement2,USGDPFromSoft_1_1
-36. US GDP From Software,,2030,50th %,public_supplement2,USGDPFromSoft_2_1
-36. US GDP From Software,,2050,50th %,public_supplement2,USGDPFromSoft_3_1
-47. Lowest Price of GFLOPS,,2024,50th %,public_supplement2,GFLOPS_1_1
-47. Lowest Price of GFLOPS,,2030,50th %,public_supplement2,GFLOPS_2_1
-47. Lowest Price of GFLOPS,,2050,50th %,public_supplement2,GFLOPS_3_1
-50. Negative Public Opinion of AI,,2024,50th %,public_supplement2,Pew_1_1
-50. Negative Public Opinion of AI,,2030,50th %,public_supplement2,Pew_2_1
-50. Negative Public Opinion of AI,,2050,50th %,public_supplement2,Pew_3_1
-56. Happiness in America,,2030,50th %,public_supplement2,Happiness_1_1
-56. Happiness in America,,2050,50th %,public_supplement2,Happiness_2_1
-56. Happiness in America,,2100,50th %,public_supplement2,Happiness_3_1
+setName,beliefSet,year,country,distrib,sheet,colName
+3. AI Catastrophic Risk,Your,2030,,,public_supplement1,AIRisk_1_1
+3. AI Catastrophic Risk,Superforecasters,2030,,,public_supplement1,AIRisk_1_4
+3. AI Catastrophic Risk,Experts,2030,,,public_supplement1,AIRisk_1_5
+4. AI Extinction Risk,Your,2030,,,public_supplement1,AIRisk_1_6
+4. AI Extinction Risk,Superforecasters,2030,,,public_supplement1,AIRisk_1_7
+4. AI Extinction Risk,Experts,2030,,,public_supplement1,AIRisk_1_8
+3. AI Catastrophic Risk,Your,2050,,,public_supplement1,AIRisk_2_1
+3. AI Catastrophic Risk,Superforecasters,2050,,,public_supplement1,AIRisk_2_4
+3. AI Catastrophic Risk,Experts,2050,,,public_supplement1,AIRisk_2_5
+4. AI Extinction Risk,Your,2050,,,public_supplement1,AIRisk_2_6
+4. AI Extinction Risk,Superforecasters,2050,,,public_supplement1,AIRisk_2_7
+4. AI Extinction Risk,Experts,2050,,,public_supplement1,AIRisk_2_8
+3. AI Catastrophic Risk,Your,2100,,,public_supplement1,AIRisk_3_1
+3. AI Catastrophic Risk,Superforecasters,2100,,,public_supplement1,AIRisk_3_4
+3. AI Catastrophic Risk,Experts,2100,,,public_supplement1,AIRisk_3_5
+4. AI Extinction Risk,Your,2100,,,public_supplement1,AIRisk_3_6
+4. AI Extinction Risk,Superforecasters,2100,,,public_supplement1,AIRisk_3_7
+4. AI Extinction Risk,Experts,2100,,,public_supplement1,AIRisk_3_8
+5. Nuclear Catastrophic Risk,Your,2030,,,public_supplement1,NuclearRisk_1_1
+5. Nuclear Catastrophic Risk,Superforecasters,2030,,,public_supplement1,NuclearRisk_1_4
+5. Nuclear Catastrophic Risk,Experts,2030,,,public_supplement1,NuclearRisk_1_5
+6. Nuclear Extinction Risk,Your,2030,,,public_supplement1,NuclearRisk_1_6
+6. Nuclear Extinction Risk,Superforecasters,2030,,,public_supplement1,NuclearRisk_1_7
+6. Nuclear Extinction Risk,Experts,2030,,,public_supplement1,NuclearRisk_1_8
+5. Nuclear Catastrophic Risk,Your,2050,,,public_supplement1,NuclearRisk_2_1
+5. Nuclear Catastrophic Risk,Superforecasters,2050,,,public_supplement1,NuclearRisk_2_4
+5. Nuclear Catastrophic Risk,Experts,2050,,,public_supplement1,NuclearRisk_2_5
+6. Nuclear Extinction Risk,Your,2050,,,public_supplement1,NuclearRisk_2_6
+6. Nuclear Extinction Risk,Superforecasters,2050,,,public_supplement1,NuclearRisk_2_7
+6. Nuclear Extinction Risk,Experts,2050,,,public_supplement1,NuclearRisk_2_8
+5. Nuclear Catastrophic Risk,Your,2100,,,public_supplement1,NuclearRisk_3_1
+5. Nuclear Catastrophic Risk,Superforecasters,2100,,,public_supplement1,NuclearRisk_3_4
+5. Nuclear Catastrophic Risk,Experts,2100,,,public_supplement1,NuclearRisk_3_5
+6. Nuclear Extinction Risk,Your,2100,,,public_supplement1,NuclearRisk_3_6
+6. Nuclear Extinction Risk,Superforecasters,2100,,,public_supplement1,NuclearRisk_3_7
+6. Nuclear Extinction Risk,Experts,2100,,,public_supplement1,NuclearRisk_3_8
+7. Non-Anthropogenic Catastrophic Risk,Your,2030,,,public_supplement1,NonAnthroRisk_1_1
+7. Non-Anthropogenic Catastrophic Risk,Superforecasters,2030,,,public_supplement1,NonAnthroRisk_1_4
+7. Non-Anthropogenic Catastrophic Risk,Experts,2030,,,public_supplement1,NonAnthroRisk_1_5
+8. Non-Anthropogenic Extinction Risk,Your,2030,,,public_supplement1,NonAnthroRisk_1_6
+8. Non-Anthropogenic Extinction Risk,Superforecasters,2030,,,public_supplement1,NonAnthroRisk_1_7
+8. Non-Anthropogenic Extinction Risk,Experts,2030,,,public_supplement1,NonAnthroRisk_1_8
+7. Non-Anthropogenic Catastrophic Risk,Your,2050,,,public_supplement1,NonAnthroRisk_2_1
+7. Non-Anthropogenic Catastrophic Risk,Superforecasters,2050,,,public_supplement1,NonAnthroRisk_2_4
+7. Non-Anthropogenic Catastrophic Risk,Experts,2050,,,public_supplement1,NonAnthroRisk_2_5
+8. Non-Anthropogenic Extinction Risk,Your,2050,,,public_supplement1,NonAnthroRisk_2_6
+8. Non-Anthropogenic Extinction Risk,Superforecasters,2050,,,public_supplement1,NonAnthroRisk_2_7
+8. Non-Anthropogenic Extinction Risk,Experts,2050,,,public_supplement1,NonAnthroRisk_2_8
+7. Non-Anthropogenic Catastrophic Risk,Your,2100,,,public_supplement1,NonAnthroRisk_3_1
+7. Non-Anthropogenic Catastrophic Risk,Superforecasters,2100,,,public_supplement1,NonAnthroRisk_3_4
+7. Non-Anthropogenic Catastrophic Risk,Experts,2100,,,public_supplement1,NonAnthroRisk_3_5
+8. Non-Anthropogenic Extinction Risk,Your,2100,,,public_supplement1,NonAnthroRisk_3_6
+8. Non-Anthropogenic Extinction Risk,Superforecasters,2100,,,public_supplement1,NonAnthroRisk_3_7
+8. Non-Anthropogenic Extinction Risk,Experts,2100,,,public_supplement1,NonAnthroRisk_3_8
+9. Total Catastrophic Risk,Your,2030,,,public_supplement1,TotalRisk_1_1
+9. Total Catastrophic Risk,Superforecasters,2030,,,public_supplement1,TotalRisk_1_4
+9. Total Catastrophic Risk,Experts,2030,,,public_supplement1,TotalRisk_1_5
+10. Total Extinction Risk,Your,2030,,,public_supplement1,TotalRisk_1_6
+10. Total Extinction Risk,Superforecasters,2030,,,public_supplement1,TotalRisk_1_7
+10. Total Extinction Risk,Experts,2030,,,public_supplement1,TotalRisk_1_8
+9. Total Catastrophic Risk,Your,2050,,,public_supplement1,TotalRisk_2_1
+9. Total Catastrophic Risk,Superforecasters,2050,,,public_supplement1,TotalRisk_2_4
+9. Total Catastrophic Risk,Experts,2050,,,public_supplement1,TotalRisk_2_5
+10. Total Extinction Risk,Your,2050,,,public_supplement1,TotalRisk_2_6
+10. Total Extinction Risk,Superforecasters,2050,,,public_supplement1,TotalRisk_2_7
+10. Total Extinction Risk,Experts,2050,,,public_supplement1,TotalRisk_2_8
+9. Total Catastrophic Risk,Your,2100,,,public_supplement1,TotalRisk_3_1
+9. Total Catastrophic Risk,Superforecasters,2100,,,public_supplement1,TotalRisk_3_4
+9. Total Catastrophic Risk,Experts,2100,,,public_supplement1,TotalRisk_3_5
+10. Total Extinction Risk,Your,2100,,,public_supplement1,TotalRisk_3_6
+10. Total Extinction Risk,Superforecasters,2100,,,public_supplement1,TotalRisk_3_7
+10. Total Extinction Risk,Experts,2100,,,public_supplement1,TotalRisk_3_8
+11. Year of Extinction,,,,50th %,public_supplement1,Extinction
+12. Future Human Births,,,,50th %,public_supplement1,FutureHumanBirths
+15. Non-State Actor Bioweapon 1k Deaths,,2024,,50th %,public_supplement1,NonStateBio_1_1
+15. Non-State Actor Bioweapon 1k Deaths,,2030,,50th %,public_supplement1,NonStateBio_2_1
+15. Non-State Actor Bioweapon 1k Deaths,,2050,,50th %,public_supplement1,NonStateBio_3_1
+16. State Actor Bioweapon 1k Deaths,,2024,,50th %,public_supplement1,StateBio_1_1
+16. State Actor Bioweapon 1k Deaths,,2030,,50th %,public_supplement1,StateBio_2_1
+16. State Actor Bioweapon 1k Deaths,,2050,,50th %,public_supplement1,StateBio_3_1
+27. Nuclear Fusion Energy,,,,50th %,public_supplement1,Fusion
+31. Nuclear Weapon Use,,2024,,,public_supplement1,NukeEvent_1_1
+31. Nuclear Weapon Use,,2030,,,public_supplement1,NukeEvent_2_1
+33. Countries with Nuclear Warheads,,2024,,50th %,public_supplement1,NuclearCountries_1_1
+33. Countries with Nuclear Warheads,,2030,,50th %,public_supplement1,NuclearCountries_2_1
+33. Countries with Nuclear Warheads,,2050,,50th %,public_supplement1,NuclearCountries_3_1
+38. Labor Force Participation Rate in OECD,,2024,,50th %,public_supplement1,LFPR_1_1
+38. Labor Force Participation Rate in OECD,,2030,,50th %,public_supplement1,LFPR_2_1
+38. Labor Force Participation Rate in OECD,,2050,,50th %,public_supplement1,LFPR_3_1
+42. AI Wins International Mathematical Olympiad,,,,50th %,public_supplement1,IMOGold
+46. Largest AI Experiment Cost of Compute,,2024,,50th %,public_supplement2,ComputeCost_1_1
+46. Largest AI Experiment Cost of Compute,,2030,,50th %,public_supplement2,ComputeCost_2_1
+46. Largest AI Experiment Cost of Compute,,2050,,50th %,public_supplement2,ComputeCost_3_1
+52. Probability of GDP Growth Over 15%,,,,,public_supplement3,GDP115_actual
+53. Year of GDP Growth over 15%,,,,50th %,public_supplement1,GDPYear
+44. Date of Advanced AI,,,,50th %,public_supplement1,FirstAIDate
+57. Prevalence of Autocracies,,2030,,50th %,public_supplement1,VDem_1_1
+57. Prevalence of Autocracies,,2050,,50th %,public_supplement1,VDem_2_1
+57. Prevalence of Autocracies,,2100,,50th %,public_supplement1,VDem_3_1
+19. Lab Leaks,,2024,,50th %,public_supplement2,Lab.Leak_1_1
+19. Lab Leaks,,2030,,50th %,public_supplement2,Lab.Leak_2_1
+19. Lab Leaks,,2050,,50th %,public_supplement2,Lab.Leak_3_1
+36. US GDP From Software,,2024,,50th %,public_supplement2,USGDPFromSoft_1_1
+36. US GDP From Software,,2030,,50th %,public_supplement2,USGDPFromSoft_2_1
+36. US GDP From Software,,2050,,50th %,public_supplement2,USGDPFromSoft_3_1
+47. Lowest Price of GFLOPS,,2024,,50th %,public_supplement2,GFLOPS_1_1
+47. Lowest Price of GFLOPS,,2030,,50th %,public_supplement2,GFLOPS_2_1
+47. Lowest Price of GFLOPS,,2050,,50th %,public_supplement2,GFLOPS_3_1
+50. Negative Public Opinion of AI,,2024,,50th %,public_supplement2,Pew_1_1
+50. Negative Public Opinion of AI,,2030,,50th %,public_supplement2,Pew_2_1
+50. Negative Public Opinion of AI,,2050,,50th %,public_supplement2,Pew_3_1
+56. Happiness in America,,2030,,50th %,public_supplement2,Happiness_1_1
+56. Happiness in America,,2050,,50th %,public_supplement2,Happiness_2_1
+56. Happiness in America,,2100,,50th %,public_supplement2,Happiness_3_1
+49. Largest Number of Parameters in a Machine Learning  Model,,2024,,50th %,public_supplement4,NumParamML_1_1
+49. Largest Number of Parameters in a Machine Learning  Model,,2030,,50th %,public_supplement4,NumParamML_2_1
+49. Largest Number of Parameters in a Machine Learning  Model,,2050,,50th %,public_supplement4,NumParamML_3_1
+18. State Actor Bioweapon 100k Deaths,,2024,,50th %,public_supplement4,StateBio100k_1_1
+18. State Actor Bioweapon 100k Deaths,,2030,,50th %,public_supplement4,StateBio100k_2_1
+18. State Actor Bioweapon 100k Deaths,,2050,,50th %,public_supplement4,StateBio100k_2_1
+22. PHEIC Declarations with 10k Deaths,,2024,,50th %,public_supplement4,PHEIC10k_1_1
+22. PHEIC Declarations with 10k Deaths,,2030,,50th %,public_supplement4,PHEIC10k_2_1
+22. PHEIC Declarations with 10k Deaths,,2050,,50th %,public_supplement4,PHEIC10k_3_1
+13. Non-Coronavirus mRNA Vaccine,,2024,,50th %,public_supplement4,mRNA_1_1
+13. Non-Coronavirus mRNA Vaccine,,2030,,50th %,public_supplement4,mRNA_2_1
+14. Novel Infectious Disease Surveillance System,,2024,,,public_supplement4,DiseaseSurveil_1_1
+14. Novel Infectious Disease Surveillance System,,2030,,,public_supplement4,DiseaseSurveil_2_1
+45. Maximum Compute Used in an AI Experiment,,2024,,50th %,public_supplement4,MaxCompute_1_1
+45. Maximum Compute Used in an AI Experiment,,2030,,50th %,public_supplement4,MaxCompute_2_1
+45. Maximum Compute Used in an AI Experiment,,2050,,50th %,public_supplement4,MaxCompute_3_1
+26. Cost of Utility-Scale Solar Energy,,2024,,50th %,public_supplement5,SolarEnergy_1_1
+26. Cost of Utility-Scale Solar Energy,,2030,,50th %,public_supplement5,SolarEnergy_2_1
+30. Cost of Hydrogen,,2024,,50th %,public_supplement5,HCost_1_1
+30. Cost of Hydrogen,,2030,,50th %,public_supplement5,HCost_2_1
+37. US Computer R&D Spending,,2024,,50th %,public_supplement5,CompSpend_1_1
+37. US Computer R&D Spending,,2030,,50th %,public_supplement5,CompSpend_2_1
+37. US Computer R&D Spending,,2050,,50th %,public_supplement5,CompSpend_3_1
+39. MATH Dataset Benchmark,,June 30 2024,,50th %,public_supplement5,MATH_1_1
+39. MATH Dataset Benchmark,,June 30 2030,,50th %,public_supplement5,MATH_2_1
+54. Loss of Agricultural Production,,2030,,,public_supplement5,LossAgr_1_1
+54. Loss of Agricultural Production,,2050,,,public_supplement5,LossAgr_2_1
+54. Loss of Agricultural Production,,2100,,,public_supplement5,LossAgr_3_1
+25. Average Global Surface Temperature,,2030,,50th %,public_supplement5,AvgTemp_1_1
+25. Average Global Surface Temperature,,2050,,50th %,public_supplement5,AvgTemp_2_1
+25. Average Global Surface Temperature,,2100,,50th %,public_supplement5,AvgTemp_3_1
+48. ImageNet Classification Training Efficiency,,2024,,50th %,public_supplement6,ImageNet_1_1
+48. ImageNet Classification Training Efficiency,,2030,,50th %,public_supplement6,ImageNet_2_1
+"40. ""Massive Multitask Language Understanding"" Benchmark",,June 30 2024,,50th %,public_supplement6,MMLU_1_1
+"40. ""Massive Multitask Language Understanding"" Benchmark",,June 30 2030,,50th %,public_supplement6,MMLU_2_1
+55. Space Colony,,2030,,,public_supplement6,SpaceColony_1_1
+55. Space Colony,,2050,,,public_supplement6,SpaceColony_2_1
+55. Space Colony,,2100,,,public_supplement6,SpaceColony_3_1
+24. Malaria Deaths,,2024,,50th %,public_supplement6,Malaria_1_1
+24. Malaria Deaths,,2030,,50th %,public_supplement6,Malaria_2_1
+24. Malaria Deaths,,2050,,50th %,public_supplement6,Malaria_3_1
+32. Total Nuclear Warheads,,2024,,50th %,public_supplement6,TotalNukes_1_1
+32. Total Nuclear Warheads,,2030,,50th %,public_supplement6,TotalNukes_2_1
+32. Total Nuclear Warheads,,2040,,50th %,public_supplement6,TotalNukes_3_1
+20. Individual Countries with Biological Weapons Programs,,2024,U.S.,,public_supplement6,BiowarCountries_1_1
+20. Individual Countries with Biological Weapons Programs,,2030,U.S.,,public_supplement6,BiowarCountries_1_2
+20. Individual Countries with Biological Weapons Programs,,2050,U.S.,,public_supplement6,BiowarCountries_1_3
+20. Individual Countries with Biological Weapons Programs,,2024,Russia,,public_supplement6,BiowarCountries_2_1
+20. Individual Countries with Biological Weapons Programs,,2030,Russia,,public_supplement6,BiowarCountries_2_2
+20. Individual Countries with Biological Weapons Programs,,2050,Russia,,public_supplement6,BiowarCountries_2_3
+20. Individual Countries with Biological Weapons Programs,,2024,China,,public_supplement6,BiowarCountries_3_1
+20. Individual Countries with Biological Weapons Programs,,2030,China,,public_supplement6,BiowarCountries_3_2
+20. Individual Countries with Biological Weapons Programs,,2050,China,,public_supplement6,BiowarCountries_3_3
+20. Individual Countries with Biological Weapons Programs,,2024,North Korea,,public_supplement6,BiowarCountries_4_1
+20. Individual Countries with Biological Weapons Programs,,2030,North Korea,,public_supplement6,BiowarCountries_4_2
+20. Individual Countries with Biological Weapons Programs,,2050,North Korea,,public_supplement6,BiowarCountries_4_3
+20. Individual Countries with Biological Weapons Programs,,2024,Israel,,public_supplement6,BiowarCountries_5_1
+20. Individual Countries with Biological Weapons Programs,,2030,Israel,,public_supplement6,BiowarCountries_5_2
+20. Individual Countries with Biological Weapons Programs,,2050,Israel,,public_supplement6,BiowarCountries_5_3
+20. Individual Countries with Biological Weapons Programs,,2024,Iran,,public_supplement6,BiowarCountries_6_1
+20. Individual Countries with Biological Weapons Programs,,2030,Iran,,public_supplement6,BiowarCountries_6_2
+20. Individual Countries with Biological Weapons Programs,,2050,Iran,,public_supplement6,BiowarCountries_6_3
+20. Individual Countries with Biological Weapons Programs,,2024,Syria,,public_supplement6,BiowarCountries_7_1
+20. Individual Countries with Biological Weapons Programs,,2030,Syria,,public_supplement6,BiowarCountries_7_2
+20. Individual Countries with Biological Weapons Programs,,2050,Syria,,public_supplement6,BiowarCountries_7_3
+43. NYT Bestsellers Written by AI,,,,50th %,public_supplement7,NYTAI
+34. Country-by-Country Nuclear Use,,,China,,public_supplement7,CountryNukeUse_1_1
+34. Country-by-Country Nuclear Use,,,France,,public_supplement7,CountryNukeUse_2_1
+34. Country-by-Country Nuclear Use,,,India,,public_supplement7,CountryNukeUse_3_1
+34. Country-by-Country Nuclear Use,,,Israel,,public_supplement7,CountryNukeUse_4_1
+34. Country-by-Country Nuclear Use,,,North Korea,,public_supplement7,CountryNukeUse_5_1
+34. Country-by-Country Nuclear Use,,,Pakistan,,public_supplement7,CountryNukeUse_6_1
+34. Country-by-Country Nuclear Use,,,Russia,,public_supplement7,CountryNukeUse_7_1
+34. Country-by-Country Nuclear Use,,,The United Kingdom,,public_supplement7,CountryNukeUse_8_1
+34. Country-by-Country Nuclear Use,,,The United States,,public_supplement7,CountryNukeUse_9_1
+34. Country-by-Country Nuclear Use,,,Other actor (state),,public_supplement7,CountryNukeUse_10_1
+34. Country-by-Country Nuclear Use,,,Other actor (non-state),,public_supplement7,CountryNukeUse_11_1
+34. Country-by-Country Nuclear Use,,,This will not occur,,public_supplement7,CountryNukeUse_12_1
+28. Solar and Wind Energy,,2024,,50th %,public_supplement7,SolarWindEnergy_1_1
+28. Solar and Wind Energy,,2030,,50th %,public_supplement7,SolarWindEnergy_2_1
+29. Annual Direct Air CO2 Capture,,2024,,50th %,public_supplement7,CO2Cap_1_1
+29. Annual Direct Air CO2 Capture,,2030,,50th %,public_supplement7,CO2Cap_2_1
+51. Nick Bostrom Affirms Existence of AGI,,2030,,,public_supplement7,Bostrom_1_1
+51. Nick Bostrom Affirms Existence of AGI,,2050,,,public_supplement7,Bostrom_2_1
+51. Nick Bostrom Affirms Existence of AGI,,2100,,,public_supplement7,Bostrom_3_1
+23. Assassinations with Biological Weapons,,2024,,50th %,public_supplement8,BioAssassin_1_1
+23. Assassinations with Biological Weapons,,2030,,50th %,public_supplement8,BioAssassin_2_1
+23. Assassinations with Biological Weapons,,2050,,50th %,public_supplement8,BioAssassin_3_1
+21. Number of Countries with Biological Weapons Programs,,2024,,50th %,public_supplement8,BiowarNumCountry_1_1
+21. Number of Countries with Biological Weapons Programs,,2030,,50th %,public_supplement8,BiowarNumCountry_2_1
+21. Number of Countries with Biological Weapons Programs,,2050,,50th %,public_supplement8,BiowarNumCountry_3_1
+41. QuALITY Dataset Benchmark,,June 30 2024,,50th %,public_supplement8,QuALITY_1_1
+41. QuALITY Dataset Benchmark,,June 30 2030,,50th %,public_supplement8,QuALITY_2_1
+41. QuALITY Dataset Benchmark,,June 30 2040,,50th %,public_supplement8,QuALITY_3_1
+58. Future Worries and Children,,,,50th %,public_supplement8,FutureWorries
+17. Non-State Actor Bioweapon 100k Deaths,,2024,,50th %,public_supplement8,NonStateBio100k_1_1
+17. Non-State Actor Bioweapon 100k Deaths,,2030,,50th %,public_supplement8,NonStateBio100k_2_1
+17. Non-State Actor Bioweapon 100k Deaths,,2050,,50th %,public_supplement8,NonStateBio100k_3_1
+59. Generation Attitudes,,,,50th %,public_supplement8,GenAttitudes
+35. GPT Revenue,,,,,public_supplement8,GPT

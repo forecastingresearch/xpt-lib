@@ -688,7 +688,7 @@ newRowInit <- function(metaTable, questionDataProcessed, currentSetName,
   return(newRow)
 }
 
-multiYearReciprocal <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
+multiYearReciprocal <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, public_supplement4, public_supplement5, public_supplement6, public_supplement7, public_supplement8, survey_column_matches) {
   #' Stats and graphs for the multi-year questions
   #'
   #' @description For the question sets that asked about a forecaster's own
@@ -819,7 +819,7 @@ multiYearReciprocal <- function(metaTable, data, public_supplement1, public_supp
           files <- c(paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv"))
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - ", currentStage, " Box Plot")
 
-          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = beliefSets[k], year = years[l], distrib = "")
+          boxPlot(files, type = "regGroups", specialty, title = metaTable$title[i], subtitle = paste0(years[l]), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = beliefSets[k], year = years[l], country = "", distrib = "")
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", years[l], "/", beliefSets[k]))
 
@@ -920,7 +920,7 @@ multiYearReciprocal <- function(metaTable, data, public_supplement1, public_supp
   return(newAdd)
 }
 
-pointDistrib <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
+pointDistrib <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, public_supplement4, public_supplement5, public_supplement6, public_supplement7, public_supplement8, survey_column_matches) {
   #' Stats and Graphs for Point Distribution Questions
   #'
   #' @description For questions where we just asked for a distribution, like:
@@ -941,22 +941,24 @@ pointDistrib <- function(metaTable, data, public_supplement1, public_supplement2
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
+    
+    safe_setName <- gsub("%", "", currentSetName)
 
-    if (dir.exists(currentSetName)) {
-      setwd(paste0(yourHome, "Summary Data/", currentSetName))
+    if (dir.exists(safe_setName)) {
+      setwd(paste0(yourHome, "Summary Data/", safe_setName))
     } else {
       setwd(paste0(yourHome, "Summary Data"))
-      dir.create(currentSetName)
-      setwd(currentSetName)
+      dir.create(safe_setName)
+      setwd(safe_setName)
     }
 
     # PHASE DATA
 
     if (dir.exists("Phase Data")) {
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+      setwd(paste0(yourHome, "Summary Data/", safe_setName, "/Phase Data"))
     } else {
       dir.create("Phase Data")
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+      setwd(paste0(yourHome, "Summary Data/", safe_setName, "/Phase Data"))
     }
 
     specialty <- metaTable[i, ]$specialty
@@ -976,16 +978,18 @@ pointDistrib <- function(metaTable, data, public_supplement1, public_supplement2
       currentStage <- unique(metaTable$stage)[j]
 
       for (k in 1:length(distrib)) {
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+        setwd(paste0(yourHome, "Summary Data/", safe_setName, "/Phase Data"))
 
         print(distrib[k])
         currentAnswerText <- distrib[k]
+        
+        dir_name <- gsub(" %", "", currentAnswerText)
 
-        if (dir.exists(currentAnswerText)) {
-          setwd(currentAnswerText)
+        if (dir.exists(dir_name)) {
+          setwd(dir_name)
         } else {
-          dir.create(currentAnswerText)
-          setwd(currentAnswerText)
+          dir.create(dir_name)
+          setwd(dir_name)
         }
 
         if (currentAnswerText == "5th %") {
@@ -1063,7 +1067,7 @@ pointDistrib <- function(metaTable, data, public_supplement1, public_supplement2
 
         questionDataProcessed_anon <- questionDataProcessed %>% select(!userName)
 
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentAnswerText))
+        setwd(paste0(yourHome, "Summary Data/", safe_setName, "/Phase Data/", dir_name))
         write.csv(questionDataProcessed, paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, ".csv"), row.names = FALSE)
         # write.csv(questionDataProcessed_anon, paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, "_ANON.csv"), row.names = FALSE)
 
@@ -1082,9 +1086,9 @@ pointDistrib <- function(metaTable, data, public_supplement1, public_supplement2
         files <- paste0(currentSetName, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
         filenameStart <- paste0(currentSetName, " - ", currentAnswerText, " - ", currentStage, " Box Plot")
 
-        boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = currentAnswerText, filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = "", distrib = currentAnswerText)
+        boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = currentAnswerText, filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = "", country = "", distrib = currentAnswerText)
 
-        setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+        setwd(paste0(yourHome, "Summary Data/", safe_setName, "/Phase Data"))
 
         newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = "", answerText = currentAnswerText, stage = currentStage, specialty = metaTable[i, ]$specialty)
         newAdd <- rbind(newAdd, newRow)
@@ -1169,7 +1173,7 @@ pointDistrib <- function(metaTable, data, public_supplement1, public_supplement2
 
     # FIGURE DATA
 
-    setwd(paste0(yourHome, "Summary Data/", currentSetName))
+    setwd(paste0(yourHome, "Summary Data/", safe_setName))
 
     if (dir.exists("Figure Data")) {
       setwd("Figure Data")
@@ -1220,16 +1224,18 @@ pointDistrib <- function(metaTable, data, public_supplement1, public_supplement2
 
 
     for (j in 1:length(distrib)) {
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Figure Data"))
+      setwd(paste0(yourHome, "Summary Data/", safe_setName, "/Figure Data"))
 
       print(distrib[j])
       currentAnswerText <- distrib[j]
+      
+      dir_name <- gsub(" %", "", currentAnswerText)
 
-      if (dir.exists(distrib[j])) {
-        setwd(distrib[j])
+      if (dir.exists(dir_name)) {
+        setwd(dir_name)
       } else {
-        dir.create(distrib[j])
-        setwd(distrib[j])
+        dir.create(dir_name)
+        setwd(dir_name)
       }
 
       if (currentAnswerText == "5th %") {
@@ -1296,7 +1302,7 @@ pointDistrib <- function(metaTable, data, public_supplement1, public_supplement2
   return(newAdd)
 }
 
-multiYearDistrib <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
+multiYearDistrib <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, public_supplement4, public_supplement5, public_supplement6, public_supplement7, public_supplement8, survey_column_matches) {
   #' Stats and graphs for Multi-year Distribution Questions
   #'
   #' @description For the questions where we ask for distributions over predefined years, like:
@@ -1378,12 +1384,14 @@ multiYearDistrib <- function(metaTable, data, public_supplement1, public_supplem
           print(distrib[l])
 
           currentAnswerText <- distrib[l]
+          
+          dir_name <- gsub(" %", "", currentAnswerText)
 
-          if (dir.exists(currentAnswerText)) {
-            setwd(currentAnswerText)
+          if (dir.exists(dir_name)) {
+            setwd(dir_name)
           } else {
-            dir.create(currentAnswerText)
-            setwd(currentAnswerText)
+            dir.create(dir_name)
+            setwd(dir_name)
           }
 
           if (currentAnswerText == "5th %") {
@@ -1480,7 +1488,7 @@ multiYearDistrib <- function(metaTable, data, public_supplement1, public_supplem
           files <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, ".csv")
           filenameStart <- paste0(currentSetName, " - ", currentYear, " - ", currentAnswerText, " - Phase ", currentStage, " Box Plot")
 
-          boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentYear, "-", currentAnswerText), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, distrib = currentAnswerText)
+          boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentYear, "-", currentAnswerText), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, country = "", distrib = currentAnswerText)
 
           setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -1646,12 +1654,14 @@ multiYearDistrib <- function(metaTable, data, public_supplement1, public_supplem
 
         print(distrib[k])
         currentAnswerText <- distrib[k]
+        
+        dir_name <- gsub(" %", "", currentAnswerText)
 
-        if (dir.exists(distrib[k])) {
-          setwd(distrib[k])
+        if (dir.exists(dir_name)) {
+          setwd(dir_name)
         } else {
-          dir.create(distrib[k])
-          setwd(distrib[k])
+          dir.create(dir_name)
+          setwd(dir_name)
         }
 
         if (currentAnswerText == "5th %") {
@@ -1719,7 +1729,7 @@ multiYearDistrib <- function(metaTable, data, public_supplement1, public_supplem
   return(newAdd)
 }
 
-multiYearBinary <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
+multiYearBinary <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, public_supplement4, public_supplement5, public_supplement6, public_supplement7, public_supplement8, survey_column_matches) {
   #' Stats and graphs for Multi-year Binary Questions
   #'
   #' @description For yes/no multi-year questions, like:
@@ -1833,7 +1843,7 @@ multiYearBinary <- function(metaTable, data, public_supplement1, public_suppleme
         files <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, ".csv")
         filenameStart <- paste0(currentSetName, " - ", currentYear, " - Phase ", currentStage, " Box Plot")
 
-        boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, distrib = "")
+        boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, country = "", distrib = "")
 
         setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/", currentYear))
 
@@ -2002,7 +2012,7 @@ multiYearBinary <- function(metaTable, data, public_supplement1, public_suppleme
 
 #####
 
-multiYearCountryDistrib <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
+multiYearCountryDistrib <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, public_supplement4, public_supplement5, public_supplement6, public_supplement7, public_supplement8, survey_column_matches) {
   #' Stats and graphs for Multi-year Country Distribution Questions
   #'
   #' @description For questions where we ask for distributions over predefined
@@ -2129,7 +2139,7 @@ multiYearCountryDistrib <- function(metaTable, data, public_supplement1, public_
           files <- paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, ".csv")
           filenameStart <- paste0(currentSetName, " - ", currentQuestionName, " - Phase ", currentStage, " Box Plot")
 
-          boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentYear), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, distrib = "")
+          boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentYear, " - ", currentCountry), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = currentYear, country = currentCountry, distrib = "")
 
           newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = currentYear, answerText = currentCountry, stage = currentStage, specialty = metaTable[i, ]$specialty)
           newAdd <- rbind(newAdd, newRow)
@@ -2329,7 +2339,7 @@ multiYearCountryDistrib <- function(metaTable, data, public_supplement1, public_
   return(newAdd)
 }
 
-multiCountryBinary <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
+multiCountryBinary <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, public_supplement4, public_supplement5, public_supplement6, public_supplement7, public_supplement8, survey_column_matches) {
   #' Stats and graphs for Multi-year Country Binary Questions
   #'
   #' @description For yes/no country questions, like country-by-country nuclear
@@ -2438,7 +2448,7 @@ multiCountryBinary <- function(metaTable, data, public_supplement1, public_suppl
         files <- paste0(currentSetName, " - ", currentCountry, " - Phase ", currentStage, ".csv")
         filenameStart <- paste0(currentSetName, " - ", currentCountry, " - Phase ", currentStage, " Box Plot")
 
-        boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentCountry), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = "", distrib = "")
+        boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = paste(currentCountry), filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = "", country = currentCountry, distrib = "")
 
         newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = "", answerText = currentCountry, stage = currentStage, specialty = metaTable[i, ]$specialty)
         newAdd <- rbind(newAdd, newRow)
@@ -2608,7 +2618,7 @@ multiCountryBinary <- function(metaTable, data, public_supplement1, public_suppl
   return(newAdd)
 }
 
-pointBinary <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, survey_column_matches) {
+pointBinary <- function(metaTable, data, public_supplement1, public_supplement2, public_supplement3, public_supplement4, public_supplement5, public_supplement6, public_supplement7, public_supplement8, survey_column_matches) {
   #' Stats and graphs for classic binary questions
   #'
   #' @description For yes/no point questions, like
@@ -2629,22 +2639,24 @@ pointBinary <- function(metaTable, data, public_supplement1, public_supplement2,
   for (i in 1:length(unique(metaTable$setName))) {
     print(unique(metaTable$setName)[i])
     currentSetName <- unique(metaTable$setName)[i]
+    
+    dir_name <- gsub("%", "pct", currentSetName)
 
-    if (dir.exists(currentSetName)) {
-      setwd(paste0(yourHome, "Summary Data/", currentSetName))
+    if (dir.exists(dir_name)) {
+      setwd(paste0(yourHome, "Summary Data/", dir_name))
     } else {
       setwd(paste0(yourHome, "Summary Data"))
-      dir.create(currentSetName)
-      setwd(currentSetName)
+      dir.create(dir_name)
+      setwd(dir_name)
     }
 
     # PHASE DATA
 
     if (dir.exists("Phase Data")) {
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+      setwd(paste0(yourHome, "Summary Data/", dir_name, "/Phase Data"))
     } else {
       dir.create("Phase Data")
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+      setwd(paste0(yourHome, "Summary Data/", dir_name, "/Phase Data"))
     }
 
     specialty <- metaTable[i, ]$specialty
@@ -2694,25 +2706,27 @@ pointBinary <- function(metaTable, data, public_supplement1, public_supplement2,
         dir.create("Histograms")
         setwd("Histograms")
       }
+      
+      setName_for_file <- gsub("%", "", currentSetName)
 
-      filenameStart <- paste0(currentSetName, " - Phase ", currentStage, " Histogram")
+      filenameStart <- paste0(setName_for_file, " - Phase ", currentStage, " Histogram")
       histogram(questionDataProcessed, filenameStart, title = metaTable$title[i], stage = currentStage, specialty, expectedRisk, forecastMin, forecastMax)
 
       setwd("..")
 
       files <- paste0(currentSetName, " - Phase ", currentStage, ".csv")
-      filenameStart <- paste0(currentSetName, " - Phase ", currentStage, " Box Plot")
+      filenameStart <- paste0(setName_for_file, " - Phase ", currentStage, " Box Plot")
 
-      boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = "", filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = "", distrib = "")
+      boxPlot(files, type = "regGroups", specialty = specialty, title = metaTable$title[i], subtitle = "", filenameStart, expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName = currentSetName, beliefSet = "", year = "", country = "", distrib = "")
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
+      setwd(paste0(yourHome, "Summary Data/", dir_name, "/Phase Data"))
 
       newRow <- newRowInit(metaTable, questionDataProcessed, currentSetName, currentQuestionName = "", answerText = "", stage = currentStage, specialty = metaTable[i, ]$specialty)
       newAdd <- rbind(newAdd, newRow)
 
       setwd(paste0(yourHome, "Summary Data"))
 
-      setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data/"))
+      setwd(paste0(yourHome, "Summary Data/", dir_name, "/Phase Data/"))
     }
 
     # setwd(paste0(yourHome, "Summary Data/", currentSetName, "/Phase Data"))
@@ -2767,7 +2781,7 @@ pointBinary <- function(metaTable, data, public_supplement1, public_supplement2,
     # write.csv(convergenceTable, "convergenceTable.csv", row.names = FALSE)
 
     # FIGURE DATA
-    setwd(paste0(yourHome, "Summary Data/", currentSetName))
+    setwd(paste0(yourHome, "Summary Data/", dir_name))
 
     if (dir.exists("Figure Data")) {
       setwd("Figure Data")

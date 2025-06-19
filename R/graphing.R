@@ -367,7 +367,7 @@ histogram <- function(questionDataProcessed, filenameStart, title, stage,
 }
 
 boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
-                    expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName, beliefSet, year, distrib) {
+                    expectedRisk, forecastMin, forecastMax, numerateCitizens, yLabel, setName, beliefSet, year, country, distrib) {
   #' Basic boxplot function
   #'
   #' @importFrom ncar Round
@@ -407,6 +407,7 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
     bs <- beliefSet
     y <- year
     d <- distrib
+    c <- country
 
     if (numerateCitizens == TRUE) {
       wd <- getwd()
@@ -415,7 +416,8 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
         filter(setName == sn) %>%
         filter(grepl(beliefSet, bs)) %>%
         filter(year == y) %>%
-        filter(distrib == d)
+        filter(distrib == d) %>%
+        filter(country == c)
       if (nrow(sheetInfo) > 0) {
         if (sheetInfo$sheet == "public_supplement1") {
           publicSurvey <- as.numeric(unlist(public_supplement1 %>%
@@ -428,6 +430,21 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
         } else if (sheetInfo$sheet == "public_supplement3") {
           publicSurvey <- as.numeric(unlist(public_supplement3 %>%
             select(all_of(sheetInfo$colName))))
+        } else if (sheetInfo$sheet == "public_supplement4") {
+          publicSurvey <- as.numeric(unlist(public_supplement4 %>%
+                                              select(all_of(sheetInfo$colName))))
+        } else if (sheetInfo$sheet == "public_supplement5") {
+          publicSurvey <- as.numeric(unlist(public_supplement5 %>%
+                                              select(all_of(sheetInfo$colName))))
+        } else if (sheetInfo$sheet == "public_supplement6") {
+          publicSurvey <- as.numeric(unlist(public_supplement6 %>%
+                                              select(all_of(sheetInfo$colName))))
+        } else if (sheetInfo$sheet == "public_supplement7") {
+          publicSurvey <- as.numeric(unlist(public_supplement7 %>%
+                                              select(all_of(sheetInfo$colName))))
+        } else if (sheetInfo$sheet == "public_supplement8") {
+          publicSurvey <- as.numeric(unlist(public_supplement8 %>%
+                                              select(all_of(sheetInfo$colName))))
         }
         publicSurvey <- publicSurvey[!is.na(publicSurvey)]
         if (!is.na(forecastMin)) {
@@ -524,6 +541,16 @@ boxPlot <- function(files, type, specialty, title, subtitle, filenameStart,
   }
 
   file_path <- getwd()
+  
+  # Properly escape `%` in the filename
+  escaped_filename <- gsub("%", "%%", paste0(filenameStart, ".png"))
+  
+  # Use file.path to construct the full path
+  full_path <- file.path(file_path, escaped_filename)
+  
+  # Save the plot
+  ggsave(full_path, boxPlot, width = 9.18, height = 5.78, units = "in")
+  
   ggsave(gsub("%", "%%", paste0(file_path, "/", filenameStart, ".png")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
   ggsave(gsub("%", "%%", paste0(file_path, "/", filenameStart, "_vector.ps")), boxPlot, width = 9.18, height = 5.78, units = c("in"))
 

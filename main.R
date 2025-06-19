@@ -52,6 +52,7 @@ data$setName[grep("40.", data$setName)] <- unique(meta$setName[grep("40.", meta$
 setwd("public-survey")
 survey_column_matches <- read.csv("survey_column_matches.csv")
 survey_column_matches[is.na(survey_column_matches)] <- ""
+survey_column_matches$setName[grep("40.", survey_column_matches$setName)] <- unique(meta$setName[grep("40.", meta$setName)])
 
 public_supplement1 <- read.csv("public_supplement1_anon.csv")
 public_supplement1 <- public_supplement1 %>%
@@ -62,6 +63,21 @@ public_supplement2 <- public_supplement2 %>%
 public_supplement3 <- read.csv("public_supplement3_anon.csv")
 public_supplement3 <- public_supplement3 %>%
   filter(Finished == TRUE)
+public_supplement4 <- read.csv("public_supplement4_anon.csv")
+public_supplement4 <- public_supplement4 %>%
+  filter(Finished == "True")
+public_supplement5 <- read.csv("public_supplement5_anon.csv")
+public_supplement5 <- public_supplement5 %>%
+  filter(Finished == "True")
+public_supplement6 <- read.csv("public_supplement6_anon.csv")
+public_supplement6 <- public_supplement6 %>%
+  filter(Finished == "True")
+public_supplement7 <- read.csv("public_supplement7_anon.csv")
+public_supplement7 <- public_supplement7 %>%
+  filter(Finished == "True")
+public_supplement8 <- read.csv("public_supplement8_anon.csv")
+public_supplement8 <- public_supplement8 %>%
+  filter(Finished == "True")
 
 # If Summary Data dir doesn't exist, create it
 if (!dir.exists(paste0(yourHome, "Summary Data"))) {

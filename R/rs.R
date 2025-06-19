@@ -241,9 +241,12 @@ multiYearReciprocal_RS <- function(metaTable, data, summaryTable) {
                         score_unincentivized, score_rs, rank_unincentivized,
                         rank_rs, group)
           csv <- unique(csv)
-
-          write.csv(csv, paste0(currentSetName, " - ", csv$questionName[1],
-                                " - Reciprocal Scores.csv"), row.names = FALSE)
+          
+          # Only write for stage 1
+          if (j == 1){
+            write.csv(csv, paste0(currentSetName, " - ", csv$questionName[1],
+                                  " - Reciprocal Scores STAGE 1.csv"), row.names = FALSE) 
+          }
 
           setwd(paste0(yourHome, "Summary Data"))
 
